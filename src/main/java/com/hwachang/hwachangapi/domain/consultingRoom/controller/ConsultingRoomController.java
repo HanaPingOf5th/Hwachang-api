@@ -15,6 +15,7 @@ public class ConsultingRoomController {
     @MessageMapping("/call/key")
     @SendTo("/topic/call/key")
     public String callKey(@Payload String message){
+        log.info("[Key] : {}", message);
         return message;
     }
 
@@ -25,27 +26,27 @@ public class ConsultingRoomController {
         return message;
     }
 
-    @MessageMapping("/peer/offer/{camkey}/{roomId}")
-    @SendTo("/topic/peer/offer/{camkey}/{roomId}")
+    @MessageMapping("/peer/offer/{camKey}/{roomId}")
+    @SendTo("/topic/peer/offer/{camKey}/{roomId}")
     public String PeerHandleOffer(@Payload String offer, @DestinationVariable(value = "roomId") String roomId,
-                                  @DestinationVariable(value = "camKey") String camKey){
-        log.info("[OFFER] {}: {}", camKey, offer);
+                                  @DestinationVariable(value = "camKey") String camKey) {
+        log.info("[OFFER] {} : {}", camKey, offer);
         return offer;
     }
 
     @MessageMapping("/peer/iceCandidate/{camKey}/{roomId}")
     @SendTo("/topic/peer/iceCandidate/{camKey}/{roomId}")
     public String PeerHandleIceCandidate(@Payload String candidate, @DestinationVariable(value = "roomId") String roomId,
-                                         @DestinationVariable(value = "camKey") String camKey){
-        log.info("[ICECANDIDATE] {}: {}", camKey, candidate);
+                                         @DestinationVariable(value = "camKey") String camKey) {
+        log.info("[ICECANDIDATE] {} : {}", camKey, candidate);
         return candidate;
     }
 
     @MessageMapping("/peer/answer/{camKey}/{roomId}")
-    @SendTo("/topic/answer/iceCandidate/{camKey}/{roomId}")
+    @SendTo("/topic/peer/answer/{camKey}/{roomId}")
     public String PeerHandleAnswer(@Payload String answer, @DestinationVariable(value = "roomId") String roomId,
-                                         @DestinationVariable(value = "camKey") String camKey){
-        log.info("[ANSWER] {}: {}", camKey, answer);
+                                   @DestinationVariable(value = "camKey") String camKey) {
+        log.info("[ANSWER] {} : {}", camKey, answer);
         return answer;
     }
 

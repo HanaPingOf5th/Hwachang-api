@@ -10,5 +10,4 @@ public class HwachangApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(HwachangApiApplication.class, args);
     }
-
 }

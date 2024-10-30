@@ -1,0 +1,5 @@
+clova:
+  speech:
+    secret-key: "1d9f0960a96d43c0a5b60b7fb9406893"
+    invoke-url: "https://clovaspeech-gw.ncloud.com/external/v1/9361/72000efa8b38db3115744f28affd9cbb2d2f5b4cc8c9c82a89a69466a60a51fa"
+

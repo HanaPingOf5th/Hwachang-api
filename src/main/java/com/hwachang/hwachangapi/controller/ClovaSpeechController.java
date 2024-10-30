@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/clova-speech")
@@ -23,4 +25,14 @@ public class ClovaSpeechController {
             return ResponseEntity.status(500).body("Error processing file: " + e.getMessage());
         }
     }
+    @PostMapping("/summarize")
+    public ResponseEntity<String> summarizeText(@RequestBody String jsonResponse) {
+        try {
+            String summary = clovaSpeechClientService.summarizeText(jsonResponse);
+            return ResponseEntity.ok(summary);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error summarizing text: " + e.getMessage());
+        }
+    }
+
 }

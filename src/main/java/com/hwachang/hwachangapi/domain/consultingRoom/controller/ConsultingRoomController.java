@@ -19,7 +19,7 @@ public class ConsultingRoomController {
         return message;
     }
 
-    //나의 camKey를 연결된 세션에 보냄
+    //신호를 받은 client에서 여기로 key를 보냄 나의 camKey를 연결된 topic에 보냄
     @MessageMapping("/send/key")
     @SendTo("/topic/send/key")
     public String sendKey(@Payload String message){
@@ -48,6 +48,15 @@ public class ConsultingRoomController {
                                    @DestinationVariable(value = "camKey") String camKey) {
         log.info("[ANSWER] {} : {}", camKey, answer);
         return answer;
+    }
+
+    @MessageMapping("/peer/disconnect/{camKey}/{roomId}")
+    @SendTo("/topic/peer/disconnect/{camKey}/{roomId}")
+    public String PeerHandleDisconnect(@Payload String message,
+                                       @DestinationVariable(value = "roomId") String roomId,
+                                       @DestinationVariable(value = "camKey") String camKey) {
+        log.info("[DISCONNECT] {} left room {}", camKey, roomId);
+        return message;
     }
 
 

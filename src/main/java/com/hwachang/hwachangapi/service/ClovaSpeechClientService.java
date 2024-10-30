@@ -1,10 +1,8 @@
 package com.hwachang.hwachangapi.service;
 
-
 import com.google.gson.Gson;
 import com.hwachang.hwachangapi.entity.NestRequestEntity;
 import lombok.RequiredArgsConstructor;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -34,19 +32,21 @@ public class ClovaSpeechClientService {
     private final Gson gson = new Gson();
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    private final Header[] headers = new Header[]{
-            new BasicHeader("Accept", "application/json"),
-            new BasicHeader("X-CLOVASPEECH_API_KEY", secretKey)
-    };
-
-
     public String recognizeFile(MultipartFile file) throws IOException {
+        System.out.println("Using secret key: " + secretKey); // 확인용
         HttpPost httpPost = new HttpPost(invokeUrl + "/recognizer/upload");
-        httpPost.setHeaders(headers);
+        httpPost.addHeader(new BasicHeader("X-CLOVASPEECH-API-KEY", secretKey));
 
+        // Create the request parameters entity
+        NestRequestEntity requestEntity = new NestRequestEntity();
+        requestEntity.setLanguage("ko-KR");
+        requestEntity.setCompletion("sync");
+        requestEntity.setFullText(true);
+
+        // Build the multipart entity
         HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addTextBody("params", gson.toJson(new NestRequestEntity()))
-                .addBinaryBody("media", file.getInputStream(), ContentType.MULTIPART_FORM_DATA, file.getOriginalFilename())
+                .addTextBody("params", gson.toJson(requestEntity), ContentType.APPLICATION_JSON)
+                .addBinaryBody("media", file.getInputStream(), ContentType.DEFAULT_BINARY, file.getOriginalFilename())
                 .build();
 
         httpPost.setEntity(httpEntity);

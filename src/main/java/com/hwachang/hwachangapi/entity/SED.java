@@ -1,13 +1,14 @@
 package com.hwachang.hwachangapi.entity;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class Diarization {
+public class SED {
     private Boolean enabled;
 
-    public Diarization(Boolean enabled) {
+    public SED(Boolean enabled) {
         this.enabled = enabled;
     }
 }

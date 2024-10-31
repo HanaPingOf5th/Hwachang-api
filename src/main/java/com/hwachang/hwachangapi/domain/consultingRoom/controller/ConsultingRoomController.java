@@ -26,6 +26,7 @@ public class ConsultingRoomController {
         return message;
     }
 
+
     @MessageMapping("/peer/offer/{camKey}/{roomId}")
     @SendTo("/topic/peer/offer/{camKey}/{roomId}")
     public String PeerHandleOffer(@Payload String offer, @DestinationVariable(value = "roomId") String roomId,
@@ -50,12 +51,19 @@ public class ConsultingRoomController {
         return answer;
     }
 
-    @MessageMapping("/peer/disconnect/{camKey}/{roomId}")
-    @SendTo("/topic/peer/disconnect/{camKey}/{roomId}")
+    @MessageMapping("/peer/disconnect/{roomId}")
+    @SendTo("/topic/peer/disconnect/{roomId}")
     public String PeerHandleDisconnect(@Payload String message,
-                                       @DestinationVariable(value = "roomId") String roomId,
-                                       @DestinationVariable(value = "camKey") String camKey) {
-        log.info("[DISCONNECT] {} left room {}", camKey, roomId);
+                                       @DestinationVariable(value = "roomId") String roomId) {
+        log.info("[DISCONNECT] left room {}", roomId);
+        return message;
+    }
+
+    @MessageMapping("/peer/shareScreen/{roomId}")
+    @SendTo("/topic/peer/shareScreen/{roomId}")
+    public String PeerHandleShareScreen(@Payload String message,
+                                       @DestinationVariable(value = "roomId") String roomId) {
+        log.info("[shareScreen] room {} share screen", roomId);
         return message;
     }
 

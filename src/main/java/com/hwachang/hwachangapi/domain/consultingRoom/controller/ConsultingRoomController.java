@@ -67,6 +67,14 @@ public class ConsultingRoomController {
         return message;
     }
 
+    @MessageMapping("/peer/chat/message/{roomId}")
+    @SendTo("/topic/peer/chat/message/{roomId}")
+    public String message(@Payload String message, @DestinationVariable(value = "roomId") String roomId) {
+        log.info("[chat] room {} message {}", roomId, message);
+        return message;
+
+    }
+
 
 
 

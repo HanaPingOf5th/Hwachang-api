@@ -19,7 +19,7 @@ public class NestRequestEntity {
     private List<String> boostings; // 부스팅할 키워드 목록
     private String forbiddens; // 민감 키워드
 
-    private Diarization diarization = new Diarization(true); // 화자 나누기 기본값으로 false로 초기화
+    private Diarization diarization = new Diarization(true); // 화자 나누기 기본값으로 true로 초기화
 
     // 생성자 - 필수 필드 초기화 (언어, 방식, 전체 텍스트, 형식)
     public NestRequestEntity() {

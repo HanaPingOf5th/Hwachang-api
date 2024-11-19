@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         info = @Info(
                 title = "화창 API",
-                description = "디지털 하나로 5기 화창의 API 명세서입니다.",
+                description = "[디지털 하나로 5기] 오기의 하나핑의 화창 API 명세서입니다.",
                 version = "v1"
         )
 )

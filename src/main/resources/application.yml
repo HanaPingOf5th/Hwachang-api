@@ -1,0 +1,10 @@
+clova:
+  speech:
+    secret-key: "775098bbd8e5440182c0f6ec98224d2a"
+    invoke-url: "https://clovaspeech-gw.ncloud.com/external/v1/9361/72000efa8b38db3115744f28affd9cbb2d2f5b4cc8c9c82a89a69466a60a51fa"
+
+naver:
+  api:
+    client-id: "ekk0z71u1o"
+    client-secret: "jqGApr728DJXn2OYU0JTaDFr7cgvHcerlmm80Hmd"
+    summary-url: "https://naveropenapi.apigw.ntruss.com/text-summary/v1/summarize"

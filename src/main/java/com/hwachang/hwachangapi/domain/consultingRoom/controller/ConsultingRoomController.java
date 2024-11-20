@@ -1,9 +1,5 @@
 package com.hwachang.hwachangapi.domain.consultingRoom.controller;
 
-import com.hwachang.hwachangapi.domain.consultingRoom.dto.ChatRecordDTO;
-import com.hwachang.hwachangapi.domain.consultingRoom.entity.ChatRecord;
-import com.hwachang.hwachangapi.domain.consultingRoom.service.ConsultingRoomService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -13,10 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 public class ConsultingRoomController {
-
-    private final ConsultingRoomService consultingRoomService;
 
     //camKey는 공유되어야 함. 나의 camKey를 받아오기 위해 신호를 보냄
     @MessageMapping("/call/key")
@@ -78,11 +71,6 @@ public class ConsultingRoomController {
     @SendTo("/topic/peer/chat/message/{roomId}")
     public String message(@Payload String message, @DestinationVariable(value = "roomId") String roomId) {
         log.info("[chat] room {} message {}", roomId, message);
-
-        ChatRecordDTO chatMessage = objectMapper.readValue(payload, ChatRecordDTO.class);
-
-
-        consultingRoomService.updateChatRecord(roomId,message);
         return message;
 
     }

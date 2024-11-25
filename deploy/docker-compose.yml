@@ -4,6 +4,6 @@ services:
     container_name: spring
     image: yoonyounghun/hwachang-api
     ports:
-      - 8080:8080
+      - "8080:8080"
     volumes:
       - /var/log/:/logs/

@@ -17,6 +17,10 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+###
+.env
+/postgresql
+
 ### IntelliJ IDEA ###
 .idea
 *.iws

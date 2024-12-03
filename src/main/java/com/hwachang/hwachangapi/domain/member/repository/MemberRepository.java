@@ -16,7 +16,4 @@ public interface MemberRepository {
 
     Optional<MemberEntity> findMemberByUsername(String username);
 
-
-
-
 }

@@ -33,6 +33,9 @@ public class JpaMemberRepository implements MemberRepository{
 
     @Override
     public Optional<MemberEntity> findMemberByUsername(String username) {
-        return Optional.empty();
+        MemberEntity member = em.createQuery("select m from MemberEntity m where m.username=:username", MemberEntity.class)
+                .setParameter("username", username)
+                .getSingleResult();
+        return Optional.ofNullable(member);
     }
 }

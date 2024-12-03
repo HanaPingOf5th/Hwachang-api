@@ -20,11 +20,11 @@ import java.util.Date;
 @Service
 @RequiredArgsConstructor
 public class JwtProvider {
-
-    @Value("your-secret-key-for-access-token")
+    // ToDo: secrete key & expire env 파일로 옮기기
+    @Value("${jwt.secret}")
     private String jwtSecret;
 
-    @Value("your-secret-key-for-refresh-token")
+    @Value("${refresh.secret}")
     private String refreshSecret;
 
     private final UserDetailsService userDetailsService;

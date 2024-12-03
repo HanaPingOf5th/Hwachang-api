@@ -59,6 +59,10 @@ public abstract class MemberEntity extends BaseEntity implements UserDetails {
         return authorityCollection;
     }
 
+    public void setValidationToken(String validationToken) {
+        this.validationToken = validationToken;
+    }
+
     @Override
     public String getPassword() {
         return password;

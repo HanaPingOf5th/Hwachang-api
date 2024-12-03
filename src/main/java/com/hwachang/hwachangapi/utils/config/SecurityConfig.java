@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest)
                 .permitAll()
-//                .anyRequest()
+//                .anyRequest() // 특정 엔드포인트를 막아놓자...
 //                .authenticated()
                 .and().sessionManagement(SessionManagementConfigurer::disable)
                 .headers(

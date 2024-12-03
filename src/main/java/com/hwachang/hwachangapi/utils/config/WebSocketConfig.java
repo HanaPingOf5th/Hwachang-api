@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.config;
+package com.hwachang.hwachangapi.utils.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

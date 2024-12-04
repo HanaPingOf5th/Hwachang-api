@@ -28,7 +28,6 @@ public class RedisController {
         System.out.println(value);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
-
 }
 
 @Getter

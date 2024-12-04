@@ -8,7 +8,6 @@ import lombok.Getter;
 @Builder
 @Getter
 public class TellerLoginRequestDto {
-    private String tellerId;
     private String userName;
     private String password;
 }

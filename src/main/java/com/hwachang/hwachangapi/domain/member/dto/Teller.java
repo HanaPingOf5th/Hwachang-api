@@ -9,7 +9,6 @@ public class Teller {
     private Long id;
     private String username;
     private String name;
-    private String tellerID;
     private String password;
     private String salt;
     private Boolean isAccountNonExpired;

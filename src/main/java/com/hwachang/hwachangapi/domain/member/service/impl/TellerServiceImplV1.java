@@ -1,6 +1,5 @@
 package com.hwachang.hwachangapi.domain.member.service.impl;
 
-import com.hwachang.hwachangapi.domain.member.dto.Teller;
 import com.hwachang.hwachangapi.domain.member.dto.TellerLoginRequestDto;
 import com.hwachang.hwachangapi.domain.member.dto.TellerLoginResponseDto;
 import com.hwachang.hwachangapi.domain.member.dto.TellerRegisterRequestDto;
@@ -26,8 +25,9 @@ public class TellerServiceImplV1 implements TellerService{
     // ToDo: 아이디 중복 체크 등 멤버 비지니스 로직 추가
     @Override
     public Long registTeller(TellerRegisterRequestDto tellerRegisterRequestDto) {
-        String salt = randomCodeGenerator.generateRandomCode();
-        TellerEntity tellerEntity = TellerEntity.createTellerEntity(tellerRegisterRequestDto, salt);
+        String encodedPassword = passwordEncoder.encode(tellerRegisterRequestDto.getPassword());
+        tellerRegisterRequestDto.setPassword(encodedPassword);
+        TellerEntity tellerEntity = TellerEntity.createTellerEntity(tellerRegisterRequestDto);
         memberRepository.save(tellerEntity);
         return tellerEntity.getId();
     }
@@ -36,12 +36,16 @@ public class TellerServiceImplV1 implements TellerService{
     public TellerLoginResponseDto logInForTeller(TellerLoginRequestDto tellerLoginRequestDto) throws Exception {
         TellerEntity teller = (TellerEntity) memberRepository.findMemberByUsername(tellerLoginRequestDto.getUserName()).orElseThrow();
         if(!teller.getIsEnabled()){
-            throw new Exception(teller.getTellerID() + " teller not verified");
+            throw new Exception(teller.getUsername() +" " + teller.getName() + " teller not verified");
         }
 
         String validationToken = jwtProvider.createValidationToken();
 
         teller.setValidationToken(validationToken);
+
+        if(!passwordEncoder.matches(tellerLoginRequestDto.getPassword(), teller.getPassword())){
+            throw new Exception("비밀번호가 일치하지 않습니다.");
+        }
 
         return TellerLoginResponseDto.builder().accessToken(jwtProvider.createAccessToken(teller.getUsername(), teller.getAccountRole()))
                 .refreshToken(jwtProvider.createRefreshToken(teller.getUsername(), validationToken))

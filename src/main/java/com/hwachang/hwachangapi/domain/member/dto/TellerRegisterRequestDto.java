@@ -11,5 +11,8 @@ public class TellerRegisterRequestDto {
     private String userName;
     private String name;
     private String password;
-    private String tellerId;
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

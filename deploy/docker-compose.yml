@@ -7,3 +7,18 @@ services:
       - "8080:8080"
     volumes:
       - /var/log/:/logs/
+    depends_on:
+      - redis
+    networks:
+      - api-net
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
+    networks:
+      - api-net
+
+networks:
+  api-net:
+    name: hwachang-api

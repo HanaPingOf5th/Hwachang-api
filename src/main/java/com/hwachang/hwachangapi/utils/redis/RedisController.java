@@ -28,6 +28,11 @@ public class RedisController {
         System.out.println(value);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
+
+    @GetMapping
+    public String test(){
+        return "authorized";
+    }
 }
 
 @Getter

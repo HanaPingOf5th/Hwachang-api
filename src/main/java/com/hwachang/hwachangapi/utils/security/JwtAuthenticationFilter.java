@@ -28,13 +28,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         String authorizationHeader = request.getHeader("Authorization");
 
         if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer")){
-            filterChain.doFilter(request,response);
+            filterChain.doFilter(request, response);
             return;
         }
 
         token = authorizationHeader.substring(7);
 
         try{
+            System.out.println(token);
             authToken = jwtProvider.authenticate(token);
         }catch(ExpiredJwtException e){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

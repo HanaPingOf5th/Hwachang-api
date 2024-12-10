@@ -17,7 +17,6 @@ public class ApplicationConfig {
     public UserDetailsService userDetailsService(MemberRepository memberRepository){
         return username -> memberRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다"));
-
     }
 
     @Bean

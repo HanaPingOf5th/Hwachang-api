@@ -11,7 +11,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/member/customer")
 @RequiredArgsConstructor
-public class CustomerController {
+public class LLMTestController {
 
     private final LLMServicePort llmServicePort;
 

@@ -47,20 +47,4 @@ public class LLMTestController {
             return ResponseEntity.status(500).body("Error processing and summarizing audio file: " + e.getMessage());
         }
     }
-
-    /**
-     * 텍스트를 요약하는 엔드포인트
-     *
-     * @param jsonResponse 클로바 스피치 API의 JSON 응답
-     * @return 요약된 텍스트
-     */
-    @PostMapping("/summarize-text")
-    public ResponseEntity<String> summarizeText(@RequestBody String jsonResponse) {
-        try {
-            String summarizedText = llmServicePort.summarizeTextFromResponse(jsonResponse);
-            return ResponseEntity.ok(summarizedText);
-        } catch (IOException e) {
-            return ResponseEntity.status(500).body("Error summarizing text: " + e.getMessage());
-        }
-    }
 }

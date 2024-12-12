@@ -8,25 +8,25 @@ import java.io.IOException;
 @Service
 public class ClovaAdapter implements LLMServicePort {
 
-    private final ClovaSpeechService clovaSpeechService;
+    private final ClovaSpeechProvider clovaSpeechProvider;
 
-    public ClovaAdapter(ClovaSpeechService clovaSpeechService) {
-        this.clovaSpeechService = clovaSpeechService;
+    public ClovaAdapter(ClovaSpeechProvider clovaSpeechProvider) {
+        this.clovaSpeechProvider = clovaSpeechProvider;
     }
 
     @Override
     public String transferAudioToText(MultipartFile file) throws IOException {
-        return clovaSpeechService.recognizeFile(file);
+        return clovaSpeechProvider.recognizeFile(file);
     }
 
     @Override
     public String summarizeTextFromResponse(String jsonResponse) throws IOException {
-        return clovaSpeechService.summarizeTextFromSTTResponse(jsonResponse);
+        return clovaSpeechProvider.summarizeTextFromSTTResponse(jsonResponse);
     }
 
     @Override
     public String processAndSummarizeAudio(MultipartFile file) throws IOException {
-        String sttResponse = clovaSpeechService.recognizeFile(file);
-        return clovaSpeechService.summarizeTextFromSTTResponse(sttResponse);
+        String sttResponse = clovaSpeechProvider.recognizeFile(file);
+        return clovaSpeechProvider.summarizeTextFromSTTResponse(sttResponse);
     }
 }

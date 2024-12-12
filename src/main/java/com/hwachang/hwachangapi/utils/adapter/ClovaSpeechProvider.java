@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @RequiredArgsConstructor
-public class ClovaSpeechService {
+public class ClovaSpeechProvider {
 
     @Value("${clova.speech.secret-key}")
     private String secretKey;

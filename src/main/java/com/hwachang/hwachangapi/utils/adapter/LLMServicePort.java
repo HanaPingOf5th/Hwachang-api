@@ -12,11 +12,6 @@ public interface LLMServicePort {
     String transferAudioToText(MultipartFile file) throws IOException;
 
     /**
-     * 텍스트를 요약
-     */
-    String summarizeTextFromResponse(String jsonResponse) throws IOException;
-
-    /**
      * 음성 파일을 텍스트로 변환하고 요약 요청까지 수행
      */
     String processAndSummarizeAudio(MultipartFile file) throws IOException;

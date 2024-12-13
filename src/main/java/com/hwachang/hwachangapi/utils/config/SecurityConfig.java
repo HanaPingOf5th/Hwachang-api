@@ -36,8 +36,8 @@ public class SecurityConfig {
                 .permitAll()
                 .requestMatchers(new AntPathRequestMatcher("/member/teller/login"), new AntPathRequestMatcher("/member/teller"))
                 .permitAll()
-                .anyRequest()
-                .authenticated()
+                // .anyRequest()
+                // .authenticated()
                 .and().sessionManagement(SessionManagementConfigurer::disable)
                 .headers(
                         httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(

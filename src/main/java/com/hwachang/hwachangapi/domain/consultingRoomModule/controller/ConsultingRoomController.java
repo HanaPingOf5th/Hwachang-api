@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.domain.consultingRoom.controller;
+package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;

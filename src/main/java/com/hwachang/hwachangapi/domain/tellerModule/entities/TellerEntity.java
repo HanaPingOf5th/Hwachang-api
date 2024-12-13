@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.domain.member.entity;
+package com.hwachang.hwachangapi.domain.tellerModule.entities;
 
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
 import jakarta.persistence.*;
@@ -8,20 +8,21 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.UUID;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
-public abstract class MemberEntity extends BaseEntity implements UserDetails {
+public abstract class TellerEntity extends BaseEntity implements UserDetails {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.UUID)
     @Column(name="member_id")
-    private Long id;
+    private UUID id;
 
     @Column(nullable=false, unique=true)
-    private String username;
+    private String tellerNumber;
 
     @Column(nullable=false)
     private String name;
@@ -34,7 +35,19 @@ public abstract class MemberEntity extends BaseEntity implements UserDetails {
 
     @Column(nullable=false)
     @Enumerated(value=EnumType.STRING)
-    private AccountRole accountRole;
+    private AccountRole accountRole; // ToDo: 논의 필요
+
+    @Column(nullable = false)
+    private String position;
+
+    @Column(nullable = false)
+    private String status; // ToDo: 타입 이넘으로 변경
+
+    @Column(nullable = false)
+    private String type; // ToDo: 타입 이넘으로 변경
+
+    @Column(nullable = false)
+    private String profileImageUrl;
 
     // UserDetail 구현
     @Override

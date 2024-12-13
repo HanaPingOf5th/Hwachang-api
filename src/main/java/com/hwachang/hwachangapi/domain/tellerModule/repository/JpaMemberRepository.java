@@ -1,6 +1,6 @@
-package com.hwachang.hwachangapi.domain.member.repository;
+package com.hwachang.hwachangapi.domain.tellerModule.repository;
 
-import com.hwachang.hwachangapi.domain.member.entity.MemberEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -11,18 +11,18 @@ import java.util.Optional;
 public class JpaMemberRepository implements MemberRepository{
     private final EntityManager em;
     @Override
-    public void save(MemberEntity member) {
+    public void save(TellerEntity member) {
         em.persist(member);
     }
 
     @Override
-    public void delete(MemberEntity member) {
+    public void delete(TellerEntity member) {
         em.remove(member);
     }
 
     @Override
-    public Optional<MemberEntity> findMemberByUsername(String username) {
-        MemberEntity member = em.createQuery("select m from MemberEntity m where m.username=:username", MemberEntity.class)
+    public Optional<TellerEntity> findMemberByUsername(String username) {
+        TellerEntity member = em.createQuery("select m from TellerEntity m where m.username=:username", TellerEntity.class)
                 .setParameter("username", username)
                 .getSingleResult();
         return Optional.ofNullable(member);

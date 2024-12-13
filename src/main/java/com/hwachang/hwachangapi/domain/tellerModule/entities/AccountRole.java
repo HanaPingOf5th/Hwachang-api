@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.domain.member.entity;
+package com.hwachang.hwachangapi.domain.tellerModule.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

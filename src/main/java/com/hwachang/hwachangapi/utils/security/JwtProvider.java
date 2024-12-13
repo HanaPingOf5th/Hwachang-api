@@ -1,7 +1,7 @@
 package com.hwachang.hwachangapi.utils.security;
 
-import com.hwachang.hwachangapi.domain.member.entity.AccountRole;
-import com.hwachang.hwachangapi.domain.member.entity.MemberEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -79,7 +79,7 @@ public class JwtProvider {
                 .build();
     }
 
-    public Boolean validateRefreshToken(RefreshTokenValidationDto dto, MemberEntity member, PasswordEncoder passwordEncoder){
+    public Boolean validateRefreshToken(RefreshTokenValidationDto dto, TellerEntity member, PasswordEncoder passwordEncoder){
         Claims claims = dto.getClaims();
         UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
         if(claims.getExpiration().before(new Date()) || claims.getIssuedAt().after(new Date())){

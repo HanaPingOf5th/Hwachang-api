@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.domain.member.controller;
+package com.hwachang.hwachangapi.domain.tellerModule.controller;
 
 import com.hwachang.hwachangapi.utils.adapter.LLMServicePort;
 import lombok.RequiredArgsConstructor;

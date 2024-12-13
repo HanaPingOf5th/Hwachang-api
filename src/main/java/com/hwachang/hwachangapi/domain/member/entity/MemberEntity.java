@@ -11,7 +11,6 @@ import java.util.Collection;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="member_type")
 @Getter
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access=AccessLevel.PROTECTED)
@@ -34,18 +33,6 @@ public abstract class MemberEntity extends BaseEntity implements UserDetails {
     private String validationToken;
 
     @Column(nullable=false)
-    private Boolean isAccountNonExpired;
-
-    @Column(nullable=false)
-    private Boolean isAccountNonLocked;
-
-    @Column(nullable=false)
-    private Boolean isCredentialsNonExpired;
-
-    @Column(nullable=false)
-    private Boolean isEnabled;
-
-    @Column(nullable=false)
     @Enumerated(value=EnumType.STRING)
     private AccountRole accountRole;
 
@@ -59,10 +46,6 @@ public abstract class MemberEntity extends BaseEntity implements UserDetails {
         return authorityCollection;
     }
 
-    public void setValidationToken(String validationToken) {
-        this.validationToken = validationToken;
-    }
-
     @Override
     public String getPassword() {
         return password;
@@ -70,21 +53,21 @@ public abstract class MemberEntity extends BaseEntity implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return isAccountNonExpired;
+        return UserDetails.super.isAccountNonExpired();
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return isAccountNonLocked;
+        return UserDetails.super.isAccountNonLocked();
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return isCredentialsNonExpired;
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
     public boolean isEnabled() {
-        return isEnabled;
+        return UserDetails.super.isEnabled();
     }
 }

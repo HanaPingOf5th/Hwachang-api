@@ -1,7 +1,6 @@
 package com.hwachang.hwachangapi.domain.member.repository;
 
 import com.hwachang.hwachangapi.domain.member.entity.MemberEntity;
-import com.hwachang.hwachangapi.domain.member.entity.TellerEntity;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -19,16 +18,6 @@ public class JpaMemberRepository implements MemberRepository{
     @Override
     public void delete(MemberEntity member) {
         em.remove(member);
-    }
-
-    @Override
-    public Optional<TellerEntity> findTellerById(Long id) {
-        try{
-            TellerEntity teller = em.find(TellerEntity.class, id);
-            return Optional.ofNullable(teller);
-        }catch(Exception e){
-            throw e;
-        }
     }
 
     @Override

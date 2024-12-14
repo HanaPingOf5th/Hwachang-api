@@ -11,27 +11,25 @@ import java.util.Collection;
 import java.util.UUID;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
-@Setter(AccessLevel.PROTECTED)
-@NoArgsConstructor(access=AccessLevel.PROTECTED)
-public abstract class TellerEntity extends BaseEntity implements UserDetails {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "teller")
+public class TellerEntity extends BaseEntity implements UserDetails {
     @Id
     @GeneratedValue(strategy=GenerationType.UUID)
-    @Column(name="member_id")
+    @Column(name="teller_id")
     private UUID id;
 
     @Column(nullable=false, unique=true)
-    private String tellerNumber;
+    private String userName;
 
     @Column(nullable=false)
     private String name;
 
     @Column(nullable=false)
     private String password;
-
-    @Column(nullable=false)
-    private String validationToken;
 
     @Column(nullable=false)
     @Enumerated(value=EnumType.STRING)
@@ -46,7 +44,7 @@ public abstract class TellerEntity extends BaseEntity implements UserDetails {
     @Column(nullable = false)
     private String type; // ToDo: 타입 이넘으로 변경
 
-    @Column(nullable = false)
+    @Column
     private String profileImageUrl;
 
     // UserDetail 구현
@@ -62,6 +60,11 @@ public abstract class TellerEntity extends BaseEntity implements UserDetails {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return "";
     }
 
     @Override

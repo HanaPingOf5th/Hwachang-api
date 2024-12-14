@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/api/member/customer")
+@RequestMapping("/api/test")
 @RequiredArgsConstructor
 public class LLMTestController {
 

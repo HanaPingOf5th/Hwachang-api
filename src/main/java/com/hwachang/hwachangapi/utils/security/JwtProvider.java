@@ -32,13 +32,13 @@ public class JwtProvider {
     @Value("3600")
     private long expireTimeAccessToken;
 
-    @Value("3600")
+    @Value("36000")
     private long expireTimeRefreshToken;
 
-    public String createAccessToken(String userPk, AccountRole role){
+    public String createAccessToken(String userPk, String tellerName){
         Claims claims = Jwts.claims().setSubject(userPk);
         Date now = new Date();
-        claims.put("roles", role);
+        claims.put("roles", tellerName);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -47,10 +47,10 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createRefreshToken(String userPk, String validationToken){
+    public String createRefreshToken(String userPk, String tellerName){
         Claims claims = Jwts.claims().setSubject(userPk);
         Date now = new Date();
-        claims.put("validationToken", validationToken);
+        claims.put("validationToken", tellerName);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -69,39 +69,6 @@ public class JwtProvider {
             throw new Exception("User not valid");
         }
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    public RefreshTokenValidationDto extractClaimAndUsername(String token){
-        Claims claims = Jwts.parserBuilder().setSigningKey(refreshSecret).build().parseClaimsJws(token).getBody();
-        return RefreshTokenValidationDto.builder()
-                .username(claims.getSubject())
-                .claims(claims)
-                .build();
-    }
-
-    public Boolean validateRefreshToken(RefreshTokenValidationDto dto, TellerEntity member, PasswordEncoder passwordEncoder){
-        Claims claims = dto.getClaims();
-        UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
-        if(claims.getExpiration().before(new Date()) || claims.getIssuedAt().after(new Date())){
-            return false;
-        }
-
-        if(!passwordEncoder.matches(claims.get("validationToken").toString(), member.getValidationToken())){
-            return false;
-        }
-
-        if(!validateUserDetails(userDetails)){
-            return false;
-        }
-        return true;
-    }
-
-    public String createValidationToken(){
-        int randomNumber = 0;
-        while(randomNumber<100000000){
-            randomNumber = (int)(Math.random()*1000000000);
-        }
-        return Integer.toString(randomNumber);
     }
 
     private boolean validateUserDetails(UserDetails userDetails){

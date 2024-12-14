@@ -4,12 +4,12 @@ import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 
 import java.util.Optional;
 
-public interface MemberRepository {
+public interface TellerRepository {
 
     void save(TellerEntity member);
 
     void delete(TellerEntity member);
 
-    Optional<TellerEntity> findMemberByUsername(String username);
+    Optional<TellerEntity> findTellerByUserName(String username);
 
 }

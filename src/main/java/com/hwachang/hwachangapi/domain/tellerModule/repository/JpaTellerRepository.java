@@ -4,11 +4,13 @@ import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class JpaMemberRepository implements MemberRepository{
+public class JpaTellerRepository implements TellerRepository {
     private final EntityManager em;
     @Override
     public void save(TellerEntity member) {
@@ -21,10 +23,13 @@ public class JpaMemberRepository implements MemberRepository{
     }
 
     @Override
-    public Optional<TellerEntity> findMemberByUsername(String username) {
-        TellerEntity member = em.createQuery("select m from TellerEntity m where m.username=:username", TellerEntity.class)
-                .setParameter("username", username)
-                .getSingleResult();
-        return Optional.ofNullable(member);
+    public Optional<TellerEntity> findTellerByUserName(String userName) {
+        List<TellerEntity> members = em.createQuery(
+                        "select t from TellerEntity t where t.userName = :userName", TellerEntity.class)
+                .setParameter("userName", userName)
+                .getResultList();
+
+        return members.stream().findFirst();
     }
+
 }

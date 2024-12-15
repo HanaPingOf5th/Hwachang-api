@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -44,25 +45,6 @@ public class ClovaSpeechProvider {
     private String requestId;
 
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
-
-    public String recognizeFile(MultipartFile file) throws IOException {
-        HttpPost httpPost = new HttpPost(invokeUrl + "/recognizer/upload");
-        httpPost.addHeader(new BasicHeader("X-CLOVASPEECH-API-KEY", secretKey));
-
-        JsonObject requestParams = new JsonObject();
-        requestParams.addProperty("language", "ko-KR");
-        requestParams.addProperty("completion", "sync");
-        requestParams.addProperty("fullText", true);
-        requestParams.addProperty("format", "JSON");
-
-        HttpEntity httpEntity = MultipartEntityBuilder.create()
-                .addTextBody("params", requestParams.toString(), ContentType.APPLICATION_JSON)
-                .addBinaryBody("media", file.getInputStream(), ContentType.DEFAULT_BINARY, file.getOriginalFilename())
-                .build();
-
-        httpPost.setEntity(httpEntity);
-        return executeRequest(httpPost);
-    }
 
     public String summarizeTextFromSTTResponse(String sttResponseJson) throws IOException {
         String[] textArray = extractTextEditedAsArray(sttResponseJson);
@@ -113,5 +95,24 @@ public class ClovaSpeechProvider {
             HttpEntity entity = httpResponse.getEntity();
             return EntityUtils.toString(entity, StandardCharsets.UTF_8);
         }
+    }
+
+    public String recognizeFile(InputStream fileStream, String fileName) throws IOException {
+        HttpPost httpPost = new HttpPost(invokeUrl + "/recognizer/upload");
+        httpPost.addHeader("X-CLOVASPEECH-API-KEY", secretKey);
+
+        JsonObject requestParams = new JsonObject();
+        requestParams.addProperty("language", "ko-KR");
+        requestParams.addProperty("completion", "sync");
+        requestParams.addProperty("fullText", true);
+        requestParams.addProperty("format", "JSON");
+
+        HttpEntity httpEntity = MultipartEntityBuilder.create()
+                .addTextBody("params", requestParams.toString(), ContentType.APPLICATION_JSON)
+                .addBinaryBody("media", fileStream, ContentType.DEFAULT_BINARY, fileName)
+                .build();
+
+        httpPost.setEntity(httpEntity);
+        return executeRequest(httpPost);
     }
 }

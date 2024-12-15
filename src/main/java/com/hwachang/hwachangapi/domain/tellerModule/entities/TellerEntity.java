@@ -39,10 +39,10 @@ public class TellerEntity extends BaseEntity implements UserDetails {
     private String position;
 
     @Column(nullable = false)
-    private String status; // ToDo: 타입 이넘으로 변경
+    private Status status;
 
     @Column(nullable = false)
-    private String type; // ToDo: 타입 이넘으로 변경
+    private Type type;
 
     @Column
     private String profileImageUrl;

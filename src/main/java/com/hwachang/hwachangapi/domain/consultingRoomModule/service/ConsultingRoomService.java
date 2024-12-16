@@ -23,14 +23,17 @@ public class ConsultingRoomService {
 
     @Transactional
     public UUID createReview(CreateReviewDto dto) {
-        ReviewEntity reviewEntity = ReviewEntity.builder()
-                .customerId(dto.getCustomerId())
-                .nps(dto.getNps())
-                .content(dto.getContent())
-                .consultingRoomId(dto.getConsultingRoomId())
-                .build();
+        try{
+            ReviewEntity reviewEntity = ReviewEntity.builder()
+                    .customerId(dto.getCustomerId())
+                    .nps(dto.getNps())
+                    .content(dto.getContent())
+                    .consultingRoomId(dto.getConsultingRoomId())
+                    .build();
 
-        return reviewRepository.save(reviewEntity).getReviewId();
+            return reviewRepository.save(reviewEntity).getReviewId();
+
+        }catch (Exception e){throw new RuntimeException("알수 없는 에러가 발생했습니다.");}
     }
 
 }

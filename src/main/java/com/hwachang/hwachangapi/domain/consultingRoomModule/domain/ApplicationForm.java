@@ -3,12 +3,13 @@ package com.hwachang.hwachangapi.domain.consultingRoomModule.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class ApplicationForm {
+public class ApplicationForm implements Serializable {
     private UUID applicationFormId;
     private String title;
     public UUID categoryId;

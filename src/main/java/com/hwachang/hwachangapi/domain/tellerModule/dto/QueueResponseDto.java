@@ -9,5 +9,5 @@ import java.util.Map;
 @Getter
 @Builder
 public class QueueResponseDto {
-    private Map<Long, CategoryData> userList;
+    private Map<Long, CategoryData> waitingListCategory;
 }

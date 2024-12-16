@@ -37,10 +37,10 @@ public class ConsultingRoomEntity extends BaseEntity {
     @Column(name ="original_text")
     private String originalText;
 
-    // ToDo: JSON 타입 저장
-    @Column(name="summary")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private String summary;
+//    // ToDo: JSON 타입 저장
+//    @Column(name="summary")
+//    @JdbcTypeCode(SqlTypes.JSON)
+//    private String summary;
 
     @Column(name="record_chat")
     @Convert(converter = StringListConverter.class)

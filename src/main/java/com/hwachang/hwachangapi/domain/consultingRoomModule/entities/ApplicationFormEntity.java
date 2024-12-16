@@ -1,6 +1,6 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.entities;
 
-import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.applicationForm.ApplicationForm;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ApplicationForm;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

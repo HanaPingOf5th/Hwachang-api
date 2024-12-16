@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class CreateTellerRequestDto {
-    private String tellerNumber;
+    private String tellerNumbers;
     private String name;
     private String password;
     private String position;

@@ -1,6 +1,6 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.service;
 
-import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.applicationForm.ApplicationForm;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ApplicationForm;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ApplicationFormEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ApplicationFormRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-
 public class ApplicationFormService {
     private final ApplicationFormRepository applicationFormRepository;
 

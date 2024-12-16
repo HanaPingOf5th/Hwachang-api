@@ -1,7 +1,6 @@
 package com.hwachang.hwachangapi.utils.security;
 
 import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
-import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -11,7 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
@@ -35,10 +33,10 @@ public class JwtProvider {
     @Value("36000")
     private long expireTimeRefreshToken;
 
-    public String createAccessToken(String userPk, String tellerName){
+    public String createAccessToken(String userPk, AccountRole role) {
         Claims claims = Jwts.claims().setSubject(userPk);
         Date now = new Date();
-        claims.put("roles", tellerName);
+        claims.put("roles", role);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -47,10 +45,10 @@ public class JwtProvider {
                 .compact();
     }
 
-    public String createRefreshToken(String userPk, String tellerName){
+    public String createRefreshToken(String userPk, String username){
         Claims claims = Jwts.claims().setSubject(userPk);
         Date now = new Date();
-        claims.put("validationToken", tellerName);
+        claims.put("username", username);
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -64,6 +62,9 @@ public class JwtProvider {
         if(claims.getExpiration().before(new Date()) || claims.getIssuedAt().after(new Date())){
             throw new Exception("Access Token Expired");
         }
+        // error 발생
+        System.out.println("------------------------------------------"+claims.getSubject());
+
         UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
         if(!validateUserDetails(userDetails)){
             throw new Exception("User not valid");

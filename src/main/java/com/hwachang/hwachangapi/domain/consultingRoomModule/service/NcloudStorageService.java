@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.domain.consultingRoomModule;
+package com.hwachang.hwachangapi.domain.consultingRoomModule.service;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;

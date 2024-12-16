@@ -1,6 +1,6 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 
-import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.applicationForm.ApplicationForm;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ApplicationForm;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CreateReviewDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ApplicationFormService;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
@@ -26,5 +26,4 @@ public class ConsultingRoomController {
     public ApplicationForm getApplicationForm(@PathVariable("formId") UUID applicationFormId) {
         return this.applicationFormService.getApplicationForm(applicationFormId);
     }
-
 }

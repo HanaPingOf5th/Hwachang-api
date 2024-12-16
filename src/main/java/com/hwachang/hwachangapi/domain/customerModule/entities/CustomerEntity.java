@@ -1,5 +1,6 @@
 package com.hwachang.hwachangapi.domain.customerModule.entities;
 
+import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -41,8 +42,10 @@ public class CustomerEntity extends BaseEntity implements UserDetails {
     // UserDetails 구현
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorityCollection = new ArrayList<>();
-        authorityCollection.add((GrantedAuthority) () -> accountRole.getKey());
+        Collection<GrantedAuthority> authorityCollection = new ArrayList<GrantedAuthority>();
+        authorityCollection.add(
+                (GrantedAuthority) () -> accountRole.getKey()
+        );
         return authorityCollection;
     }
 

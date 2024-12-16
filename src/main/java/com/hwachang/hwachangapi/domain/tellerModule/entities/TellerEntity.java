@@ -22,8 +22,8 @@ public class TellerEntity extends BaseEntity implements UserDetails {
     @Column(name="teller_id")
     private UUID id;
 
-    @Column(name="teller_number", nullable=false, unique=true)
-    private String userName;
+    @Column(nullable=false, unique=true)
+    private String username;
 
     @Column(nullable=false)
     private String name;
@@ -55,16 +55,6 @@ public class TellerEntity extends BaseEntity implements UserDetails {
                 (GrantedAuthority) () -> accountRole.getKey()
         );
         return authorityCollection;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return "";
     }
 
     @Override

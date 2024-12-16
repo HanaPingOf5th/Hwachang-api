@@ -23,10 +23,8 @@ public class TellerService {
 
     @Transactional
     public String signup(CreateTellerRequestDto request) {
-        System.out.println("---------------");
-        System.out.println(request.getPassword());
         TellerEntity tellerEntity = TellerEntity.builder()
-                .userName(request.getTellerNumber())
+                .username(request.getTellerNumbers())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .type(Type.CORPORATE)
@@ -50,8 +48,8 @@ public class TellerService {
         }
 
         // Access Token 및 Refresh Token 생성
-        String accessToken = jwtProvider.createAccessToken(String.valueOf(tellerEntity.getId()), tellerEntity.getName());
-        String refreshToken = jwtProvider.createRefreshToken(String.valueOf(tellerEntity.getId()), tellerEntity.getName());
+        String accessToken = jwtProvider.createAccessToken(tellerEntity.getUsername(), tellerEntity.getAccountRole());
+        String refreshToken = jwtProvider.createRefreshToken(tellerEntity.getUsername(), tellerEntity.getName());
 
         return LoginResponseDto.builder()
                 .token(accessToken)

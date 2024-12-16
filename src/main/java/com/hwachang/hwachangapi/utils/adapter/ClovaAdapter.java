@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class ClovaAdapter implements LLMServicePort {
@@ -15,18 +16,13 @@ public class ClovaAdapter implements LLMServicePort {
     }
 
     @Override
-    public String transferAudioToText(MultipartFile file) throws IOException {
-        return clovaSpeechProvider.recognizeFile(file);
+    public String transferAudioToText(InputStream fileStream, String fileName) throws IOException {
+        return clovaSpeechProvider.recognizeFile(fileStream, fileName);
     }
 
     @Override
-    public String summarizeTextFromResponse(String jsonResponse) throws IOException {
-        return clovaSpeechProvider.summarizeTextFromSTTResponse(jsonResponse);
-    }
-
-    @Override
-    public String processAndSummarizeAudio(MultipartFile file) throws IOException {
-        String sttResponse = clovaSpeechProvider.recognizeFile(file);
+    public String processAndSummarizeAudio(InputStream fileStream, String fileName) throws IOException {
+        String sttResponse = clovaSpeechProvider.recognizeFile(fileStream, fileName);
         return clovaSpeechProvider.summarizeTextFromSTTResponse(sttResponse);
     }
 }

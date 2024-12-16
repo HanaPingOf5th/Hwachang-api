@@ -1,10 +1,15 @@
 package com.hwachang.hwachangapi.domain.tellerModule.dto.QueueData;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-import java.util.Map;
-
-@Data
+@Getter
+@Builder
 public class CategoryData {
-    private Map<String, Integer> status;
+    // 고객대기중, 대기, 통화중, 후처리, 이석에 해당하는 고객 수
+    private Integer waitingCustomer;
+    private Integer waitingTeller;
+    private Integer calling;
+    private Integer postProcessing;
+    private Integer leave;
 }

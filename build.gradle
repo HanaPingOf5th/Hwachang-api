@@ -56,7 +56,11 @@ dependencies {
     implementation 'software.amazon.awssdk:ssooidc'
 
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.13'
+
+    // jpa type
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-60:3.2.0'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()

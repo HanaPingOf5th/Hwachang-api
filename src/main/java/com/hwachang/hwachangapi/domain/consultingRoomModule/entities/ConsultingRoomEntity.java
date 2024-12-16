@@ -1,10 +1,13 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.entities;
+import com.hwachang.hwachangapi.utils.annotations.StringListConverter;
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.List;
 import java.util.UUID;
@@ -28,17 +31,19 @@ public class ConsultingRoomEntity extends BaseEntity {
     private UUID categoryId;
 
     @Column(name="customer_list")
-    @ElementCollection(fetch = FetchType.LAZY)
+    @Convert(converter = StringListConverter.class)
     private List<UUID> customerIds;
 
     @Column(name ="original_text")
     private String originalText;
 
+    // ToDo: JSON 타입 저장
     @Column(name="summary")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String summary;
 
     @Column(name="record_chat")
-    @ElementCollection(fetch = FetchType.LAZY)
+    @Convert(converter = StringListConverter.class)
     private List<String> recordChat;
 
     @Column(name="voice_record")

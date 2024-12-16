@@ -29,7 +29,7 @@ public class TellerService {
                 .userName(request.getTellerNumber())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .type(Type.SAVINGS)
+                .type(Type.CORPORATE)
                 .status(Status.AVAILABLE)
                 .accountRole(AccountRole.Teller)
                 .position(request.getPosition()).build();

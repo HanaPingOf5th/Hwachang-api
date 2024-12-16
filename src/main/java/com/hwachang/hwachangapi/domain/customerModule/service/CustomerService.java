@@ -1,6 +1,7 @@
 package com.hwachang.hwachangapi.domain.customerModule.service;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.customerModule.dto.ConsultingListDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginRequestDto;
@@ -63,23 +64,23 @@ public class CustomerService {
                 .build();
     }
 
-    @Transactional
-    public List<ConsultingListDto> getConsultingRecords(UUID customerId) {
-        List<ConsultingRoomEntity> rooms = consultingRoomRepository.findByCustomerIdsContains(customerId);
-
-        return rooms.stream()
-                .map(room -> {
-                    TellerEntity teller = tellerRepository.findById(room.getBankerId())
-                            .orElseThrow(() -> new RuntimeException("행원을 찾을 수 없습니다."));
-
-                    return new ConsultingListDto(
-                            room.getSummary(),
-                            teller.getName(),
-                            teller.getType().toString(),
-                            teller.getPosition(),
-                            room.getCreatedAt()
-                    );
-                })
-                .collect(Collectors.toList());
-    }
+//    @Transactional
+//    public List<ConsultingListDto> getConsultingRecords(UUID customerId) {
+//        List<ConsultingRoomEntity> rooms = consultingRoomRepository.findByCustomerIdsContains(customerId);
+//
+//        return rooms.stream()
+//                .map(room -> {
+//                    TellerEntity teller = tellerRepository.findById(room.getBankerId())
+//                            .orElseThrow(() -> new RuntimeException("행원을 찾을 수 없습니다."));
+//
+//                    return new ConsultingListDto(
+//                            room.getSummary(),
+//                            teller.getName(),
+//                            teller.getType().toString(),
+//                            teller.getPosition(),
+//                            room.getCreatedAt()
+//                    );
+//                })
+//                .collect(Collectors.toList());
+//    }
 }

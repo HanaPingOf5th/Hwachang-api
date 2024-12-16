@@ -26,8 +26,8 @@ public class CustomerController {
     public LoginResponseDto signIn(@RequestBody LoginRequestDto loginRequestDto) {
         return this.customerService.login(loginRequestDto);
     }
-    @GetMapping("/consultings/{customerId}")
-    public List<ConsultingListDto> getConsultingRecords(@PathVariable UUID customerId) {
-        return customerService.getConsultingRecords(customerId);
-    }
+//    @GetMapping("/consultings/{customerId}")
+//    public List<ConsultingListDto> getConsultingRecords(@PathVariable UUID customerId) {
+//        return customerService.getConsultingRecords(customerId);
+//    }
 }

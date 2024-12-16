@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class CategoryData {
+public class WaitingListCategory {
     // 고객대기중, 대기, 통화중, 후처리, 이석에 해당하는 고객 수
     private Integer waitingCustomer;
     private Integer waitingTeller;

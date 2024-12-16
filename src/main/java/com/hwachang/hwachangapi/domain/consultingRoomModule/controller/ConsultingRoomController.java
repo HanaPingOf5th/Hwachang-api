@@ -74,8 +74,4 @@ public class ConsultingRoomController {
         return message;
 
     }
-
-
-
-
 }

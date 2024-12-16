@@ -22,7 +22,7 @@ public class TellerEntity extends BaseEntity implements UserDetails {
     @Column(name="teller_id")
     private UUID id;
 
-    @Column(nullable=false, unique=true)
+    @Column(name="teller_number", nullable=false, unique=true)
     private String userName;
 
     @Column(nullable=false)

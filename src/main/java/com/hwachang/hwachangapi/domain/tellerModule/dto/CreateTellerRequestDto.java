@@ -11,6 +11,4 @@ public class CreateTellerRequestDto {
     private String name;
     private String password;
     private String position;
-    private String status;
-    private String type;
 }

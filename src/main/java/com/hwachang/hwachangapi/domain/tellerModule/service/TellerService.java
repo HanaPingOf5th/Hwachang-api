@@ -4,7 +4,9 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.Type;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.security.JwtProvider;
 import jakarta.transaction.Transactional;
@@ -27,8 +29,8 @@ public class TellerService {
                 .userName(request.getTellerNumber())
                 .name(request.getName())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .type(request.getType())
-                .status(request.getStatus())
+                .type(Type.valueOf(request.getType()))
+                .status(Status.valueOf(request.getStatus()))
                 .accountRole(AccountRole.Teller)
                 .position(request.getPosition()).build();
 

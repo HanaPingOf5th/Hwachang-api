@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,6 +21,12 @@ public class JpaTellerRepository implements TellerRepository {
     @Override
     public void delete(TellerEntity member) {
         em.remove(member);
+    }
+
+    @Override
+    public Optional<TellerEntity> findById(UUID tellerId) {
+        TellerEntity teller = em.find(TellerEntity.class, tellerId);
+        return Optional.ofNullable(teller);
     }
 
     @Override

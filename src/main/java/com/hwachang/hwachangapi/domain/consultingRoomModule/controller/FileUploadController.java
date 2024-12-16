@@ -1,6 +1,7 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 
-import com.hwachang.hwachangapi.domain.consultingRoomModule.NcloudStorageService;
+
+import com.hwachang.hwachangapi.domain.consultingRoomModule.service.NcloudStorageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

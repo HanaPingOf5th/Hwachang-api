@@ -35,7 +35,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         token = authorizationHeader.substring(7);
 
         try{
-            System.out.println(token);
+            // 여기까지 옴
             authToken = jwtProvider.authenticate(token);
         }catch(ExpiredJwtException e){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

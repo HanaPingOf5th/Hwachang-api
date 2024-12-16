@@ -10,19 +10,12 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor
 public class ApplicationForm implements Serializable {
-    private UUID applicationFormId;
     private String title;
-    public UUID categoryId;
     private CustomerInfo customerInfo;
     private List<Subject> subjects;
 
-    public static ApplicationForm create(UUID applicationFormId,
-                                         String title,
-                                         UUID categoryId,
-                                         CustomerInfo customerInfo,
-                                         List<Subject> subjects) {
-
-        return new ApplicationForm(applicationFormId, title, categoryId, customerInfo, subjects);
+    public static ApplicationForm create(String title, UUID categoryId, CustomerInfo customerInfo, List<Subject> subjects) {
+        return new ApplicationForm(title, customerInfo, subjects);
     }
 }
 

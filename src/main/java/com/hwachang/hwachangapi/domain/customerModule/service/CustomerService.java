@@ -4,6 +4,7 @@ import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.Consultin
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginResponseDto;
+import com.hwachang.hwachangapi.domain.customerModule.entities.AccountRole;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
@@ -31,6 +32,7 @@ public class CustomerService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .name(request.getName())
                 .phoneNumber(request.getPhoneNumber())
+                .accountRole(AccountRole.USER)
                 .build();
 
         customerRepository.save(customerEntity);
@@ -53,5 +55,16 @@ public class CustomerService {
                 .token(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Transactional
+    public void logout(String token) {
+        // 토큰 유효성 확인
+        if (!jwtProvider.isTokenValid(token)) {
+            throw new RuntimeException("유효하지 않은 토큰입니다.");
+        }
+
+        // 로그아웃 처리 (서버에서는 추가 상태 관리를 하지 않음)
+        System.out.println("로그아웃 성공: 클라이언트에서 토큰을 삭제하세요.");
     }
 }

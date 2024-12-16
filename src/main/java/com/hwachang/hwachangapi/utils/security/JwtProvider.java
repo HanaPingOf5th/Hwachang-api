@@ -79,4 +79,16 @@ public class JwtProvider {
             return true;
         }
     }
+
+    public boolean isTokenValid(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(jwtSecret)
+                    .build()
+                    .parseClaimsJws(token);
+            return true; // 유효한 토큰
+        } catch (Exception e) {
+            return false; // 유효하지 않은 토큰
+        }
+    }
 }

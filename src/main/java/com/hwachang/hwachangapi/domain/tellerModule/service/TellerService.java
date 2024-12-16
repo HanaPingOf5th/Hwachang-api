@@ -40,25 +40,22 @@ public class TellerService {
 
     @Transactional
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
-        try{
-            TellerEntity tellerEntity = this.tellerRepository.findTellerByUserName(loginRequestDto.getTellerNumber()).orElseThrow();
-            String password = passwordEncoder.encode(loginRequestDto.getPassword());
+        // 행원 조회
+        TellerEntity tellerEntity = this.tellerRepository.findTellerByUserName(loginRequestDto.getTellerNumber())
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-            if(passwordEncoder.matches(loginRequestDto.getPassword(), password)){
-                String accessToken = jwtProvider.createAccessToken(String.valueOf(tellerEntity.getId()), tellerEntity.getName());
-                String refreshToken = jwtProvider.createRefreshToken(String.valueOf(tellerEntity.getId()), tellerEntity.getName());
-                return LoginResponseDto.builder().token(accessToken).refreshToken(refreshToken).build();
-            }else {
-                // ToDo: 커스텀 예외 처리 필요
-                throw new RuntimeException("비밀번호가 맞지 않습니다.");
-            }
-
-        }catch (Exception e){
-            if(e.getMessage().equals("비밀번호가 맞지 않습니다.")){
-                throw new RuntimeException("비밀번호가 맞지 않습니다.");
-            }else {
-                throw new RuntimeException(e);
-            }
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), tellerEntity.getPassword())) {
+            throw new RuntimeException("비밀번호가 맞지 않습니다.");
         }
+
+        // Access Token 및 Refresh Token 생성
+        String accessToken = jwtProvider.createAccessToken(String.valueOf(tellerEntity.getId()), tellerEntity.getName());
+        String refreshToken = jwtProvider.createRefreshToken(String.valueOf(tellerEntity.getId()), tellerEntity.getName());
+
+        return LoginResponseDto.builder()
+                .token(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 }

@@ -1,19 +1,29 @@
 package com.hwachang.hwachangapi.domain.customerModule.service;
 
+import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
+import com.hwachang.hwachangapi.domain.customerModule.dto.ConsultingListDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginResponseDto;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.security.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerService {
+    private final ConsultingRoomRepository consultingRoomRepository;
+    private final TellerRepository tellerRepository;
     private final CustomerRepository customerRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
@@ -51,5 +61,25 @@ public class CustomerService {
                 .token(accessToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Transactional
+    public List<ConsultingListDto> getConsultingRecords(UUID customerId) {
+        List<ConsultingRoomEntity> rooms = consultingRoomRepository.findByCustomerIdsContains(customerId);
+
+        return rooms.stream()
+                .map(room -> {
+                    TellerEntity teller = tellerRepository.findById(room.getBankerId())
+                            .orElseThrow(() -> new RuntimeException("행원을 찾을 수 없습니다."));
+
+                    return new ConsultingListDto(
+                            room.getSummary(),
+                            teller.getName(),
+                            teller.getType().toString(),
+                            teller.getPosition(),
+                            room.getCreatedAt()
+                    );
+                })
+                .collect(Collectors.toList());
     }
 }

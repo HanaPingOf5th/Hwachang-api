@@ -1,6 +1,6 @@
 package com.hwachang.hwachangapi.utils.security;
 
-import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
+import com.hwachang.hwachangapi.utils.database.AccountRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

@@ -1,13 +1,12 @@
 package com.hwachang.hwachangapi.domain.tellerModule.dto;
 
-import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
 public class CreateTellerRequestDto {
-    private String tellerNumbers;
+    private String tellerNumber;
     private String name;
     private String password;
     private String position;

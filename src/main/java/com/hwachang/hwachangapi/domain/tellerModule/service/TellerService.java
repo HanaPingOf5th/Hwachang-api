@@ -3,7 +3,7 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;
-import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
+import com.hwachang.hwachangapi.utils.database.AccountRole;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Type;
@@ -23,14 +23,16 @@ public class TellerService {
 
     @Transactional
     public String signup(CreateTellerRequestDto request) {
-        TellerEntity tellerEntity = TellerEntity.builder()
-                .username(request.getTellerNumbers())
-                .name(request.getName())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .type(Type.CORPORATE)
-                .status(Status.AVAILABLE)
-                .accountRole(AccountRole.Teller)
-                .position(request.getPosition()).build();
+        TellerEntity tellerEntity = TellerEntity.create(
+                request.getTellerNumber(),
+                request.getName(),
+                passwordEncoder.encode(request.getPassword()),
+                AccountRole.Teller,
+                request.getPosition(),
+                Status.AVAILABLE,
+                Type.CORPORATE,
+                "profile-image-url"
+        );
 
         this.tellerRepository.save(tellerEntity);
         return tellerEntity.getUsername();

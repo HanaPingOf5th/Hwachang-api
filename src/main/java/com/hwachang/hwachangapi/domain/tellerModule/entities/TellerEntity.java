@@ -1,8 +1,11 @@
 package com.hwachang.hwachangapi.domain.tellerModule.entities;
 
+import com.hwachang.hwachangapi.utils.database.AccountRole;
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
+import com.hwachang.hwachangapi.utils.database.BaseMemberEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -13,28 +16,11 @@ import java.util.UUID;
 @Entity
 @Getter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter(AccessLevel.PROTECTED)
 @Table(name = "teller")
-public class TellerEntity extends BaseEntity implements UserDetails {
-    @Id
-    @GeneratedValue(strategy=GenerationType.UUID)
-    @Column(name="teller_id")
-    private UUID id;
-
-    @Column(nullable=false, unique=true)
-    private String username;
-
-    @Column(nullable=false)
-    private String name;
-
-    @Column(nullable=false)
-    private String password;
-
-    @Column(nullable=false)
-    @Enumerated(value=EnumType.STRING)
-    private AccountRole accountRole; // ToDo: 논의 필요
-
+@NoArgsConstructor
+public class TellerEntity extends BaseMemberEntity {
     @Column(nullable = false)
     private String position;
 
@@ -47,33 +33,34 @@ public class TellerEntity extends BaseEntity implements UserDetails {
     @Column
     private String profileImageUrl;
 
-    // UserDetail 구현
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> authorityCollection = new ArrayList<GrantedAuthority>();
-        authorityCollection.add(
-                (GrantedAuthority) () -> accountRole.getKey()
-        );
-        return authorityCollection;
+    public TellerEntity(
+            String username,
+            String name,
+            String password,
+            AccountRole accountRole,
+            String position,
+            Status status,
+            Type type,
+            String profileImageUrl
+    ) {
+        super(username, name, password, accountRole); // 상위 클래스의 생성자 호출
+        this.position = position;
+        this.status = status;
+        this.type = type;
+        this.profileImageUrl = profileImageUrl;
     }
 
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
+    public static TellerEntity create(
+            String username,
+            String name,
+            String password,
+            AccountRole accountRole,
+            String position,
+            Status status,
+            Type type,
+            String profileImageUrl
+    ) {
 
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return new TellerEntity(username, name, password, accountRole, position, status, type, profileImageUrl);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/consulting-room")
+@RequestMapping("/consulting-room")
 @RequiredArgsConstructor
 public class ConsultingRoomControllerV2 {
     private final ConsultingRoomService consultingRoomService;

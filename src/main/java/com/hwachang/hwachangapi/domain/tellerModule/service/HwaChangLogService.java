@@ -50,7 +50,7 @@ public class HwaChangLogService {
         return counts;
     }
 
-    public Map<String, Map<String, List<Integer>>> readGraphData(TellerEntity teller, LocalDateTime startDate) {
+    public Map<String, Map<String, List<Integer>>> readGraphData(TellerEntity teller) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime oneDayAgo = now.minusDays(1);
         LocalDateTime twoDaysAgo = now.minusDays(2);

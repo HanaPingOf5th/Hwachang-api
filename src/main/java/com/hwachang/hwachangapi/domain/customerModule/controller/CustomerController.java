@@ -43,9 +43,4 @@ public class CustomerController {
         return ResponseEntity.ok(records);
     }
 
-    @PostMapping("/chat")
-    public ResponseEntity<String> chatWithClova(@RequestBody String message) {
-        String response = customerService.callClovaApi(message);
-        return ResponseEntity.ok(response);
-    }
 }

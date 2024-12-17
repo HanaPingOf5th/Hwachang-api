@@ -115,9 +115,6 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
-    public String callClovaApi(String userMessage) {
-        return clovaApiService.callClovaApi(userMessage);
-    }
 
 
 }

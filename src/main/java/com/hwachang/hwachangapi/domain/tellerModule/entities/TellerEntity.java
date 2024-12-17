@@ -1,5 +1,7 @@
 package com.hwachang.hwachangapi.domain.tellerModule.entities;
 
+import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
+import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.StatusHandler;
 import com.hwachang.hwachangapi.utils.database.AccountRole;
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
 import com.hwachang.hwachangapi.utils.database.BaseMemberEntity;
@@ -62,5 +64,12 @@ public class TellerEntity extends BaseMemberEntity {
     ) {
 
         return new TellerEntity(username, name, password, accountRole, position, status, type, profileImageUrl);
+    }
+
+    public void changeStatus(Status newStatus) {
+        if (newStatus == null) {
+            throw new StatusHandler(ErrorStatus.STATUS_NOT_FOUND);
+        }
+        this.status = newStatus;
     }
 }

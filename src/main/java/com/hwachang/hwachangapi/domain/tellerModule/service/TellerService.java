@@ -1,10 +1,8 @@
 package com.hwachang.hwachangapi.domain.tellerModule.service;
 
-import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerInfoResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.*;
 import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
+import com.hwachang.hwachangapi.utils.apiPayload.exception.InvalidStatusException;
 import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import com.hwachang.hwachangapi.utils.database.AccountRole;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
@@ -19,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import static java.lang.Enum.valueOf;
 
 @Service
 @RequiredArgsConstructor
@@ -80,5 +80,24 @@ public class TellerService {
                 .status(teller.getStatus().getDescription())
                 .type(teller.getType().getDescription())
                 .build();
+    }
+
+    // 행원 상태 변경
+    @Transactional
+    public void updateStatus(TellerStatusRequestDto requestDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        try {
+            teller.changeStatus(Status.valueOf(requestDto.getStatus()));
+            tellerRepository.save(teller);
+        } catch (InvalidStatusException e) {
+            System.err.println("Invalid status: " + e.getMessage());
+            throw new UserHandler(ErrorStatus.INVALID_STATUS);
+        }
     }
 }

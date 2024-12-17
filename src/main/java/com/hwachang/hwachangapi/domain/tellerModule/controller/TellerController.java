@@ -1,10 +1,7 @@
 package com.hwachang.hwachangapi.domain.tellerModule.controller;
 
+import com.hwachang.hwachangapi.domain.tellerModule.dto.*;
 import com.hwachang.hwachangapi.utils.apiPayload.ApiResponse;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerInfoResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
@@ -38,5 +35,11 @@ public class TellerController {
     public ApiResponse<TellerInfoResponseDto> getTellerInfo() {
         TellerInfoResponseDto responseDto = tellerService.getTellerInfo();
         return ApiResponse.onSuccess(responseDto);
+    }
+
+    @PatchMapping("/status")
+    public ApiResponse<Void> changeTellerStatus(@RequestBody TellerStatusRequestDto statusRequestDto) {
+        tellerService.updateStatus(statusRequestDto);
+        return ApiResponse.onSuccess("상태 변경에 성공하였습니다.", null);
     }
 }

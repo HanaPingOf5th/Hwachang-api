@@ -11,6 +11,7 @@ import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Type;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.database.AccountRole;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -40,6 +41,14 @@ class CustomerServiceTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void setUp() {
+        // **모든 엔티티 초기화**
+        consultingRoomRepository.deleteAll();
+        tellerRepository.deleteAll();
+        customerRepository.deleteAll();
+    }
 
     @Test
     @Transactional

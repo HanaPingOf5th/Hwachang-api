@@ -15,4 +15,5 @@ public interface CustomerRepository {
     Optional<CustomerEntity> findById(UUID id);
 
     Optional<CustomerEntity> findByUsername(String username);
+    void deleteAll();
 }

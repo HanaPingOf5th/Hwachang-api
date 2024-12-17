@@ -25,4 +25,9 @@ public class JpaConsultingRoomRepository implements ConsultingRoomRepository {
         return em.createQuery("SELECT c FROM ConsultingRoomEntity c", ConsultingRoomEntity.class)
                 .getResultList();
     }
+
+    @Override
+    public void deleteAll(){
+        em.createQuery("DELETE FROM ConsultingRoomEntity").executeUpdate();
+    }
 }

@@ -13,4 +13,5 @@ public interface ConsultingRoomRepository {
 //    List<ConsultingRoomEntity> findAllByBankerId(UUID id);
     void save(ConsultingRoomEntity consultingRoomEntity);
     List<ConsultingRoomEntity> findAll();
+    void deleteAll();
 }

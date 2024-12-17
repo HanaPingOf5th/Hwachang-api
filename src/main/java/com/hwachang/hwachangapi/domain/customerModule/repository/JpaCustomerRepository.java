@@ -38,4 +38,9 @@ public class JpaCustomerRepository implements CustomerRepository {
                 .setParameter("username", username).getResultList();
         return customers.stream().findFirst();
     }
+
+    @Override
+    public void deleteAll(){
+        em.createQuery("delete from CustomerEntity").executeUpdate();
+    }
 }

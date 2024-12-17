@@ -1,6 +1,6 @@
 package com.hwachang.hwachangapi.domain.tellerModule.controller;
 
-import com.hwachang.hwachangapi.common.apiPayload.ApiResponse;
+import com.hwachang.hwachangapi.utils.apiPayload.ApiResponse;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;

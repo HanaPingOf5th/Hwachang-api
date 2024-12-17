@@ -1,10 +1,9 @@
-package com.hwachang.hwachangapi.common.apiPayload;
+package com.hwachang.hwachangapi.utils.apiPayload;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.hwachang.hwachangapi.common.apiPayload.code.status.SuccessStatus;
-import com.sun.net.httpserver.Authenticator;
+import com.hwachang.hwachangapi.utils.apiPayload.code.status.SuccessStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

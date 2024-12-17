@@ -1,11 +1,11 @@
 package com.hwachang.hwachangapi.domain.tellerModule.service;
 
-import com.hwachang.hwachangapi.common.apiPayload.code.status.ErrorStatus;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerInfoResponseDto;
-import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
+import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
+import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import com.hwachang.hwachangapi.utils.database.AccountRole;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
@@ -67,13 +67,12 @@ public class TellerService {
 
     // 행원 정보 조회
     public TellerInfoResponseDto getTellerInfo() {
-        System.out.println("getTellerInfo 호출");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
 
         TellerEntity teller = tellerRepository.findTellerByUserName(username)
-                .orElseThrow(() -> new RuntimeException("사용자가 존재하지 않습니다."));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
         return TellerInfoResponseDto.builder()
                 .name(teller.getName())

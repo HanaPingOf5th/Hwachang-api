@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.common.apiPayload.code;
+package com.hwachang.hwachangapi.utils.apiPayload.code;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,7 +1,7 @@
-package com.hwachang.hwachangapi.common.apiPayload.code.status;
+package com.hwachang.hwachangapi.utils.apiPayload.code.status;
 
-import com.hwachang.hwachangapi.common.apiPayload.code.BaseCode;
-import com.hwachang.hwachangapi.common.apiPayload.code.ReasonDTO;
+import com.hwachang.hwachangapi.utils.apiPayload.code.BaseCode;
+import com.hwachang.hwachangapi.utils.apiPayload.code.ReasonDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

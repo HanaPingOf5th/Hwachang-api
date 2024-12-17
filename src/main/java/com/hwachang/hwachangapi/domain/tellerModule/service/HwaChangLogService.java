@@ -2,15 +2,24 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
+import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
+import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.DailyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponse;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.NPSEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
+import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
+import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -26,8 +35,8 @@ import java.util.Map;
 public class HwaChangLogService {
 
     private final TellerRepository tellerRepository;
-
     private final TellerConsultingRoomRepository consultingRoomRepository;
+    private final ReviewRepository reviewRepository;
 
     private List<LocalDateTime> read(TellerEntity teller, LocalDateTime startDate, LocalDateTime endDate) {
         return consultingRoomRepository.findAllByDate(teller.getId(), startDate, endDate);
@@ -86,4 +95,25 @@ public class HwaChangLogService {
                         .build())
                 .build();
     }
+
+//    public TellerMainResponse getTellerDashboardData() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        String username = userDetails.getUsername();
+//
+//        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+//                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+//
+//        int avgScore = reviewRepository.findAverageNpsByTellerId(teller.getId());
+//        int sumCustomer = reviewRepository.countCustomersByTellerId(teller.getId());
+//        LogData logData = readGraphData(teller);
+//        List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
+//
+//        return TellerMainResponse.builder()
+//                .avgScore(avgScore)
+//                .sumCustomer(sumCustomer)
+//                .hwachangLog(logData)
+//                .reviews(reviews)
+//                .build();
+//    }
 }

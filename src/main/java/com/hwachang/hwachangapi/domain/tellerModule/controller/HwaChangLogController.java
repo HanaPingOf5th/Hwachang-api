@@ -1,11 +1,14 @@
 package com.hwachang.hwachangapi.domain.tellerModule.controller;
 
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerInfoResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponse;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.JpaTellerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.service.HwaChangLogService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
+import com.hwachang.hwachangapi.utils.apiPayload.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,4 +37,10 @@ public class HwaChangLogController {
 
         return hwaChangLogService.readGraphData(teller);
     }
+
+//    @GetMapping("/main")
+//    public ApiResponse<TellerMainResponse> getTellerDashboard() {
+//        TellerMainResponse responseDto = hwaChangLogService.getTellerDashboardData();
+//        return ApiResponse.onSuccess(responseDto);
+//    }
 }

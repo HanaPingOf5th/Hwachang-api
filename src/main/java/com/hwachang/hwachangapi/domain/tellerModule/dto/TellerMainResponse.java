@@ -11,6 +11,6 @@ import java.util.List;
 public class TellerMainResponse {
     private Integer avgScore;
     private Integer sumCustomer;
-    private List<LogData> hwachangLog;
+    private LogData hwachangLog;
     private List<String> reviews;
 }

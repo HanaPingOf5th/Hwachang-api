@@ -9,13 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/waiting-room")
 @RequiredArgsConstructor
 public class WaitingRoomController {
     private final RedisTemplate<String, List<String>> redisListTemplate;
-    //RequestBody : {userName:"userName1" ,content:"content1"}
     @PostMapping("/prechat")
     public void sendPreChat (@RequestBody PreChatRequestDto preChatRequestDto){
         ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
@@ -27,14 +27,14 @@ public class WaitingRoomController {
             prechats = new ArrayList<>();
         }
         prechats.add(content);
-        valueOperations.set(userName, prechats);
+        Long expiredTime = 600L;
+        valueOperations.set(userName, prechats, expiredTime, TimeUnit.SECONDS);
     }
 
     @GetMapping("/prechat/{userName}")
     public List<String> getPreChatsByUserName(@PathVariable String userName){
         ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
-        //채팅을 가져온 후 데이터 삭제
-        List<String> prechats = valueOperations.getAndDelete(userName);
+        List<String> prechats = valueOperations.get(userName);
         return prechats;
     }
 }

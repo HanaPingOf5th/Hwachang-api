@@ -1,5 +1,6 @@
 package com.hwachang.hwachangapi.domain.customerModule.controller;
 
+import com.hwachang.hwachangapi.domain.customerModule.dto.ConsultingListDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.dto.LoginResponseDto;
@@ -7,6 +8,9 @@ import com.hwachang.hwachangapi.domain.customerModule.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/customer")
@@ -31,6 +35,12 @@ public class CustomerController {
         customerService.logout(token);
 
         return ResponseEntity.ok("로그아웃 성공. 클라이언트에서 토큰을 삭제하세요.");
+    }
+
+    @GetMapping("/consultings/{customerId}")
+    public ResponseEntity<List<ConsultingListDto>> getConsultingRecords(@PathVariable UUID customerId) {
+        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(customerId);
+        return ResponseEntity.ok(records);
     }
 
     @PostMapping("/chat")

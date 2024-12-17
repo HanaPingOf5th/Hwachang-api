@@ -6,8 +6,8 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 @Builder
+@Getter
 public class WeeklyLog {
     public List<Integer> thisWeek;
     public List<Integer> lastWeek;

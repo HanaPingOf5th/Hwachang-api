@@ -1,11 +1,15 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.service;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ApplicationForm;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CategoryDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.FormByCategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ApplicationFormEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ApplicationFormRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -16,5 +20,18 @@ public class ApplicationFormService {
     public ApplicationForm getApplicationForm(UUID applicationFormId) {
         ApplicationFormEntity applicationFormEntity = applicationFormRepository.findByApplicationFormId(applicationFormId);
         return applicationFormEntity.getApplicationForm();
+    }
+
+    public List<FormByCategoryDto> getAllApplicationFormsByCategoryId(UUID categoryId) {
+        List<ApplicationFormEntity> result = applicationFormRepository.findAllByCategoryId(categoryId);
+        List<FormByCategoryDto> formList = new ArrayList<>();
+        result.forEach(entity ->{
+            FormByCategoryDto formByCategoryDto = FormByCategoryDto.builder()
+                    .title(entity.getTitle())
+                    .categoryId(entity.getCategoryId())
+                    .build();
+            formList.add(formByCategoryDto);
+        });
+        return formList;
     }
 }

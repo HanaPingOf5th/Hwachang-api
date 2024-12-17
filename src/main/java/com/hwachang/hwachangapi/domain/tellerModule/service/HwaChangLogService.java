@@ -7,6 +7,7 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,7 +27,7 @@ public class HwaChangLogService {
 
     private final TellerRepository tellerRepository;
 
-    private final ConsultingRoomRepository consultingRoomRepository;
+    private final TellerConsultingRoomRepository consultingRoomRepository;
 
     private List<LocalDateTime> read(TellerEntity teller, LocalDateTime startDate, LocalDateTime endDate) {
         return consultingRoomRepository.findAllByDate(teller.getId(), startDate, endDate);

@@ -2,6 +2,7 @@ package com.hwachang.hwachangapi.domain.tellerModule.controller;
 
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.JpaTellerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.service.HwaChangLogService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class HwaChangLogController {
     private final HwaChangLogService hwaChangLogService;
-    private final TellerRepository tellerRepository;
+    private final JpaTellerRepository tellerRepository;
     @GetMapping("/graph")
     public LogData getGraphData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

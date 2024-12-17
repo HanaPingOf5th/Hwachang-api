@@ -8,13 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public interface ConsultingRoomRepository extends JpaRepository<ConsultingRoomEntity, UUID> {
+public interface ConsultingRoomRepository {
 
-    @Query("select c.createdAt from ConsultingRoomEntity c " +
-            "where c.bankerId = :id " +
-                "and c.createdAt >= :startDate " +
-                "and c.createdAt < :endDate")
-    List<LocalDateTime> findAllByDate(UUID id, LocalDateTime startDate, LocalDateTime endDate);
-
-    List<ConsultingRoomEntity> findAllByBankerId(UUID id);
+//    List<ConsultingRoomEntity> findAllByBankerId(UUID id);
 }

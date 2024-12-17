@@ -27,7 +27,7 @@ public class JwtProvider {
 
     private final UserDetailsService userDetailsService;
 
-    @Value("3600")
+    @Value("36000")
     private long expireTimeAccessToken;
 
     @Value("36000")

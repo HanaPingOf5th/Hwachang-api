@@ -22,7 +22,10 @@ public class ClovaAdapter implements LLMServicePort {
 
     @Override
     public String processAndSummarizeAudio(InputStream fileStream, String fileName) throws IOException {
-        String sttResponse = clovaSpeechProvider.recognizeFile(fileStream, fileName);
-        return clovaSpeechProvider.summarizeTextFromSTTResponse(sttResponse);
+        // 1. 음성 파일을 텍스트로 변환
+        String sttResponse = clovaSpeechProvider.SummarizeAudio(fileStream, fileName);
+
+        // 2. 텍스트를 SYSTEM_MESSAGE_CONTENT에 맞춰 AI 요약 API 호출
+        return clovaSpeechProvider.callClovaApi(sttResponse);
     }
 }

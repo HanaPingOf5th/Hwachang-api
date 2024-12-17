@@ -1,6 +1,7 @@
-package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
+package com.hwachang.hwachangapi.domain.clovaModule.utils;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -18,4 +19,3 @@ public class FileUtils {
         return connection.getInputStream();
     }
 }
-

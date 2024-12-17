@@ -11,7 +11,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/consulting-room") // client에서 접속하는 endPoint ex) localhost:8080/consulting-room
+        registry.addEndpoint("/ws/consulting-room") // client에서 접속하는 endPoint ex) localhost:8080/consulting-room
                 .setAllowedOriginPatterns("*") // cors 에 따른 설정 ( * 는 모두 허용 )
                 .withSockJS();
 

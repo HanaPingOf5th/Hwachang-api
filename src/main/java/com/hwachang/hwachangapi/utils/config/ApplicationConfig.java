@@ -1,6 +1,7 @@
 package com.hwachang.hwachangapi.utils.config;
 
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
+import com.hwachang.hwachangapi.utils.database.BaseMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +15,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class ApplicationConfig {
 
     @Bean
-    public UserDetailsService userDetailsService(TellerRepository tellerRepository){
-        return username -> tellerRepository.findTellerByUserName(username)
+    public UserDetailsService userDetailsService(BaseMemberRepository memberRepository){
+        return username -> memberRepository.findMemberByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자가 없습니다"));
     }
 

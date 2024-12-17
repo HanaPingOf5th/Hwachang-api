@@ -1,6 +1,5 @@
 package com.hwachang.hwachangapi.domain.tellerModule.dto;
 
-import com.hwachang.hwachangapi.domain.tellerModule.entities.AccountRole;
 import lombok.Builder;
 import lombok.Getter;
 

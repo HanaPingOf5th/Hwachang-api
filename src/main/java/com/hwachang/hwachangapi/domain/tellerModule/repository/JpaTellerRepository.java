@@ -30,10 +30,10 @@ public class JpaTellerRepository implements TellerRepository {
     }
 
     @Override
-    public Optional<TellerEntity> findTellerByUserName(String userName) {
+    public Optional<TellerEntity> findTellerByUserName(String username) {
         List<TellerEntity> members = em.createQuery(
-                        "select t from TellerEntity t where t.userName = :userName", TellerEntity.class)
-                .setParameter("userName", userName)
+                        "select t from TellerEntity t where t.username = :username", TellerEntity.class)
+                .setParameter("username", username)
                 .getResultList();
 
         return members.stream().findFirst();

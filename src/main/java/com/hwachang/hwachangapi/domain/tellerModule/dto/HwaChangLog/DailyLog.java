@@ -6,8 +6,8 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Builder
 @Getter
+@Builder
 public class DailyLog {
     public List<Integer> today;
     public List<Integer> yesterday;

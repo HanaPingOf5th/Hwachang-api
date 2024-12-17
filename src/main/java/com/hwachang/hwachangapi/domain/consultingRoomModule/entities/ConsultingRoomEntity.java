@@ -35,12 +35,11 @@ public class ConsultingRoomEntity extends BaseEntity {
     private List<UUID> customerIds;
 
     @Column(name ="original_text")
+    @JdbcTypeCode(SqlTypes.JSON) // JSON 타입 저장
     private String originalText;
 
-    // ToDo: JSON 타입 저장
     @Column(name="summary")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private String summary;
+    private String summary; // 요약을 String 형태로 저장
 
     @Column(name="record_chat")
     @Convert(converter = StringListConverter.class)

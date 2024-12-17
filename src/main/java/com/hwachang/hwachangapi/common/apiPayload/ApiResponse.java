@@ -19,8 +19,12 @@ public class ApiResponse<T> {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private T result;
 
-    public static <T> ApiResponse<T> onSuccess(T result) {
+    public static <T> ApiResponse<T> onSuccess(T result){
         return new ApiResponse<>(true, SuccessStatus._OK.getCode(), SuccessStatus._OK.getMessage(), result);
+    }
+
+    public static <T> ApiResponse<T> onSuccess(String message, T result) {
+        return new ApiResponse<>(true, SuccessStatus._OK.getCode(), message, result);
     }
 
     public static <T> ApiResponse<T> onFailure(String code, String message, T data) {

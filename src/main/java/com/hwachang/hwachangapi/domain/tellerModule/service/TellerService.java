@@ -3,6 +3,9 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.LoginResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerInfoResponseDto;
+import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
+import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import com.hwachang.hwachangapi.utils.database.AccountRole;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
@@ -11,6 +14,9 @@ import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.security.JwtProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +62,23 @@ public class TellerService {
         return LoginResponseDto.builder()
                 .token(accessToken)
                 .refreshToken(refreshToken)
+                .build();
+    }
+
+    // 행원 정보 조회
+    public TellerInfoResponseDto getTellerInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return TellerInfoResponseDto.builder()
+                .name(teller.getName())
+                .position(teller.getPosition())
+                .status(teller.getStatus().getDescription())
+                .type(teller.getType().getDescription())
                 .build();
     }
 }

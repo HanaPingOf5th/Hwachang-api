@@ -125,26 +125,26 @@ public class CustomerService {
         System.out.println("로그아웃 성공: 클라이언트에서 토큰을 삭제하세요.");
     }
 
-    @Transactional
-    public List<ConsultingListDto> getCustomerConsultingRecords(UUID customerId) {
-        // 손님의 UUID를 기준으로 상담방 검색
-        List<ConsultingRoomEntity> consultingRooms = consultingRoomRepository.findByCustomerId(customerId);
-
-        return consultingRooms.stream()
-                .map(room -> {
-                    // 상담을 담당한 행원 정보 조회
-                    TellerEntity teller = tellerRepository.findById(room.getBankerId())
-                            .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
-
-                    // DTO 변환
-                    return ConsultingListDto.builder()
-                            .summary(room.getSummary()) // 상담 요약
-                            .tellerName(teller.getName()) // 행원 이름
-                            .type(teller.getType().getDescription()) // 유형 (개인금융/기업금융)
-                            .category(teller.getType().name()) // 카테고리 (enum key)
-                            .date(room.getCreatedAt()) // 생성 날짜
-                            .build();
-                })
-                .collect(Collectors.toList());
-    }
+//    @Transactional
+//    public List<ConsultingListDto> getCustomerConsultingRecords(UUID customerId) {
+//        // 손님의 UUID를 기준으로 상담방 검색
+//        List<ConsultingRoomEntity> consultingRooms = consultingRoomRepository.findByCustomerId(customerId);
+//
+//        return consultingRooms.stream()
+//                .map(room -> {
+//                    // 상담을 담당한 행원 정보 조회
+//                    TellerEntity teller = tellerRepository.findById(room.getBankerId())
+//                            .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
+//
+//                    // DTO 변환
+//                    return ConsultingListDto.builder()
+//                            .summary(room.getSummary()) // 상담 요약
+//                            .tellerName(teller.getName()) // 행원 이름
+//                            .type(teller.getType().getDescription()) // 유형 (개인금융/기업금융)
+//                            .category(teller.getType().name()) // 카테고리 (enum key)
+//                            .date(room.getCreatedAt()) // 생성 날짜
+//                            .build();
+//                })
+//                .collect(Collectors.toList());
+//    }
 }

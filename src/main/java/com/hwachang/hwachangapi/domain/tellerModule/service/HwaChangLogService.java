@@ -2,7 +2,10 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.DailyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +36,7 @@ public class HwaChangLogService {
         List<Integer> counts = new ArrayList<>(Collections.nCopies(24, 0));
         for (LocalDateTime dateTime: dateTimes) {
             int hour = dateTime.getHour();
-            counts.set(hour-1, counts.get(hour)+1);
+            counts.set(hour, counts.get(hour)+1);
         }
         return counts;
     }
@@ -50,9 +53,9 @@ public class HwaChangLogService {
         return counts;
     }
 
-    public Map<String, Map<String, List<Integer>>> readGraphData(TellerEntity teller) {
+    public LogData readGraphData(TellerEntity teller) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime oneDayAgo = now.minusDays(1);
+        LocalDateTime yesterday = now.minusDays(1);
         LocalDateTime twoDaysAgo = now.minusDays(2);
         LocalDateTime oneWeekAgo = now.minusWeeks(1);
         LocalDateTime twoWeeksAgo = now.minusWeeks(2);
@@ -60,26 +63,26 @@ public class HwaChangLogService {
         LocalDateTime twoMonthsAgo = now.minusMonths(2);
         
         // 조회
-        List<Integer> dayList = countByHour(read(teller, oneDayAgo, now));
-        List<Integer> oneDayAgoList = countByHour(read(teller, twoDaysAgo, oneDayAgo));
-        List<Integer> weekList = countByDay(read(teller, oneWeekAgo, now), oneWeekAgo, now);
-        List<Integer> oneWeekAgoList = countByDay(read(teller, twoWeeksAgo, oneWeekAgo), twoWeeksAgo, oneWeekAgo);
-        List<Integer> monthList = countByDay(read(teller, oneMonthAgo, now), oneMonthAgo, now);
-        List<Integer> oneMonthAgoList = countByDay(read(teller, twoMonthsAgo, oneMonthAgo), twoMonthsAgo, oneMonthAgo);
+        List<Integer> todayList = countByHour(read(teller, yesterday, now));
+        List<Integer> yesterdayList = countByHour(read(teller, twoDaysAgo, yesterday));
+        List<Integer> thisweekList = countByDay(read(teller, oneWeekAgo, now), oneWeekAgo, now);
+        List<Integer> lastWeekList = countByDay(read(teller, twoWeeksAgo, oneWeekAgo), twoWeeksAgo, oneWeekAgo);
+        List<Integer> thismonthList = countByDay(read(teller, oneMonthAgo, now), oneMonthAgo, now);
+        List<Integer> lastMonthList = countByDay(read(teller, twoMonthsAgo, oneMonthAgo), twoMonthsAgo, oneMonthAgo);
 
-        return Map.of(
-                "day", Map.of(
-                        "today", dayList,
-                        "yesterday", oneDayAgoList
-                ),
-                "week", Map.of(
-                        "thisWeek", weekList,
-                        "lastWeek", oneWeekAgoList
-                ),
-                "month", Map.of(
-                        "thisMonth", monthList,
-                        "lastMonth", oneMonthAgoList
-                )
-        );
+        return LogData.builder()
+                .dailyLog(DailyLog.builder()
+                        .today(todayList)
+                        .yesterday(yesterdayList)
+                        .build())
+                .weeklyLog(WeeklyLog.builder()
+                        .thisWeek(thisweekList)
+                        .lastWeek(lastWeekList)
+                        .build())
+                .monthlyLog(MonthlyLog.builder()
+                        .thisMonth(thismonthList)
+                        .lastMonth(lastMonthList)
+                        .build())
+                .build();
     }
 }

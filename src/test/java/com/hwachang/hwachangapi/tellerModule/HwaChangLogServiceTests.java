@@ -32,10 +32,11 @@ public class HwaChangLogServiceTests {
 
     @Test
     public void testInsertConsultingRoom() {
+        TellerEntity teller = tellerRepository.findTellerByUserName("hana_0005").orElseThrow();
         for (int i = 0; i < 10; i++) {
             ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
-                    .bankerId(UUID.fromString("575ed844-58c0-4170-8dab-e4544c7fe16a"))
-                    .categoryId(UUID.fromString("575ed844-58c0-4170-8dab-e4544c7fe16a"))
+                    .bankerId(teller.getId())
+                    .categoryId(teller.getId())
                     .originalText("Test Text")
                     .recordChat(List.of("Chat1", "Chat2"))
                     .title("Test Title")
@@ -48,9 +49,8 @@ public class HwaChangLogServiceTests {
 
     @Test
     public void testRead() {
-        TellerEntity teller = tellerRepository.findById(UUID.fromString("575ed844-58c0-4170-8dab-e4544c7fe16a")).orElseThrow();
-        LocalDateTime now = LocalDateTime.now();
-        log.info("응답 데이터 : {}", service.readGraphData(teller, now));
+        TellerEntity teller = tellerRepository.findTellerByUserName("hana_0005").orElseThrow();
+        log.info("응답 데이터 : {}", service.readGraphData(teller));
     }
 
 }

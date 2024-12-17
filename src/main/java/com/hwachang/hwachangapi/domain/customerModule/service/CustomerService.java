@@ -1,5 +1,6 @@
 package com.hwachang.hwachangapi.domain.customerModule.service;
 
+import com.hwachang.hwachangapi.domain.clovaModule.service.ClovaApiService;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.customerModule.dto.ConsultingListDto;
@@ -31,53 +32,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CustomerService {
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
+    private final ClovaApiService clovaApiService;
     private final ConsultingRoomRepository consultingRoomRepository;
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
 
-    public String callClovaApi(String userMessage) {
-        // Clova Studio API 호출을 위한 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", "NTA0MjU2MWZlZTcxNDJiY97QrrA6UMhe0PTH7P9CpKmtMwqOVj8p1U5/OhclIE6b"); // 발급 받은 API KEY
-        headers.set("X-NCP-APIGW-API-KEY", "y6bvnqr0gP7MpGAyp4GBOVBPaIQZg9nVoAARj8DD"); // 발급 받은 API Gateway KEY
-        headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
-
-        // 요청 Body 설정
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("topP", 0.8);
-        requestBody.put("topK", 0);
-        requestBody.put("maxTokens", 500);
-        requestBody.put("temperature", 0.5);
-        requestBody.put("repeatPenalty", 5.0);
-        requestBody.put("stopBefore", List.of());
-        requestBody.put("includeAiFilters", true);
-        requestBody.put("seed", 0);
-
-        // 대화 메시지 설정
-        Map<String, Object> message = new HashMap<>();
-        message.put("role", "user");
-        message.put("content", userMessage);
-        requestBody.put("messages", List.of(message));
-
-        // API 호출
-        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-        ResponseEntity<Map> response = restTemplate.postForEntity(
-                "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003",
-                requestEntity,
-                Map.class
-        );
-
-        // 결과 반환
-        Map<String, Object> responseBody = response.getBody();
-        Map<String, Object> result = (Map<String, Object>) responseBody.get("result");
-        Map<String, Object> messageResult = (Map<String, Object>) result.get("message");
-
-        return (String) messageResult.get("content");
-    }
 
     @Transactional
     public String signup(CustomerSignupRequestDto request) {
@@ -153,5 +114,10 @@ public class CustomerService {
                 })
                 .collect(Collectors.toList());
     }
+
+    public String callClovaApi(String userMessage) {
+        return clovaApiService.callClovaApi(userMessage);
+    }
+
 
 }

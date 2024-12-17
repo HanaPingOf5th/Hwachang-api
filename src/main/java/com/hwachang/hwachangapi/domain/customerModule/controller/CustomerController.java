@@ -37,11 +37,11 @@ public class CustomerController {
         return ResponseEntity.ok("로그아웃 성공. 클라이언트에서 토큰을 삭제하세요.");
     }
 
-//    @GetMapping("/consultings/{customerId}")
-//    public ResponseEntity<List<ConsultingListDto>> getConsultingRecords(@PathVariable UUID customerId) {
-//        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(customerId);
-//        return ResponseEntity.ok(records);
-//    }
+    @GetMapping("/consultings/{customerId}")
+    public ResponseEntity<List<ConsultingListDto>> getConsultingRecords(@PathVariable UUID customerId) {
+        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(customerId);
+        return ResponseEntity.ok(records);
+    }
 
     @PostMapping("/chat")
     public ResponseEntity<String> chatWithClova(@RequestBody String message) {

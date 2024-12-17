@@ -17,9 +17,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ConsultingRoomService {
-    private final ConsultingRoomRepository consultingRoomRepository;
     private final ReviewRepository reviewRepository;
-    private final CustomerRepository customerRepository;
 
     @Transactional
     public UUID createReview(CreateReviewDto dto) {

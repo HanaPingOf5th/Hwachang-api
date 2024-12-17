@@ -1,4 +1,4 @@
-package com.hwachang.hwachangapi.domain.customerModule.entities;
+package com.hwachang.hwachangapi.utils.database;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

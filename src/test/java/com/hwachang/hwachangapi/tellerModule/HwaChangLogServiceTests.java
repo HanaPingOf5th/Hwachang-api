@@ -2,8 +2,10 @@ package com.hwachang.hwachangapi.tellerModule;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.JpaTellerRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.service.HwaChangLogService;
 import org.apache.logging.log4j.LogManager;
@@ -24,7 +26,7 @@ public class HwaChangLogServiceTests {
     private HwaChangLogService service;
 
     @Autowired
-    private ConsultingRoomRepository consultingRoomRepository;
+    private TellerConsultingRoomRepository consultingRoomRepository;
 
     @Autowired
     private TellerRepository tellerRepository;
@@ -37,11 +39,11 @@ public class HwaChangLogServiceTests {
             ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
                     .bankerId(teller.getId())
                     .categoryId(teller.getId())
-                    .originalText("Test Text")
                     .recordChat(List.of("Chat1", "Chat2"))
-                    .title("Test Title")
                     .time("Test Time")
+                    .title("Test Title")
                     .voiceRecord("Test Voice")
+                    .summary("Test Summary")
                     .build();
             consultingRoomRepository.save(consultingRoom);
         }
@@ -50,7 +52,12 @@ public class HwaChangLogServiceTests {
     @Test
     public void testRead() {
         TellerEntity teller = tellerRepository.findTellerByUserName("hana_0005").orElseThrow();
-        log.info("응답 데이터 : {}", service.readGraphData(teller));
+        LogData graphData = service.readGraphData(teller);
+
+        log.info("응답 데이터");
+        log.info("응답 일별 : {}", graphData.getDailyLog().today);
+        log.info("응답 주별 : {}", graphData.getWeeklyLog().thisWeek);
+        log.info("응답 월별 : {}", graphData.getMonthlyLog().thisMonth);
     }
 
 }

@@ -15,4 +15,5 @@ public interface TellerRepository {
 
     Optional<TellerEntity> findTellerByUserName(String username);
 
+    void deleteAll();
 }

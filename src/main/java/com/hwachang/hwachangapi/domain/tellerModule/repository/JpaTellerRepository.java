@@ -39,4 +39,8 @@ public class JpaTellerRepository implements TellerRepository {
         return members.stream().findFirst();
     }
 
+    @Override
+    public void deleteAll(){
+        em.createQuery("delete from TellerEntity").executeUpdate();
+    }
 }

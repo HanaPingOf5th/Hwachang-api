@@ -100,7 +100,7 @@ public class CustomerService {
         return filteredRooms.stream()
                 .map(room -> {
                     // 상담을 담당한 행원 정보 조회
-                    TellerEntity teller = tellerRepository.findById(room.getBankerId())
+                    TellerEntity teller = tellerRepository.findById(room.getTellerId())
                             .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
                     // DTO 생성 및 반환

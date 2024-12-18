@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name="Category")

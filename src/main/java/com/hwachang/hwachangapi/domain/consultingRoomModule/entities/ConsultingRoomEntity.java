@@ -24,8 +24,8 @@ public class ConsultingRoomEntity extends BaseEntity {
     @Column(name="consulting_room_id")
     private UUID consultingRoomId;
 
-    @Column(name="banker_id")
-    private UUID bankerId;
+    @Column(name="teller_id")
+    private UUID tellerId;
 
     @Column(name="category_id")
     private UUID categoryId;

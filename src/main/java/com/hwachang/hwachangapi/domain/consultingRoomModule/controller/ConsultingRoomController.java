@@ -35,17 +35,17 @@ public class ConsultingRoomController {
         return this.applicationFormService.getApplicationForm(applicationFormId);
     }
 
-    @GetMapping("/application/form-list/{categoryId}")
+    @GetMapping("/application/list/{categoryId}")
     public List<FormByCategoryDto> getAllApplicationFormsByCategoryId(@PathVariable("categoryId") UUID categoryId) {
         return this.applicationFormService.getAllApplicationFormsByCategoryId(categoryId);
     }
 
-    @GetMapping("/document/document-list/{categoryId}")
+    @GetMapping("/document/list/{categoryId}")
     public List<DocumentByCategoryDto> getAllDocumentsByCategoryId(@PathVariable("categoryId") UUID categoryId){
         return this.documentService.getAllDocumentsByCategoryId(categoryId);
     }
 
-    @GetMapping("/application/categories")
+    @GetMapping("/categories")
     public List<CategoryDto> getCategories() {
         return this.categoryService.getCategories();
     }

@@ -8,13 +8,8 @@ import java.util.UUID;
 @Builder
 @Getter
 public class CreateReviewDto {
-    private UUID customerId;
-
     private UUID tellerId;
-
     private Integer nps;
-
     private String content;
-
     private UUID consultingRoomId;
 }

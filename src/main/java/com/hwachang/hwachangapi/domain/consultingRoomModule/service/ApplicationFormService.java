@@ -34,4 +34,8 @@ public class ApplicationFormService {
         });
         return formList;
     }
+
+    public List<FormByCategoryDto> getAllFormsByKeyword(String keyword) {
+        return applicationFormRepository.findAllByKeyword(keyword);
+    }
 }

@@ -1,5 +1,6 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.repository;
 
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.FormByCategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ApplicationFormEntity;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +14,11 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
     ApplicationFormEntity findByApplicationFormId(UUID formId);
 
     List<ApplicationFormEntity> findAllByCategoryId(UUID categoryId);
+
+    @Query("select new com.hwachang.hwachangapi.domain.consultingRoomModule.dto.FormByCategoryDto(f.applicationFormId, f.title) "
+            +"from ApplicationFormEntity f "
+            +"where f.title like %:keyword%")
+    List<FormByCategoryDto> findAllByKeyword(String keyword);
 
     @Modifying
     @Query(value = "INSERT INTO application_form (application_form_id, category_id, title, application_form) " +
@@ -48,4 +54,5 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
             " }');",
             nativeQuery = true)
     void createApplicationFormEntity(@Param("categoryId") UUID categoryId);
+
 }

@@ -6,7 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class FileUtils {
-
+    //Todo : 이부분도 프론트로 옮길 예정
     public static InputStream downloadFileAsStream(String fileUrl) throws IOException {
         URL url = new URL(fileUrl);
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();

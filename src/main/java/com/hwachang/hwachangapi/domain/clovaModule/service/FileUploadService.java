@@ -10,6 +10,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class FileUploadService {
 
+    //Todo : 이 부분도 프론트로 옮길 예정
     private final NcloudStorageService ncloudStorageService;
 
     public String uploadFile(MultipartFile file) throws IOException {

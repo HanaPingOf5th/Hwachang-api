@@ -38,15 +38,15 @@ public class TellerController {
 
     @Operation(summary = "행원 상담 현황 조회", description = "행원은 메인 페이지에서 대시보드로 상담 현황을 확인할 수 있습니다.")
     @GetMapping("/main")
-    public ApiResponse<TellerMainResponse> getTellerDashboard() {
-        TellerMainResponse responseDto = hwaChangLogService.getTellerDashboardData();
+    public ApiResponse<TellerMainResponseDto> getTellerDashboard() {
+        TellerMainResponseDto responseDto = hwaChangLogService.getTellerDashboardData();
         return ApiResponse.onSuccess(responseDto);
     }
 
     @Operation(summary = "행원 상담 후기 조회", description = "행원에게 작성된 상담 후기를 조회할 수 있습니다.")
     @GetMapping("/reviews")
-    public ApiResponse<TellerReviewResponse> getTellerReviews() {
-        TellerReviewResponse responseDto = hwaChangLogService.getTellerReviews();
+    public ApiResponse<TellerReviewResponseDto> getTellerReviews() {
+        TellerReviewResponseDto responseDto = hwaChangLogService.getTellerReviews();
         return ApiResponse.onSuccess(responseDto);
     }
 

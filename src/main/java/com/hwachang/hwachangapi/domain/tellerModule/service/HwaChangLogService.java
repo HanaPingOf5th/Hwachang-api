@@ -5,7 +5,8 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.DailyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
-import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponse;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerReviewResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
@@ -91,7 +92,7 @@ public class HwaChangLogService {
                 .build();
     }
 
-    public TellerMainResponse getTellerDashboardData() {
+    public TellerMainResponseDto getTellerDashboardData() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
@@ -104,7 +105,7 @@ public class HwaChangLogService {
         LogData logData = readGraphData(teller);
         List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
 
-        return TellerMainResponse.builder()
+        return TellerMainResponseDto.builder()
                 .avgScore(avgScore)
                 .sumCustomer(sumCustomer)
                 .hwachangLog(logData)
@@ -112,7 +113,7 @@ public class HwaChangLogService {
                 .build();
     }
 
-    public TellerReviewResponse getTellerReviews() {
+    public TellerReviewResponseDto getTellerReviews() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String username = userDetails.getUsername();
@@ -122,7 +123,7 @@ public class HwaChangLogService {
 
         List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
 
-        return TellerReviewResponse.builder()
+        return TellerReviewResponseDto.builder()
                 .reviews(reviews)
                 .build();
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class TellerMainResponse {
+public class TellerMainResponseDto {
     private Integer avgScore;
     private Integer sumCustomer;
     private LogData hwachangLog;

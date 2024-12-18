@@ -83,7 +83,7 @@ class CustomerServiceTest {
         // 3. 상담방 생성 및 Customer UUID 추가
         for (int i = 0; i < 3; i++) {
             ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
-                    .bankerId(teller.getId())
+                    .tellerId(teller.getId())
                     .categoryId(teller.getId())
                     .customerIds(List.of(customerId)) // 고객 ID 포함
                     .recordChat(List.of("Chat1", "Chat2"))

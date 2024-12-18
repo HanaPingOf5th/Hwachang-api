@@ -35,7 +35,7 @@ public class ConsultingRoomEntity extends BaseEntity {
     private List<UUID> customerIds;
 
     @Column(name ="original_text")
-    @JdbcTypeCode(SqlTypes.JSON) // JSON 타입 저장
+    // @JdbcTypeCode(SqlTypes.JSON) // JSON 타입 저장
     private String originalText;
 
     @Column(name="summary")

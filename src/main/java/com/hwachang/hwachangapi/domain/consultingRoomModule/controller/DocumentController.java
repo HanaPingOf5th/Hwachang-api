@@ -3,10 +3,8 @@ package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.DocumentByCategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.DocumentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -19,5 +17,10 @@ public class DocumentController {
     @GetMapping("/list/{categoryId}")
     public List<DocumentByCategoryDto> getAllDocumentsByCategoryId(@PathVariable("categoryId") UUID categoryId){
         return this.documentService.getAllDocumentsByCategoryId(categoryId);
+    }
+
+    @GetMapping()
+    public List<DocumentByCategoryDto> getAllDocumentsByKeyword(@RequestParam("keyword") String keyword){
+        return this.documentService.getAllDocumentsByKeyword(keyword);
     }
 }

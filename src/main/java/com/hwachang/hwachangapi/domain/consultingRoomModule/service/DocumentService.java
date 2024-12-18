@@ -30,4 +30,8 @@ public class DocumentService {
         });
         return documentList;
     }
+
+    public List<DocumentByCategoryDto> getAllDocumentsByKeyword(String keyword) {
+        return documentRepository.findAllByKeyword(keyword);
+    }
 }

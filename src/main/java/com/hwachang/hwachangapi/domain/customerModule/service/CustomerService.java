@@ -102,7 +102,7 @@ public class CustomerService {
 
                     // DTO 생성 및 반환
                     return ConsultingListDto.builder()
-                            // Todo : summary 문자열 parsing (주요주제)
+                            .consultingRoomId(room.getConsultingRoomId()) // 상담방 ID 추가
                             .summary(room.getSummary()) // 상담 요약
                             .tellerName(teller.getName()) // 행원 이름
                             .type(teller.getType().getDescription()) // 유형 (개인금융/기업금융)
@@ -112,6 +112,7 @@ public class CustomerService {
                 })
                 .collect(Collectors.toList());
     }
+
 
 
     @Transactional

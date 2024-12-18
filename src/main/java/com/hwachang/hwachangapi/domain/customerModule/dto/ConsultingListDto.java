@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 
 @Getter
 @AllArgsConstructor
 @Builder
 public class ConsultingListDto {
+    private UUID consultingRoomId;    // 컨설팅룸 ID
     private String summary;       // 상담 요약 (주제)
     private String tellerName;    // 담당자 (행원 이름)
     private String type;          // 유형 (개인금융 or 기업금융)

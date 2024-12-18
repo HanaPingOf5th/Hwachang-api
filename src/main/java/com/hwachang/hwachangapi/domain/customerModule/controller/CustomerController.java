@@ -40,10 +40,10 @@ public class CustomerController {
         return ResponseEntity.ok(records);
     }
 
-    @GetMapping("/consultings/detail")
+    @GetMapping("/consultings/detail/{consultingRoomId}")
     public ResponseEntity<ConsultingDetailsDto> getConsultingDetail(
-            @RequestParam UUID customerId,
-            @RequestParam UUID consultingRoomId
+            @PathVariable UUID consultingRoomId,
+            @RequestParam UUID customerId
     ) {
         ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(customerId, consultingRoomId);
         return ResponseEntity.ok(consultingDetail);

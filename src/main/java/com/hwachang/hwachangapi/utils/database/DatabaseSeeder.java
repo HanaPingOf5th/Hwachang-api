@@ -23,9 +23,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Component
@@ -54,6 +52,21 @@ public class DatabaseSeeder implements CommandLineRunner {
         CustomerEntity customerEntity = this.customerRepository.findByUsername("dw1234").orElseThrow();
         List<UUID> customerIds = new ArrayList<>();
         customerIds.add(customerEntity.getId());
+        List<Map<String, Object>> originText = new ArrayList<>();
+
+        Map<String, Object> entry1 = new HashMap<>();
+        entry1.put("startTime", "00:00:01");
+        entry1.put("endTime", "00:00:05");
+        entry1.put("text", "안녕하세요, 대출 상담 관련해서 문의드립니다.");
+        entry1.put("speaker", "고객");
+        originText.add(entry1);
+
+        Map<String, Object> entry2 = new HashMap<>();
+        entry2.put("startTime", "00:00:06");
+        entry2.put("endTime", "00:00:10");
+        entry2.put("text", "네, 어떤 부분이 궁금하신가요?");
+        entry2.put("speaker", "상담원");
+        originText.add(entry2);
 
         // Category
         CategoryEntity categoryEntity1 = CategoryEntity.builder()
@@ -77,7 +90,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .tellerId(tellerEntity.getId())
                 .categoryId(categoryId)
                 .customerIds(customerIds)
-                .originalText("상담요약내용입니다.")
+                .originalText(originText)
                 .summary("요약내용 입니다.")
                 .recordChat(new ArrayList<>())
                 .voiceRecord("음성기록url?")

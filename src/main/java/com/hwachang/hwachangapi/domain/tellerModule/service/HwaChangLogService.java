@@ -111,4 +111,19 @@ public class HwaChangLogService {
                 .reviews(reviews)
                 .build();
     }
+
+    public TellerReviewResponse getTellerReviews() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
+
+        return TellerReviewResponse.builder()
+                .reviews(reviews)
+                .build();
+    }
 }

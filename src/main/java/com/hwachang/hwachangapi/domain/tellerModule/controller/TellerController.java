@@ -43,6 +43,13 @@ public class TellerController {
         return ApiResponse.onSuccess(responseDto);
     }
 
+    @Operation(summary = "행원 상담 후기 조회", description = "행원에게 작성된 상담 후기를 조회할 수 있습니다.")
+    @GetMapping("/reviews")
+    public ApiResponse<TellerReviewResponse> getTellerReviews() {
+        TellerReviewResponse responseDto = hwaChangLogService.getTellerReviews();
+        return ApiResponse.onSuccess(responseDto);
+    }
+
     @Operation(summary = "행원 정보 조회", description = "행원은 우측 사이드바에서 행원의 프로필을 확인할 수 있습니다.")
     @GetMapping("/mypage")
     public ApiResponse<TellerInfoResponseDto> getTellerInfo() {

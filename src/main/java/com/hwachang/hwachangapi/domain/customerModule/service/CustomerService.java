@@ -19,6 +19,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,13 +86,19 @@ public class CustomerService {
     }
 
     @Transactional
-    public List<ConsultingListDto> getCustomerConsultingRecords(UUID customerId) {
-        // 1. 전체 상담방 조회
+    public List<ConsultingListDto> getCustomerConsultingRecords(UUID customerId, String summaryKeyword, String startDate, String endDate) {
+        LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.MIN;
+        LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.MAX;
+
         List<ConsultingRoomEntity> allConsultingRooms = consultingRoomRepository.findAll();
 
-        // 2. 특정 customerId가 포함된 상담방 필터링
         List<ConsultingRoomEntity> filteredRooms = allConsultingRooms.stream()
                 .filter(room -> room.getCustomerIds() != null && room.getCustomerIds().contains(customerId))
+                .filter(room -> {
+                    LocalDate roomDate = room.getCreatedAt().toLocalDate(); // `createdAt`이 LocalDateTime인 경우
+                    return !roomDate.isBefore(start) && !roomDate.isAfter(end);
+                })
+                .filter(room -> summaryKeyword == null || room.getSummary().contains(summaryKeyword))
                 .collect(Collectors.toList());
 
         // 3. DTO 변환

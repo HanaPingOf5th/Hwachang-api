@@ -97,7 +97,7 @@ class CustomerServiceTest {
         }
 
         // 4. 테스트 대상 메서드 호출
-        List<ConsultingListDto> consultingRecords = customerService.getCustomerConsultingRecords(customerId);
+        List<ConsultingListDto> consultingRecords = customerService.getCustomerConsultingRecords(customerId, null, null, null);
 
         // 5. 검증
         assertThat(consultingRecords).hasSize(3);

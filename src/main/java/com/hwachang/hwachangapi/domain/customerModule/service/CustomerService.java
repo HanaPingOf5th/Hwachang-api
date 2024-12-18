@@ -3,10 +3,7 @@ package com.hwachang.hwachangapi.domain.customerModule.service;
 import com.hwachang.hwachangapi.domain.clovaModule.service.ClovaApiService;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
-import com.hwachang.hwachangapi.domain.customerModule.dto.ConsultingListDto;
-import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
-import com.hwachang.hwachangapi.domain.customerModule.dto.LoginRequestDto;
-import com.hwachang.hwachangapi.domain.customerModule.dto.LoginResponseDto;
+import com.hwachang.hwachangapi.domain.customerModule.dto.*;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
@@ -105,6 +102,7 @@ public class CustomerService {
 
                     // DTO 생성 및 반환
                     return ConsultingListDto.builder()
+                            // Todo : summary 문자열 parsing (주요주제)
                             .summary(room.getSummary()) // 상담 요약
                             .tellerName(teller.getName()) // 행원 이름
                             .type(teller.getType().getDescription()) // 유형 (개인금융/기업금융)
@@ -116,5 +114,29 @@ public class CustomerService {
     }
 
 
+    @Transactional
+    public ConsultingDetailsDto getConsultingDetails(UUID customerId, UUID consultingRoomId) {
+        // 1. 상담방 조회
+        ConsultingRoomEntity consultingRoom = consultingRoomRepository.findById(consultingRoomId)
+                .orElseThrow(() -> new RuntimeException("상담 방을 찾을 수 없습니다."));
 
+        // 2. 고객 참여 검증
+        if (consultingRoom.getCustomerIds() == null || !consultingRoom.getCustomerIds().contains(customerId)) {
+            throw new RuntimeException("해당 고객은 이 상담에 참여하지 않았습니다.");
+        }
+
+        // 3. 행원 정보 조회
+        TellerEntity teller = tellerRepository.findById(consultingRoom.getTellerId())
+                .orElseThrow(() -> new RuntimeException("해당 상담을 담당한 행원을 찾을 수 없습니다."));
+
+        // 4. DTO 생성 및 반환
+        return ConsultingDetailsDto.builder()
+                .summary(consultingRoom.getSummary())
+                .originalText(consultingRoom.getOriginalText())
+                .tellerName(teller.getName())
+                .type(teller.getType().name())
+                .category(teller.getType().getDescription())
+                .date(consultingRoom.getCreatedAt())
+                .build();
+    }
 }

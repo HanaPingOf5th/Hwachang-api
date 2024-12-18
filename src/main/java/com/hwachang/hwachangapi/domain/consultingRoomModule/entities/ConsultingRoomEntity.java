@@ -1,4 +1,5 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.entities;
+import com.hwachang.hwachangapi.utils.annotations.JsonListConverter;
 import com.hwachang.hwachangapi.utils.annotations.StringListConverter;
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
 import jakarta.persistence.*;
@@ -10,6 +11,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Entity
@@ -34,9 +36,9 @@ public class ConsultingRoomEntity extends BaseEntity {
     @Convert(converter = StringListConverter.class)
     private List<UUID> customerIds;
 
-    @Column(name ="original_text")
-    // @JdbcTypeCode(SqlTypes.JSON) // JSON 타입 저장
-    private String originalText;
+    @Column(name = "original_text")
+    @Convert(converter = JsonListConverter.class) // JSON 변환 컨버터 적용
+    private List<Map<String, Object>> originalText;
 
     @Column(name="summary")
     private String summary; // 요약을 String 형태로 저장

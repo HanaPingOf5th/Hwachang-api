@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -29,5 +30,10 @@ public class JpaConsultingRoomRepository implements ConsultingRoomRepository {
     @Override
     public void deleteAll(){
         em.createQuery("DELETE FROM ConsultingRoomEntity").executeUpdate();
+    }
+
+    @Override
+    public Optional<ConsultingRoomEntity> findById(UUID id) {
+        return Optional.ofNullable(em.find(ConsultingRoomEntity.class, id));
     }
 }

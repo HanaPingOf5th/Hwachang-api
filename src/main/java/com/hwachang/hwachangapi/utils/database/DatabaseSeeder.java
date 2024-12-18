@@ -11,7 +11,9 @@ import com.hwachang.hwachangapi.domain.consultingRoomModule.service.CategoryServ
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
+import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
+import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
 import com.hwachang.hwachangapi.domain.customerModule.service.CustomerService;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
@@ -38,6 +40,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final ConsultingRoomRepository consultingRoomRepository;
     private final ConsultingRoomService consultingRoomService;
     private final ApplicationFormRepository applicationFormRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -103,13 +106,14 @@ public class DatabaseSeeder implements CommandLineRunner {
         UUID consultingRoomId = this.consultingRoomRepository.findAll().stream().findFirst().get().getConsultingRoomId();
 
         // review
-        CreateReviewDto createReviewDto = CreateReviewDto.builder()
+        ReviewEntity reviewEntity = ReviewEntity.builder()
                 .customerId(customerIds.get(0))
                 .tellerId(tellerEntity.getId())
                 .nps(10)
                 .consultingRoomId(consultingRoomId)
                 .build();
-        this.consultingRoomService.createReview(createReviewDto);
+
+        this.reviewRepository.save(reviewEntity);
 
         // ApplicationForm
         this.applicationFormRepository.createApplicationFormEntity(categoryId);

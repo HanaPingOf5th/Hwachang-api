@@ -11,5 +11,5 @@ public class WaitingListCategory {
     private Integer waitingTeller;
     private Integer calling;
     private Integer postProcessing;
-    private Integer leave;
+    private Integer away;
 }

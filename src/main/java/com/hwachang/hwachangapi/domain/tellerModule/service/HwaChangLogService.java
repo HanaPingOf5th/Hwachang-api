@@ -96,24 +96,24 @@ public class HwaChangLogService {
                 .build();
     }
 
-//    public TellerMainResponse getTellerDashboardData() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        String username = userDetails.getUsername();
-//
-//        TellerEntity teller = tellerRepository.findTellerByUserName(username)
-//                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
-//
-//        int avgScore = reviewRepository.findAverageNpsByTellerId(teller.getId());
-//        int sumCustomer = reviewRepository.countCustomersByTellerId(teller.getId());
-//        LogData logData = readGraphData(teller);
-//        List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
-//
-//        return TellerMainResponse.builder()
-//                .avgScore(avgScore)
-//                .sumCustomer(sumCustomer)
-//                .hwachangLog(logData)
-//                .reviews(reviews)
-//                .build();
-//    }
+    public TellerMainResponse getTellerDashboardData() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        int avgScore = reviewRepository.findAverageNpsByTellerId(teller.getId());
+        int sumCustomer = reviewRepository.countCustomersByTellerId(teller.getId());
+        LogData logData = readGraphData(teller);
+        List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
+
+        return TellerMainResponse.builder()
+                .avgScore(avgScore)
+                .sumCustomer(sumCustomer)
+                .hwachangLog(logData)
+                .reviews(reviews)
+                .build();
+    }
 }

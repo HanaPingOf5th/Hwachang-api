@@ -24,6 +24,7 @@ public class ConsultingRoomService {
         try{
             ReviewEntity reviewEntity = ReviewEntity.builder()
                     .customerId(dto.getCustomerId())
+                    .tellerId(dto.getTellerId())
                     .nps(dto.getNps())
                     .content(dto.getContent())
                     .consultingRoomId(dto.getConsultingRoomId())

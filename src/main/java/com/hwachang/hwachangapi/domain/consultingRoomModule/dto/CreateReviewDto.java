@@ -10,6 +10,8 @@ import java.util.UUID;
 public class CreateReviewDto {
     private UUID customerId;
 
+    private UUID tellerId;
+
     private Integer nps;
 
     private String content;

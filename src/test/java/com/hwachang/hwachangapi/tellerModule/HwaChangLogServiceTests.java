@@ -37,7 +37,7 @@ public class HwaChangLogServiceTests {
         TellerEntity teller = tellerRepository.findTellerByUserName("hana_0005").orElseThrow();
         for (int i = 0; i < 10; i++) {
             ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
-                    .bankerId(teller.getId())
+                    .tellerId(teller.getId())
                     .categoryId(teller.getId())
                     .recordChat(List.of("Chat1", "Chat2"))
                     .time("Test Time")

@@ -1,15 +1,11 @@
 package com.hwachang.hwachangapi.domain.tellerModule.service;
 
-import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
-import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
-import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.DailyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponse;
-import com.hwachang.hwachangapi.domain.tellerModule.entities.NPSEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
@@ -27,7 +23,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Log4j2
 @Service

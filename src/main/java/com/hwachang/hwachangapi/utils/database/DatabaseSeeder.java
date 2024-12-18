@@ -1,26 +1,48 @@
 package com.hwachang.hwachangapi.utils.database;
 
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CategoryDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CreateReviewDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.CategoryEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ApplicationFormRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.CategoryRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.service.CategoryService;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
+import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
+import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
 import com.hwachang.hwachangapi.domain.customerModule.service.CustomerService;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.Type;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
 
 @Component
 @AllArgsConstructor
 public class DatabaseSeeder implements CommandLineRunner {
     private final TellerService tellerService;
     private final CustomerService customerService;
+    private final CustomerRepository customerRepository;
+    private final TellerRepository tellerRepository;
+    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
+    private final ConsultingRoomRepository consultingRoomRepository;
+    private final ConsultingRoomService consultingRoomService;
+    private final ApplicationFormRepository applicationFormRepository;
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
         // user seeding
         CreateTellerRequestDto createTellerRequestDto = CreateTellerRequestDto.builder().tellerNumber("hj1234").name("함형주").position("대리").password("12345").build();
@@ -28,24 +50,55 @@ public class DatabaseSeeder implements CommandLineRunner {
         CustomerSignupRequestDto customerSignupRequestDto = CustomerSignupRequestDto.builder().username("dw1234").name("김동은").phoneNumber("010-1111-1111").password("12345").build();
         this.customerService.signup(customerSignupRequestDto);
 
-        // Category
-//        CategoryEntity categoryEntity = CategoryEntity.builder().CategoryName("기업").
+        TellerEntity tellerEntity = this.tellerRepository.findTellerByUserName("hj1234").orElseThrow();
+        CustomerEntity customerEntity = this.customerRepository.findByUsername("dw1234").orElseThrow();
+        List<UUID> customerIds = new ArrayList<>();
+        customerIds.add(customerEntity.getId());
 
-        // consultingRoom
-//        ConsultingRoomEntity consultingRoomEntity = ConsultingRoomEntity.builder()
-//                .title("상담방1")
-//                .time("30min")
-//                .categoryId(UUID.fromString("9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"))
-//                .build();
+        // Category
+        CategoryEntity categoryEntity1 = CategoryEntity.builder()
+                .CategoryName("예금")
+                .CategoryType(Type.PERSONAL)
+                .build();
+
+        CategoryEntity categoryEntity2 = CategoryEntity.builder()
+                .CategoryName("적금")
+                .CategoryType(Type.PERSONAL)
+                .build();
+
+        categoryRepository.save(categoryEntity1);
+        categoryRepository.save(categoryEntity2);
+
+        List<CategoryDto> categoryDtos = categoryService.getCategories();
+        UUID categoryId = categoryDtos.get(0).getCategoryId();
+
+        // consultingRooms
+        ConsultingRoomEntity consultingRoomEntity = ConsultingRoomEntity.builder()
+                .tellerId(tellerEntity.getId())
+                .categoryId(categoryId)
+                .customerIds(customerIds)
+                .originalText("상담요약내용입니다.")
+                .summary("요약내용 입니다.")
+                .recordChat(new ArrayList<>())
+                .voiceRecord("음성기록url?")
+                .title("상담방1")
+                .time("30min")
+                .build();
+
+        this.consultingRoomRepository.save(consultingRoomEntity);
+
+        UUID consultingRoomId = this.consultingRoomRepository.findAll().stream().findFirst().get().getConsultingRoomId();
 
         // review
-//        CreateReviewDto createReviewDto = CreateReviewDto.builder()
-//                .customerId(this.customerRepository.findByUsername("hj1234").orElseThrow().getId())
-//                .tellerId(this.tellerRepository.findTellerByUserName("dw1234").orElseThrow().getId())
-//                .nps(10)
-//                .consultingRoomId(UUID.fromString("9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"))
-//                .build();
-//        this.consultingRoomService.createReview(createReviewDto);
+        CreateReviewDto createReviewDto = CreateReviewDto.builder()
+                .customerId(customerIds.get(0))
+                .tellerId(tellerEntity.getId())
+                .nps(10)
+                .consultingRoomId(consultingRoomId)
+                .build();
+        this.consultingRoomService.createReview(createReviewDto);
 
+        // ApplicationForm
+        this.applicationFormRepository.createApplicationFormEntity(categoryId);
     }
 }

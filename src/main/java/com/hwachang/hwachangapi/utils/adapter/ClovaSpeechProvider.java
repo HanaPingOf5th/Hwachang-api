@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +39,8 @@ public class ClovaSpeechProvider {
     @Value("${clova.speech.invoke-url}")
     private String invokeUrl;
 
-    @Value("${clova.api.host}")
-    private String apiHost;
+    @Value("${clova.api.url}")
+    private String apiUrl;
 
     @Value("${clova.api.key}")
     private String apiKey;
@@ -59,9 +60,8 @@ public class ClovaSpeechProvider {
 
         // 2. JSON 파싱: 맨 마지막 통합된 "text" 추출
         JsonObject jsonObject = JsonParser.parseString(sttResponse).getAsJsonObject();
-        String finalText = jsonObject.get("text").getAsString();
 
-        return finalText;
+        return jsonObject.get("text").getAsString();
     }
 
     private String executeRequest(HttpPost httpPost) throws IOException {
@@ -105,14 +105,16 @@ public class ClovaSpeechProvider {
                     "   - [요약문장2]\n" +
                     "   - [요약문장3]\n" +
                     "5. **유의사항**:\n" +
-                    "   - 특수문자는 절대 사용하지 말아줘.\n";
+                    "   - 특수문자는 절대 사용하지 말아줘.\n" +
+                    "   - 문장 간결하고 핵심만 전달하도록 작성해.\n" +
+                    "   - 대화의 의미를 해치지 않도록 자연스러운 흐름을 유지해줘.";
 
-    private static final String API_URL = "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003";
+
 
     public String callClovaApi(String userMessage) {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", "NTA0MjU2MWZlZTcxNDJiY97QrrA6UMhe0PTH7P9CpKmtMwqOVj8p1U5/OhclIE6b");
-        headers.set("X-NCP-APIGW-API-KEY", "y6bvnqr0gP7MpGAyp4GBOVBPaIQZg9nVoAARj8DD");
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", apiKey);
+        headers.set("X-NCP-APIGW-API-KEY", gatewayKey);
         headers.setContentType(org.springframework.http.MediaType.APPLICATION_JSON);
 
         // 요청 Body 설정
@@ -136,11 +138,66 @@ public class ClovaSpeechProvider {
 
         org.springframework.http.HttpEntity<Map<String, Object>> requestEntity = new org.springframework.http.HttpEntity<>(requestBody, headers);
 
-        ResponseEntity<Map> response = restTemplate.postForEntity(API_URL, requestEntity, Map.class);
+        ResponseEntity<Map> response = restTemplate.postForEntity(apiUrl, requestEntity, Map.class);
 
         Map<String, Object> result = (Map<String, Object>) response.getBody().get("result");
         Map<String, Object> message = (Map<String, Object>) result.get("message");
 
         return (String) message.get("content");
+    }
+
+    /**
+     * 음성 파일을 인식하고 필요한 데이터를 JSON 형태로 반환
+     */
+    public List<JsonObject> parseSegments(InputStream fileStream, String fileName) throws IOException {
+        // 1. 음성 파일을 JSON 형태로 변환
+        String sttResponse = recognizeFile(fileStream, fileName);
+
+        // 2. JSON 파싱: segments 배열 추출
+        JsonObject jsonObject = JsonParser.parseString(sttResponse).getAsJsonObject();
+        JsonArray segments = jsonObject.getAsJsonArray("segments");
+
+        // 3. 필요한 데이터만 가공하여 반환
+        List<JsonObject> parsedData = new ArrayList<>();
+
+        for (int i = 0; i < segments.size(); i++) {
+            JsonObject segment = segments.get(i).getAsJsonObject();
+
+            // start와 end 시간 변환
+            int startTimeMs = segment.get("start").getAsInt();
+            int endTimeMs = segment.get("end").getAsInt();
+
+            String startTime = convertMsToTime(startTimeMs);
+            String endTime = convertMsToTime(endTimeMs);
+
+            // text와 diarization 정보 추출
+            String text = segment.get("text").getAsString();
+            String speaker = segment.getAsJsonObject("diarization").get("label").getAsString();
+
+            // 새로운 JSON 객체에 데이터 추가
+            JsonObject resultObject = new JsonObject();
+            resultObject.addProperty("startTime", startTime);
+            resultObject.addProperty("endTime", endTime);
+            resultObject.addProperty("text", text);
+            resultObject.addProperty("speaker", speaker);
+
+            parsedData.add(resultObject);
+        }
+
+        return parsedData;
+    }
+
+    /**
+     * 밀리초(ms)를 시간, 분, 초 형식으로 변환
+     */
+    private String convertMsToTime(int milliseconds) {
+        int seconds = milliseconds / 1000;
+        int minutes = seconds / 60;
+        int hours = minutes / 60;
+
+        seconds %= 60;
+        minutes %= 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 }

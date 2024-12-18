@@ -1,5 +1,6 @@
 package com.hwachang.hwachangapi.domain.clovaModule.service;
 
+import com.google.gson.JsonObject;
 import com.hwachang.hwachangapi.domain.clovaModule.utils.FileUtils;
 import com.hwachang.hwachangapi.utils.adapter.LLMServicePort;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class ClovaApiService {
 
     private final LLMServicePort llmServicePort;
 
-    public String recognizeAudio(String fileUrl) throws IOException {
+    public List<Map<String, Object>>  recognizeAudio(String fileUrl) throws IOException {
         InputStream inputStream = FileUtils.downloadFileAsStream(fileUrl);
         return llmServicePort.transferAudioToText(inputStream, fileUrl);
     }
@@ -30,8 +31,4 @@ public class ClovaApiService {
         InputStream inputStream = FileUtils.downloadFileAsStream(fileUrl);
         return llmServicePort.processAndSummarizeAudio(inputStream, fileUrl);
     }
-
-
-
-
 }

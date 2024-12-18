@@ -14,6 +14,7 @@ import java.util.UUID;
 
 @Service
 public class NcloudStorageService {
+    //Todo : 이 서비스도 프론트도 옮길예정
 
     private final AmazonS3 s3Client;
     private final String bucketName;

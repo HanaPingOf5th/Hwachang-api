@@ -7,7 +7,7 @@ import java.util.UUID;
 
 @Builder
 @Getter
-public class FormByCategoryDto {
-    private UUID applicationFormId;
+public class DocumentByCategoryDto {
+    private UUID documentId;
     private String title;
 }

@@ -28,7 +28,7 @@ public class ApplicationFormService {
         result.forEach(entity ->{
             FormByCategoryDto formByCategoryDto = FormByCategoryDto.builder()
                     .title(entity.getTitle())
-                    .categoryId(entity.getCategoryId())
+                    .applicationFormId(entity.getApplicationFormId())
                     .build();
             formList.add(formByCategoryDto);
         });

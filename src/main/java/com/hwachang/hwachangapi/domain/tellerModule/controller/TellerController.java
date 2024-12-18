@@ -22,12 +22,14 @@ public class TellerController {
     private final TellerService tellerService;
     private final HwaChangLogService hwaChangLogService;
 
+    @Operation(summary = "행원 회원가입", description = "행원은 사원번호, 이름, 비밀번호, 직책으로 회원가입을 진행합니다.")
     @PostMapping("/signup")
     public String signUp(@RequestBody CreateTellerRequestDto createTellerRequestDto) {
         log.info("행원 회원가입 " + createTellerRequestDto.getName());
         return this.tellerService.signup(createTellerRequestDto);
     }
 
+    @Operation(summary = "행원 로그인", description = "행원은 사원번호와 비밀번호로 로그인을 진행합니다.")
     @PostMapping("/login")
     public LoginResponseDto signIn(@RequestBody LoginRequestDto loginRequestDto) {
         log.info("행원 로그인 " + loginRequestDto.getTellerNumber());

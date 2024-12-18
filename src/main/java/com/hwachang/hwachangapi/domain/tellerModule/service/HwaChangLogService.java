@@ -9,6 +9,7 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponse;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerReviewResponse;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.NPSEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerConsultingRoomRepository;
@@ -113,6 +114,21 @@ public class HwaChangLogService {
                 .avgScore(avgScore)
                 .sumCustomer(sumCustomer)
                 .hwachangLog(logData)
+                .reviews(reviews)
+                .build();
+    }
+
+    public TellerReviewResponse getTellerReviews() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
+
+        return TellerReviewResponse.builder()
                 .reviews(reviews)
                 .build();
     }

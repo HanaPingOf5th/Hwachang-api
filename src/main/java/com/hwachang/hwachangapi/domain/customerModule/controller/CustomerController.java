@@ -1,9 +1,6 @@
 package com.hwachang.hwachangapi.domain.customerModule.controller;
 
-import com.hwachang.hwachangapi.domain.customerModule.dto.ConsultingListDto;
-import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
-import com.hwachang.hwachangapi.domain.customerModule.dto.LoginRequestDto;
-import com.hwachang.hwachangapi.domain.customerModule.dto.LoginResponseDto;
+import com.hwachang.hwachangapi.domain.customerModule.dto.*;
 import com.hwachang.hwachangapi.domain.customerModule.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -43,4 +40,12 @@ public class CustomerController {
         return ResponseEntity.ok(records);
     }
 
+    @GetMapping("/consultings/detail")
+    public ResponseEntity<ConsultingDetailsDto> getConsultingDetail(
+            @RequestParam UUID customerId,
+            @RequestParam UUID consultingRoomId
+    ) {
+        ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(customerId, consultingRoomId);
+        return ResponseEntity.ok(consultingDetail);
+    }
 }

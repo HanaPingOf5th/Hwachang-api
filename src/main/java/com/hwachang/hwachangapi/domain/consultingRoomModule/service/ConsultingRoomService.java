@@ -10,6 +10,9 @@ import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerReposit
 import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -18,12 +21,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConsultingRoomService {
     private final ReviewRepository reviewRepository;
+    private final CustomerRepository customerRepository;
 
     @Transactional
     public UUID createReview(CreateReviewDto dto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        CustomerEntity customerEntity = this.customerRepository.findByUsername(username).orElseThrow();
         try{
             ReviewEntity reviewEntity = ReviewEntity.builder()
-                    .customerId(dto.getCustomerId())
+                    .customerId(customerEntity.getId())
                     .tellerId(dto.getTellerId())
                     .nps(dto.getNps())
                     .content(dto.getContent())

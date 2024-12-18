@@ -24,6 +24,7 @@ public class DocumentService {
             DocumentByCategoryDto documentByCategoryDto = DocumentByCategoryDto.builder()
                     .documentId(entity.getDocumentId())
                     .title(entity.getTitle())
+                    .path(entity.getPath())
                     .build();
             documentList.add(documentByCategoryDto);
         });

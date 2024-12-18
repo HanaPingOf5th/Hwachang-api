@@ -10,4 +10,5 @@ import java.util.UUID;
 public class DocumentByCategoryDto {
     private UUID documentId;
     private String title;
+    private String path;
 }

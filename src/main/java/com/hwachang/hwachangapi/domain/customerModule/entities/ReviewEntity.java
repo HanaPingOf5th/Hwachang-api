@@ -23,7 +23,7 @@ public class ReviewEntity {
     @Column(name="customer_id")
     private UUID customerId;
 
-    @Column(name = "teller_id")
+    @Column(name="teller_id")
     private UUID tellerId;
 
     @Column(name="nps")

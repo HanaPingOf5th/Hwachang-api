@@ -18,8 +18,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import static java.lang.Enum.valueOf;
-
 @Service
 @RequiredArgsConstructor
 public class TellerService {

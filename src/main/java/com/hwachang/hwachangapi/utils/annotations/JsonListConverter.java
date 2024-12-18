@@ -25,13 +25,10 @@ public class JsonListConverter implements AttributeConverter<List<Map<String, Ob
 
     @Override
     public List<Map<String, Object>> convertToEntityAttribute(String dbData) {
-        if (dbData == null || dbData.isEmpty()) {
-            return null;
-        }
         try {
-            return objectMapper.readValue(dbData, List.class); // JSON 문자열을 다시 List로 역직렬화
+            return objectMapper.readValue(dbData, objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
         } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JSON 역직렬화 실패", e);
+            throw new RuntimeException("역직렬화 실패" + dbData, e);
         }
     }
 }

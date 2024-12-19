@@ -1,13 +1,12 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ApplicationForm;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.DocumentByCategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.FormByCategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ApplicationFormService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -25,5 +24,10 @@ public class ApplicationFormController {
     @GetMapping("/list/{categoryId}")
     public List<FormByCategoryDto> getAllApplicationFormsByCategoryId(@PathVariable("categoryId") UUID categoryId) {
         return this.applicationFormService.getAllApplicationFormsByCategoryId(categoryId);
+    }
+
+    @GetMapping()
+    public List<FormByCategoryDto> getAllFormsByKeyword(@RequestParam("keyword") String keyword){
+        return this.applicationFormService.getAllFormsByKeyword(keyword);
     }
 }

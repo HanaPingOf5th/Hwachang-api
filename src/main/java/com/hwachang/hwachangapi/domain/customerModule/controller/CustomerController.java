@@ -34,18 +34,21 @@ public class CustomerController {
         return ResponseEntity.ok("로그아웃 성공. 클라이언트에서 토큰을 삭제하세요.");
     }
 
-    @GetMapping("/consultings/{customerId}")
-    public ResponseEntity<List<ConsultingListDto>> getConsultingRecords(@PathVariable UUID customerId) {
-        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(customerId);
+    @GetMapping("/consultings")
+    public ResponseEntity<List<ConsultingListDto>> getConsultingRecords(
+            @RequestParam(required = false) String summaryKeyword,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate
+    ) {
+        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(summaryKeyword, startDate, endDate);
         return ResponseEntity.ok(records);
     }
 
     @GetMapping("/consultings/detail/{consultingRoomId}")
     public ResponseEntity<ConsultingDetailsDto> getConsultingDetail(
-            @PathVariable UUID consultingRoomId,
-            @RequestParam UUID customerId
+            @PathVariable UUID consultingRoomId
     ) {
-        ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(customerId, consultingRoomId);
+        ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(consultingRoomId);
         return ResponseEntity.ok(consultingDetail);
     }
 }

@@ -4,6 +4,9 @@ import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.PreChatRequestDt
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,10 +21,12 @@ public class WaitingRoomController {
     private final RedisTemplate<String, List<String>> redisListTemplate;
     @PostMapping("/prechat")
     public void sendPreChat (@RequestBody PreChatRequestDto preChatRequestDto){
-        ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
-        String userName = preChatRequestDto.getUserName();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String userName = userDetails.getUsername();
         String content = preChatRequestDto.getContent();
 
+        ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
         List<String> prechats = valueOperations.get(userName);
         if (prechats == null) {
             prechats = new ArrayList<>();

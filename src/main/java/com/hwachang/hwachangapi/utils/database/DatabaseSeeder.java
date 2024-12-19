@@ -96,8 +96,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .originalText(originText)
                 .summary("요약내용 입니다.")
                 .recordChat(new ArrayList<>())
-                .voiceRecord("음성기록url?")
-                .title("상담방1")
+                .voiceRecordUrl("음성기록url?")
                 .time("30min")
                 .build();
 

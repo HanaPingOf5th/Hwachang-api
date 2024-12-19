@@ -54,7 +54,7 @@ public class ConsultingRoomService {
     }
 
     @Transactional
-    public UUID saveConsultingRoomDetails(UUID consultingRoomId, UUID tellerId, UUID categoryId, List<UUID> customerIds, List<String> recordChat, String voiceUrl, String time) {
+    public UUID updateConsultingRoomDetails(UUID consultingRoomId, UUID tellerId, UUID categoryId, List<UUID> customerIds, List<String> recordChat, String voiceUrl, String time) {
         try {
             // 오디오 파일 다운로드 및 처리
             InputStream inputStream = FileUtils.downloadFileAsStream(voiceUrl);
@@ -83,7 +83,7 @@ public class ConsultingRoomService {
                     time
             );
 
-            consultingRoomEntity.updateConsultingRoomByLLM(
+            consultingRoomEntity.updateConsultingRoomDetails(
                     ConsultingRoomEntity.builder()
                             .consultingRoomId(updatedConsultingRoom.getConsultingRoomId())
                             .tellerId(updatedConsultingRoom.getTellerId())

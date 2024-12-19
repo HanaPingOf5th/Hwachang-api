@@ -24,7 +24,7 @@ public class ConsultingRoomController {
             @RequestParam String voiceUrl,
             @RequestParam String time) {
         // 상담 종료 후 데이터를 저장
-        return consultingRoomService.saveConsultingRoomDetails(
+        return consultingRoomService.updateConsultingRoomDetails(
                 consultingRoomId, tellerId, categoryId, customerIds, recordChat, voiceUrl, time);
     }
 

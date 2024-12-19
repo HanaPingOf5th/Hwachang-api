@@ -57,7 +57,7 @@ public class ConsultingRoomEntity extends BaseEntity {
     @Column(name="time")
     private String time;
 
-    public void updateConsultingRoomByLLM(ConsultingRoomEntity consultingRoomEntity) {
+    public void updateConsultingRoomDetails(ConsultingRoomEntity consultingRoomEntity) {
         this.consultingRoomId = consultingRoomEntity.getConsultingRoomId();
         this.tellerId = consultingRoomEntity.getTellerId();
         this.categoryId = consultingRoomEntity.getCategoryId();

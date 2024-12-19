@@ -118,70 +118,76 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.applicationFormRepository.createApplicationFormEntity(categoryId);
 
 
-
-        //second data
         CreateTellerRequestDto createTellerRequestDto2 = CreateTellerRequestDto.builder()
-                .tellerNumber("rladlsdud678")
-                .name("김인영")
+                .tellerNumber("jy5678")
+                .name("정윤희")
                 .position("팀장")
-                .password("800301")
+                .password("password5678")
                 .build();
         this.tellerService.signup(createTellerRequestDto2);
 
         CustomerSignupRequestDto customerSignupRequestDto2 = CustomerSignupRequestDto.builder()
-                .username("suzin123")
-                .name("임수진")
-                .phoneNumber("010-2222-2222")
-                .password("12345")
+                .username("ys7890")
+                .name("윤수민")
+                .phoneNumber("010-2222-3333")
+                .password("password7890")
                 .build();
         this.customerService.signup(customerSignupRequestDto2);
 
-        TellerEntity tellerEntity2 = this.tellerRepository.findTellerByUserName("rladlsdud678").orElseThrow();
-        CustomerEntity customerEntity2 = this.customerRepository.findByUsername("suzin123").orElseThrow();
+        TellerEntity tellerEntity2 = this.tellerRepository.findTellerByUserName("jy5678").orElseThrow();
+        CustomerEntity customerEntity2 = this.customerRepository.findByUsername("ys7890").orElseThrow();
         List<UUID> customerIds2 = new ArrayList<>();
         customerIds2.add(customerEntity2.getId());
 
         List<Map<String, Object>> originText2 = new ArrayList<>();
+
         Map<String, Object> entry3 = new HashMap<>();
         entry3.put("startTime", "00:00:01");
-        entry3.put("endTime", "00:00:05");
-        entry3.put("text", "적금 상품 추천 부탁드립니다.");
+        entry3.put("endTime", "00:00:07");
+        entry3.put("text", "안녕하세요, 적금 상품 추천 부탁드립니다.");
         entry3.put("speaker", "고객");
         originText2.add(entry3);
 
         Map<String, Object> entry4 = new HashMap<>();
-        entry4.put("startTime", "00:00:06");
-        entry4.put("endTime", "00:00:10");
-        entry4.put("text", "네, 몇 가지 상품을 안내드리겠습니다.");
+        entry4.put("startTime", "00:00:08");
+        entry4.put("endTime", "00:00:15");
+        entry4.put("text", "네, 고객님께 적합한 상품을 안내드리겠습니다.");
         entry4.put("speaker", "상담원");
         originText2.add(entry4);
 
+// 새로운 카테고리 추가
         CategoryEntity categoryEntity3 = CategoryEntity.builder()
-                .CategoryName("적금")
+                .CategoryName("적금 추천")
                 .CategoryType(Type.PERSONAL)
                 .build();
         categoryRepository.save(categoryEntity3);
+        UUID categoryId2 = categoryEntity3.getCategoryId();
 
+// 두 번째 상담방 추가
         ConsultingRoomEntity consultingRoomEntity2 = ConsultingRoomEntity.builder()
                 .tellerId(tellerEntity2.getId())
-                .categoryId(categoryEntity2.getCategoryId())
+                .categoryId(categoryId2)
                 .customerIds(customerIds2)
                 .originalText(originText2)
-                .summary("적금 상담 요약입니다.")
+                .summary("적금 상담 요약")
                 .recordChat(new ArrayList<>())
                 .voiceRecordUrl("적금음성기록url")
-                .time("45min")
+                .time("25min")
                 .build();
         this.consultingRoomRepository.save(consultingRoomEntity2);
+        UUID consultingRoomId2 = consultingRoomEntity2.getConsultingRoomId();
 
+// 두 번째 리뷰 추가
         ReviewEntity reviewEntity2 = ReviewEntity.builder()
                 .customerId(customerIds2.get(0))
                 .tellerId(tellerEntity2.getId())
                 .nps(9)
-                .consultingRoomId(consultingRoomEntity2.getConsultingRoomId())
+                .consultingRoomId(consultingRoomId2)
                 .build();
         this.reviewRepository.save(reviewEntity2);
 
-        this.applicationFormRepository.createApplicationFormEntity(categoryEntity2.getCategoryId());
+// 두 번째 ApplicationForm 추가
+        this.applicationFormRepository.createSavingsApplicationFormEntity(categoryId2);
+
     }
 }

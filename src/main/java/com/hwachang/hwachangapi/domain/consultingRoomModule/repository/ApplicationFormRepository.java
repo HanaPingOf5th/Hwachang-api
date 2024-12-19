@@ -55,4 +55,39 @@ public interface ApplicationFormRepository extends JpaRepository<ApplicationForm
             nativeQuery = true)
     void createApplicationFormEntity(@Param("categoryId") UUID categoryId);
 
+    @Modifying
+    @Query(value = "INSERT INTO application_form (application_form_id, category_id, title, application_form) " +
+            "VALUES ('d4c3a9e2-6f45-4d32-9b8b-8e7f2d3c9e8f', " +
+            ":categoryId, " +
+            "'SavingsAccountForm', " +
+            "'{ \"title\": \"적금 신청서\", " +
+            "   \"customerInfo\": { \"name\": \"이수민\", \"residentNumber\": \"654321-7654321\", \"address\": \"강남구 베타코\" }, " +
+            "   \"subjects\": [ " +
+            "     { \"title\": \"고객 상담란\", " +
+            "       \"items\": [ " +
+            "         { \"type\": \"input\", \"description\": \"상품종류\" }, " +
+            "         { \"type\": \"input\", \"description\": \"계약기간\" }, " +
+            "         { \"type\": \"input\", \"description\": \"금액\" }, " +
+            "         { \"type\": \"check\", \"description\": \"금리확정명\" }, " +
+            "         { \"type\": \"check\", \"description\": \"금리연동형\" }, " +
+            "         { \"type\": \"input\", \"description\": \"연금납입 한도\" }, " +
+            "         { \"type\": \"input\", \"description\": \"권유자\" } " +
+            "       ] " +
+            "     }, " +
+            "     { \"title\": \"자동 이체\", " +
+            "       \"items\": [ " +
+            "         { \"type\": \"input\", \"description\": \"월이자 입금 / 해지 입금 계좌\" }, " +
+            "         { \"type\": \"input\", \"description\": \"월 불입 금액 인출 계좌\" }, " +
+            "         { \"type\": \"input\", \"description\": \"이체금액\" }, " +
+            "         { \"type\": \"check\", \"description\": \"이 은행을 사용\" }, " +
+            "         { \"type\": \"check\", \"description\": \"안하면 슬픔\" }, " +
+            "         { \"type\": \"input\", \"description\": \"연금납입 한도\" }, " +
+            "         { \"type\": \"input\", \"description\": \"권유자\" } " +
+            "       ] " +
+            "     } " +
+            "   ] " +
+            " }');",
+            nativeQuery = true)
+    void createSavingsApplicationFormEntity(@Param("categoryId") UUID categoryId);
+
 }

@@ -41,7 +41,7 @@ public class ConsultingRoomEntity extends BaseEntity {
     @Convert(converter = JsonListConverter.class) // JSON 변환 컨버터 적용
     private List<Map<String, Object>> originalText;
 
-    @Column(name="summary")
+    @Column(name="summary", length = 1000)
     private String summary; // 요약을 String 형태로 저장
 
     @Column(name="record_chat")

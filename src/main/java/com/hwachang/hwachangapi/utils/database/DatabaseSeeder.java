@@ -84,7 +84,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(depositCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom1Text)
-                .summary("대출 상담 요약입니다.")
+                .summary("주요주제 : 개인상담과 기업상담은 주제가 다름" +
+                        " - 개인상담은 개인위주로 해주는 상담임" +
+                        " - 기업상담은 기업위주로 해주는 상담임" +
+                        " - 둘은 합칠 수 없음"
+                )
                 .recordChat(new ArrayList<>())
                 .voiceRecordUrl("voice1.url")
                 .time("20min")
@@ -99,7 +103,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(savingsCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom2Text)
-                .summary("적금 상담 요약입니다.")
+                .summary("주요주제 : 예금과 적금은 하는 방법과 효율이 다름" +
+                        " - 예금은 이율이 좋지 않음" +
+                        " - 적금은 이율이 좋음" +
+                        " - 예금과 적금은 다름"
+                )
                 .recordChat(new ArrayList<>())
                 .voiceRecordUrl("voice2.url")
                 .time("30min")

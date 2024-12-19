@@ -46,16 +46,48 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
         // user seeding
-        CreateTellerRequestDto createTellerRequestDto = CreateTellerRequestDto.builder().tellerNumber("hj1234").name("함형주").position("대리").password("12345").build();
+        CreateTellerRequestDto createTellerRequestDto = CreateTellerRequestDto.builder()
+                .tellerNumber("hj1234")
+                .name("함형주")
+                .position("대리")
+                .password("12345")
+                .build();
         this.tellerService.signup(createTellerRequestDto);
-        CustomerSignupRequestDto customerSignupRequestDto = CustomerSignupRequestDto.builder().username("dw1234").name("김동은").phoneNumber("010-1111-1111").password("12345").build();
+        CreateTellerRequestDto createTellerRequestDto2 = CreateTellerRequestDto.builder()
+                .tellerNumber("rladlsdud678")
+                .name("김인영")
+                .position("팀장")
+                .password("800301")
+                .build();
+        this.tellerService.signup(createTellerRequestDto2);
+
+        CustomerSignupRequestDto customerSignupRequestDto = CustomerSignupRequestDto.builder()
+                .username("dw1234")
+                .name("김동은")
+                .phoneNumber("010-1111-1111")
+                .password("12345")
+                .build();
         this.customerService.signup(customerSignupRequestDto);
+        CustomerSignupRequestDto customerSignupRequestDto2 = CustomerSignupRequestDto.builder()
+                .username("sz1234")
+                .name("임수진")
+                .phoneNumber("010-2222-3333")
+                .password("1122")
+                .build();
+        this.customerService.signup(customerSignupRequestDto2);
+
 
         TellerEntity tellerEntity = this.tellerRepository.findTellerByUserName("hj1234").orElseThrow();
         CustomerEntity customerEntity = this.customerRepository.findByUsername("dw1234").orElseThrow();
         List<UUID> customerIds = new ArrayList<>();
         customerIds.add(customerEntity.getId());
         List<Map<String, Object>> originText = new ArrayList<>();
+
+        TellerEntity tellerEntity2 = this.tellerRepository.findTellerByUserName("rladlsdud678").orElseThrow();
+        CustomerEntity customerEntity2 = this.customerRepository.findByUsername("sz1234").orElseThrow();
+        List<UUID> customerIds2 = new ArrayList<>();
+        customerIds2.add(customerEntity2.getId());
+        List<Map<String, Object>> originText2 = new ArrayList<>();
 
         Map<String, Object> entry1 = new HashMap<>();
         entry1.put("startTime", "00:00:01");
@@ -71,76 +103,6 @@ public class DatabaseSeeder implements CommandLineRunner {
         entry2.put("speaker", "상담원");
         originText.add(entry2);
 
-        // Category
-        CategoryEntity categoryEntity1 = CategoryEntity.builder()
-                .CategoryName("예금")
-                .CategoryType(Type.PERSONAL)
-                .build();
-
-        CategoryEntity categoryEntity2 = CategoryEntity.builder()
-                .CategoryName("적금")
-                .CategoryType(Type.PERSONAL)
-                .build();
-
-        categoryRepository.save(categoryEntity1);
-        categoryRepository.save(categoryEntity2);
-
-        List<CategoryDto> categoryDtos = categoryService.getCategories();
-        UUID categoryId = categoryDtos.get(0).getCategoryId();
-
-        // consultingRooms
-        ConsultingRoomEntity consultingRoomEntity = ConsultingRoomEntity.builder()
-                .tellerId(tellerEntity.getId())
-                .categoryId(categoryId)
-                .customerIds(customerIds)
-                .originalText(originText)
-                .summary("요약내용 입니다.")
-                .recordChat(new ArrayList<>())
-                .voiceRecordUrl("음성기록url?")
-                .time("30min")
-                .build();
-
-        this.consultingRoomRepository.save(consultingRoomEntity);
-
-        UUID consultingRoomId = this.consultingRoomRepository.findAll().stream().findFirst().get().getConsultingRoomId();
-
-        // review
-        ReviewEntity reviewEntity = ReviewEntity.builder()
-                .customerId(customerIds.get(0))
-                .tellerId(tellerEntity.getId())
-                .nps(10)
-                .consultingRoomId(consultingRoomId)
-                .build();
-
-        this.reviewRepository.save(reviewEntity);
-
-        // ApplicationForm
-        this.applicationFormRepository.createApplicationFormEntity(categoryId);
-
-
-        CreateTellerRequestDto createTellerRequestDto2 = CreateTellerRequestDto.builder()
-                .tellerNumber("jy5678")
-                .name("정윤희")
-                .position("팀장")
-                .password("password5678")
-                .build();
-        this.tellerService.signup(createTellerRequestDto2);
-
-        CustomerSignupRequestDto customerSignupRequestDto2 = CustomerSignupRequestDto.builder()
-                .username("ys7890")
-                .name("윤수민")
-                .phoneNumber("010-2222-3333")
-                .password("password7890")
-                .build();
-        this.customerService.signup(customerSignupRequestDto2);
-
-        TellerEntity tellerEntity2 = this.tellerRepository.findTellerByUserName("jy5678").orElseThrow();
-        CustomerEntity customerEntity2 = this.customerRepository.findByUsername("ys7890").orElseThrow();
-        List<UUID> customerIds2 = new ArrayList<>();
-        customerIds2.add(customerEntity2.getId());
-
-        List<Map<String, Object>> originText2 = new ArrayList<>();
-
         Map<String, Object> entry3 = new HashMap<>();
         entry3.put("startTime", "00:00:01");
         entry3.put("endTime", "00:00:07");
@@ -155,15 +117,40 @@ public class DatabaseSeeder implements CommandLineRunner {
         entry4.put("speaker", "상담원");
         originText2.add(entry4);
 
-// 새로운 카테고리 추가
-        CategoryEntity categoryEntity3 = CategoryEntity.builder()
-                .CategoryName("적금 추천")
+        // Category
+        CategoryEntity categoryEntity1 = CategoryEntity.builder()
+                .CategoryName("예금")
                 .CategoryType(Type.PERSONAL)
                 .build();
-        categoryRepository.save(categoryEntity3);
-        UUID categoryId2 = categoryEntity3.getCategoryId();
 
-// 두 번째 상담방 추가
+        CategoryEntity categoryEntity2 = CategoryEntity.builder()
+                .CategoryName("적금")
+                .CategoryType(Type.PERSONAL)
+                .build();
+
+
+        categoryRepository.save(categoryEntity1);
+        categoryRepository.save(categoryEntity2);
+
+
+        List<CategoryDto> categoryDtos = categoryService.getCategories();
+        UUID categoryId = categoryDtos.get(0).getCategoryId();
+        UUID categoryId2 = categoryDtos.get(1).getCategoryId();
+
+        // consultingRooms
+        ConsultingRoomEntity consultingRoomEntity = ConsultingRoomEntity.builder()
+                .tellerId(tellerEntity.getId())
+                .categoryId(categoryId)
+                .customerIds(customerIds)
+                .originalText(originText)
+                .summary("요약내용 입니다.")
+                .recordChat(new ArrayList<>())
+                .voiceRecordUrl("음성기록url?")
+                .time("30min")
+                .build();
+        this.consultingRoomRepository.save(consultingRoomEntity);
+        UUID consultingRoomId = this.consultingRoomRepository.findAll().stream().findFirst().get().getConsultingRoomId();
+
         ConsultingRoomEntity consultingRoomEntity2 = ConsultingRoomEntity.builder()
                 .tellerId(tellerEntity2.getId())
                 .categoryId(categoryId2)
@@ -177,7 +164,16 @@ public class DatabaseSeeder implements CommandLineRunner {
         this.consultingRoomRepository.save(consultingRoomEntity2);
         UUID consultingRoomId2 = consultingRoomEntity2.getConsultingRoomId();
 
-// 두 번째 리뷰 추가
+        // review
+        ReviewEntity reviewEntity = ReviewEntity.builder()
+                .customerId(customerIds.get(0))
+                .tellerId(tellerEntity.getId())
+                .nps(10)
+                .consultingRoomId(consultingRoomId)
+                .build();
+
+        this.reviewRepository.save(reviewEntity);
+
         ReviewEntity reviewEntity2 = ReviewEntity.builder()
                 .customerId(customerIds2.get(0))
                 .tellerId(tellerEntity2.getId())
@@ -186,8 +182,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .build();
         this.reviewRepository.save(reviewEntity2);
 
-// 두 번째 ApplicationForm 추가
+        // ApplicationForm
+        this.applicationFormRepository.createApplicationFormEntity(categoryId);
         this.applicationFormRepository.createSavingsApplicationFormEntity(categoryId2);
-
     }
 }

@@ -34,11 +34,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConsultingRoomService {
     private final ReviewRepository reviewRepository;
-    private final ConsultingRoomRepository consultingRoomRepository;
+    private final JpaConsultingRoomRepository consultingRoomRepository;
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private final LLMServicePort llmServicePort;
-    private final JpaConsultingRoomRepository jpaConsultingRoomRepository;
 
     @Transactional
     public ConsultingRoomResponseDto createConsultingRoom(UUID customerId, UUID categoryId) {
@@ -102,7 +101,7 @@ public class ConsultingRoomService {
             String summary = llmServicePort.processAndSummarizeAudio(inputStreamForSummary, voiceUrl);
 
             // Consulting Room Entity 조회
-            ConsultingRoomEntity consultingRoomEntity = jpaConsultingRoomRepository.findById(consultingRoomId).orElseThrow();
+            ConsultingRoomEntity consultingRoomEntity = consultingRoomRepository.findById(consultingRoomId).orElseThrow();
 
             // ConsultingRoom 도메인 객체 생성 및 업데이트
             ConsultingRoom updatedConsultingRoom = ConsultingRoom.create(

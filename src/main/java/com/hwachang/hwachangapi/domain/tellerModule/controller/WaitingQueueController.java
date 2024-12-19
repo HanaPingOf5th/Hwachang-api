@@ -3,6 +3,7 @@ package com.hwachang.hwachangapi.domain.tellerModule.controller;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerStatusRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.WaitingQueueService;
@@ -38,23 +39,16 @@ public class WaitingQueueController {
                 : ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "이미 대기열에 추가된 고객입니다.", null);
     }
 
-    @Operation(summary = "행원 상담 대기실 입장", description = "행원은 상담 대기실로 입장합니다.")
-    @PostMapping("/{typeId}/teller-entrance")
-    public ApiResponse<Void> enterTellerWaitingRoom(@PathVariable int typeId) {
-        String username = getCurrentUsername();
-
-        // 행원 상태 "상담 가능"으로 변경
-        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("AVAILABLE").build();
-        tellerService.updateStatus(statusRequestDto);
-
-        return ApiResponse.onSuccess("행원이 상담 중입니다.", null);
+    @Operation(summary = "대기열 정보 조회", description = "행원은 상담 하러 가기 페이지에서 대기열 정보를 조회합니다.")
+    @GetMapping("/{typeId}/teller-entrance")
+    public ApiResponse<QueueResponseDto> getWaitingQueuesInfo(@PathVariable int typeId) {
+        QueueResponseDto responseDto = waitingQueueService.getWaitingQueuesInfo(typeId);
+        return ApiResponse.onSuccess(responseDto);
     }
 
     @Operation(summary = "행원 상담 후처리 요청", description = "행원이 상담을 마친 후 후처리 작업을 진행 중입니다.")
     @PostMapping("/teller-postprocessing")
     public ApiResponse<Void> requestTellerPostProcessing() {
-        String username = getCurrentUsername();
-
         // 행원 상태 "다른 업무중"으로 변경
         TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("BUSY").build();
         tellerService.updateStatus(statusRequestDto);
@@ -89,8 +83,8 @@ public class WaitingQueueController {
 
     @Operation(summary = "대기열 크기 확인", description = "해당 대기열의 크기를 확인합니다.")
     @GetMapping("/{typeId}/size")
-    public ApiResponse<Integer> getQueueSize(@PathVariable int typeId) {
-        int size = waitingQueueService.getWaitingQueueSize(typeId);
+    public ApiResponse<Long> getQueueSize(@PathVariable int typeId) {
+        Long size = waitingQueueService.getWaitingQueueSize(typeId);
         return ApiResponse.onSuccess(size);
     }
 

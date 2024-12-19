@@ -3,6 +3,10 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
 import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.TypeHandler;
 import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
@@ -21,6 +25,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class WaitingQueueService {
     private final RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisTemplate;
     private final CustomerRepository customerRepository;
+    private final TellerRepository tellerRepository;
     private static final String WAIT_QUEUE_KEY = "waiting_queue:";
     private AtomicLong counter = new AtomicLong(0);
 
@@ -106,13 +111,30 @@ public class WaitingQueueService {
     }
 
     // 대기열 크기 반환
-    public int getWaitingQueueSize(int typeId) {
+    public Long getWaitingQueueSize(int typeId) {
         String key = getQueueKey(typeId);
 
         PriorityQueue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
-        log.info("큐의 크기: {}", (queue != null) ? queue.size() : 0);
+        log.info("큐의 크기: {}", (queue != null) ? queue.size() : 0L);
 
-        return (queue != null) ? queue.size() : 0;
+        return (queue != null) ? (long) queue.size() : 0L;
+    }
+
+    public QueueResponseDto getWaitingQueuesInfo(int typeId) {
+        long waitingTeller = getTellerCountByStatus(Status.AVAILABLE);
+        long calling = getTellerCountByStatus(Status.UNAVAILABLE);
+        long postProcessing = getTellerCountByStatus(Status.BUSY);
+
+        return QueueResponseDto.builder()
+                .waitingCustomer(getWaitingQueueSize(typeId))
+                .waitingTeller(waitingTeller)
+                .calling(calling)
+                .postProcessing(postProcessing)
+                .build();
+    }
+
+    public long getTellerCountByStatus(Status status) {
+        return tellerRepository.countByStatus(status);
     }
 
     // 고유한 Redis 키 생성

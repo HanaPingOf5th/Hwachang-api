@@ -3,9 +3,11 @@ package com.hwachang.hwachangapi.utils.database;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.CategoryEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.DocumentEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ApplicationFormRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.CategoryRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.DocumentRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.CategoryService;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
@@ -34,6 +36,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final CategoryService categoryService;
     private final ConsultingRoomRepository consultingRoomRepository;
     private final ApplicationFormRepository applicationFormRepository;
+    private final DocumentRepository documentRepository;
 
     @Override
     @Transactional
@@ -119,6 +122,34 @@ public class DatabaseSeeder implements CommandLineRunner {
         // Creating application forms for categories
         applicationFormRepository.createApplicationFormEntity(depositCategoryId);
         applicationFormRepository.createSavingsApplicationFormEntity(savingsCategoryId);
+
+        // create document
+
+        documentRepository.save(DocumentEntity.builder()
+                .categoryId(categories.get(0).getCategoryId())
+                .title("예금관련 서류")
+                .path("https://www.naver.com/")
+                .build());
+        documentRepository.save(DocumentEntity.builder()
+                .categoryId(categories.get(0).getCategoryId())
+                .title("예금관련 서류2")
+                .path("https://www.naver.com/")
+                .build());
+        documentRepository.save(DocumentEntity.builder()
+                .categoryId(categories.get(0).getCategoryId())
+                .title("예금관련 서류3")
+                .path("https://www.naver.com/")
+                .build());
+        documentRepository.save(DocumentEntity.builder()
+                .categoryId(categories.get(1).getCategoryId())
+                .title("적금관련 서류1")
+                .path("https://www.naver.com/")
+                .build());
+        documentRepository.save(DocumentEntity.builder()
+                .categoryId(categories.get(1).getCategoryId())
+                .title("적금관련 서류2")
+                .path("https://www.naver.com/")
+                .build());
     }
 
     private Map<String, Object> createTextEntry(String startTime, String endTime, String text, String speaker) {

@@ -21,12 +21,12 @@ public class WaitingRoomController {
     private final RedisTemplate<String, List<String>> redisListTemplate;
     @PostMapping("/prechat")
     public void sendPreChat (@RequestBody PreChatRequestDto preChatRequestDto){
-        ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String userName = userDetails.getUsername();
         String content = preChatRequestDto.getContent();
 
+        ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
         List<String> prechats = valueOperations.get(userName);
         if (prechats == null) {
             prechats = new ArrayList<>();

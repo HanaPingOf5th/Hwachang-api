@@ -62,9 +62,6 @@ public class JwtProvider {
         if(claims.getExpiration().before(new Date()) || claims.getIssuedAt().after(new Date())){
             throw new Exception("Access Token Expired");
         }
-        // error 발생
-        System.out.println("------------------------------------------"+claims.getSubject());
-
         UserDetails userDetails = userDetailsService.loadUserByUsername(claims.getSubject());
         if(!validateUserDetails(userDetails)){
             throw new Exception("User not valid");

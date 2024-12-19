@@ -24,9 +24,14 @@ public class DocumentService {
             DocumentByCategoryDto documentByCategoryDto = DocumentByCategoryDto.builder()
                     .documentId(entity.getDocumentId())
                     .title(entity.getTitle())
+                    .path(entity.getPath())
                     .build();
             documentList.add(documentByCategoryDto);
         });
         return documentList;
+    }
+
+    public List<DocumentByCategoryDto> getAllDocumentsByKeyword(String keyword) {
+        return documentRepository.findAllByKeyword(keyword);
     }
 }

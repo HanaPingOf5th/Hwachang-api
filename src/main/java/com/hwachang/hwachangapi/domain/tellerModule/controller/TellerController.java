@@ -63,4 +63,14 @@ public class TellerController {
         tellerService.updateStatus(statusRequestDto);
         return ApiResponse.onSuccess("상태 변경에 성공하였습니다.", null);
     }
+
+    @Operation(summary = "행원 상담 대기실 입장 후 상태 변경", description = "행원은 상담 대기실로 입장합니다.")
+    @PatchMapping("/status/entrance")
+    public ApiResponse<Void> enterTellerWaitingRoom() {
+        // 행원 상태 "상담 가능"으로 변경
+        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("AVAILABLE").build();
+        tellerService.updateStatus(statusRequestDto);
+
+        return ApiResponse.onSuccess("행원이 상담 가능 상태입니다.", null);
+    }
 }

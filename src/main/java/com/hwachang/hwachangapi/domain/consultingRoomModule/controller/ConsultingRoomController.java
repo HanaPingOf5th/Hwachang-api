@@ -2,6 +2,8 @@ package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CreateReviewDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerStatusRequestDto;
+import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConsultingRoomController {
     private final ConsultingRoomService consultingRoomService;
+    private final TellerService tellerService;
 
     @PostMapping("/end")
     public UUID endConsultingRoom(
@@ -23,6 +26,11 @@ public class ConsultingRoomController {
             @RequestParam List<String> recordChat,
             @RequestParam String voiceUrl,
             @RequestParam String time) {
+
+        // 행원 상태 "상담 가능"으로 변경
+        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("AVAILABLE").build();
+        tellerService.updateStatus(statusRequestDto);
+
         // 상담 종료 후 데이터를 저장
         return consultingRoomService.updateConsultingRoomDetails(
                 consultingRoomId, tellerId, categoryId, customerIds, recordChat, voiceUrl, time);

@@ -10,6 +10,11 @@ import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
 import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
+import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
+import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import com.hwachang.hwachangapi.utils.adapter.LLMServicePort;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +23,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -29,9 +34,37 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ConsultingRoomService {
     private final ReviewRepository reviewRepository;
-    private final CustomerRepository customerRepository;
-    private final LLMServicePort llmServicePort;
     private final JpaConsultingRoomRepository consultingRoomRepository;
+    private final CustomerRepository customerRepository;
+    private final TellerRepository tellerRepository;
+    private final LLMServicePort llmServicePort;
+
+    @Transactional
+    public ConsultingRoomResponseDto createConsultingRoom(UUID customerId, UUID categoryId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        TellerEntity teller = tellerRepository.findTellerByUserName(username)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        CustomerEntity customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
+                .tellerId(teller.getId())
+                .customerIds(List.of(customerId))
+                .categoryId(categoryId)
+                .build();
+        consultingRoomRepository.save(consultingRoom);
+
+        return ConsultingRoomResponseDto.builder()
+                .consultingRoom(consultingRoom.getConsultingRoomId())
+                .customerId(customerId)
+                .userName(customer.getUsername())
+                .categoryId(categoryId)
+                .build();
+    }
 
     @Transactional
     public UUID createReview(CreateReviewDto dto) {

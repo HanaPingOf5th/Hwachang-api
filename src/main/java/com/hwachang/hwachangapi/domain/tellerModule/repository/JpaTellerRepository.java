@@ -1,8 +1,11 @@
 package com.hwachang.hwachangapi.domain.tellerModule.repository;
 
+import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -42,5 +45,14 @@ public class JpaTellerRepository implements TellerRepository {
     @Override
     public void deleteAll(){
         em.createQuery("delete from TellerEntity").executeUpdate();
+    }
+
+    @Override
+    public long countByStatus(Status status) {
+        Long count = em.createQuery(
+                        "select count(t) from TellerEntity t where t.status = :status", Long.class)
+                .setParameter("status", status)
+                .getSingleResult();
+        return count;
     }
 }

@@ -20,8 +20,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 상태 관련 에러
     STATUS_NOT_FOUND(HttpStatus.BAD_REQUEST, "STATUS5001", "존재하지 않는 상태입니다."),
-    INVALID_STATUS(HttpStatus.BAD_REQUEST, "STATUS5002", "유효하지 않은 상태입니다.");
+    INVALID_STATUS(HttpStatus.BAD_REQUEST, "STATUS5002", "유효하지 않은 상태입니다."),
 
+    // 타입 관련 에러
+    INVALID_TYPE(HttpStatus.BAD_REQUEST, "TYPE6001", "유효하지 않은 타입입니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

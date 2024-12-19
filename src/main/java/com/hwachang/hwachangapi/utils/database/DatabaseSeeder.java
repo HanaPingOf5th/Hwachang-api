@@ -116,5 +116,72 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // ApplicationForm
         this.applicationFormRepository.createApplicationFormEntity(categoryId);
+
+
+
+        //second data
+        CreateTellerRequestDto createTellerRequestDto2 = CreateTellerRequestDto.builder()
+                .tellerNumber("rladlsdud678")
+                .name("김인영")
+                .position("팀장")
+                .password("800301")
+                .build();
+        this.tellerService.signup(createTellerRequestDto2);
+
+        CustomerSignupRequestDto customerSignupRequestDto2 = CustomerSignupRequestDto.builder()
+                .username("suzin123")
+                .name("임수진")
+                .phoneNumber("010-2222-2222")
+                .password("12345")
+                .build();
+        this.customerService.signup(customerSignupRequestDto2);
+
+        TellerEntity tellerEntity2 = this.tellerRepository.findTellerByUserName("rladlsdud678").orElseThrow();
+        CustomerEntity customerEntity2 = this.customerRepository.findByUsername("suzin123").orElseThrow();
+        List<UUID> customerIds2 = new ArrayList<>();
+        customerIds2.add(customerEntity2.getId());
+
+        List<Map<String, Object>> originText2 = new ArrayList<>();
+        Map<String, Object> entry3 = new HashMap<>();
+        entry3.put("startTime", "00:00:01");
+        entry3.put("endTime", "00:00:05");
+        entry3.put("text", "적금 상품 추천 부탁드립니다.");
+        entry3.put("speaker", "고객");
+        originText2.add(entry3);
+
+        Map<String, Object> entry4 = new HashMap<>();
+        entry4.put("startTime", "00:00:06");
+        entry4.put("endTime", "00:00:10");
+        entry4.put("text", "네, 몇 가지 상품을 안내드리겠습니다.");
+        entry4.put("speaker", "상담원");
+        originText2.add(entry4);
+
+        CategoryEntity categoryEntity3 = CategoryEntity.builder()
+                .CategoryName("적금")
+                .CategoryType(Type.PERSONAL)
+                .build();
+        categoryRepository.save(categoryEntity3);
+
+        ConsultingRoomEntity consultingRoomEntity2 = ConsultingRoomEntity.builder()
+                .tellerId(tellerEntity2.getId())
+                .categoryId(categoryEntity2.getCategoryId())
+                .customerIds(customerIds2)
+                .originalText(originText2)
+                .summary("적금 상담 요약입니다.")
+                .recordChat(new ArrayList<>())
+                .voiceRecordUrl("적금음성기록url")
+                .time("45min")
+                .build();
+        this.consultingRoomRepository.save(consultingRoomEntity2);
+
+        ReviewEntity reviewEntity2 = ReviewEntity.builder()
+                .customerId(customerIds2.get(0))
+                .tellerId(tellerEntity2.getId())
+                .nps(9)
+                .consultingRoomId(consultingRoomEntity2.getConsultingRoomId())
+                .build();
+        this.reviewRepository.save(reviewEntity2);
+
+        this.applicationFormRepository.createApplicationFormEntity(categoryEntity2.getCategoryId());
     }
 }

@@ -37,7 +37,7 @@ public class ConsultingRoomEntity extends BaseEntity {
     @Convert(converter = UniversalListConverter.class)
     private List<UUID> customerIds;
 
-    @Column(name = "original_text")
+    @Column(name = "original_text", length = 10000)
     @Convert(converter = JsonListConverter.class) // JSON 변환 컨버터 적용
     private List<Map<String, Object>> originalText;
 

@@ -89,8 +89,7 @@ class CustomerServiceTest {
                     .customerIds(List.of(customerId)) // 고객 ID 포함
                     .recordChat(List.of("Chat1", "Chat2"))
                     .time("10:00 AM")
-                    .title("Test Consulting Room " + i)
-                    .voiceRecord("Voice Record")
+                    .voiceRecordUrl("Voice Record")
                     .summary("Summary for Room " + i)
                     .build();
             consultingRoomRepository.save(consultingRoom);

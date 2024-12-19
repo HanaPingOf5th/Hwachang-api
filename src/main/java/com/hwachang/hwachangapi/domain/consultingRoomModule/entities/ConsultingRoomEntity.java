@@ -1,6 +1,7 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.entities;
 import com.hwachang.hwachangapi.utils.annotations.JsonListConverter;
 import com.hwachang.hwachangapi.utils.annotations.StringListConverter;
+import com.hwachang.hwachangapi.utils.annotations.UniversalListConverter;
 import com.hwachang.hwachangapi.utils.database.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "ConsultingRoom")
+@Table(name = "Consulting_room")
 public class ConsultingRoomEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -33,7 +34,7 @@ public class ConsultingRoomEntity extends BaseEntity {
     private UUID categoryId;
 
     @Column(name="customer_list")
-    @Convert(converter = StringListConverter.class)
+    @Convert(converter = UniversalListConverter.class)
     private List<UUID> customerIds;
 
     @Column(name = "original_text")
@@ -44,15 +45,28 @@ public class ConsultingRoomEntity extends BaseEntity {
     private String summary; // 요약을 String 형태로 저장
 
     @Column(name="record_chat")
-    @Convert(converter = StringListConverter.class)
+    @Convert(converter = UniversalListConverter.class)
     private List<String> recordChat;
 
-    @Column(name="voice_record")
-    private String voiceRecord;
+    @Column(name="voice_record_url")
+    private String voiceRecordUrl;
 
     @Column(name="title")
     private String title;
 
     @Column(name="time")
     private String time;
+
+    public void updateConsultingRoomDetails(ConsultingRoomEntity consultingRoomEntity) {
+        this.consultingRoomId = consultingRoomEntity.getConsultingRoomId();
+        this.tellerId = consultingRoomEntity.getTellerId();
+        this.categoryId = consultingRoomEntity.getCategoryId();
+        this.customerIds = consultingRoomEntity.getCustomerIds();
+        this.originalText = consultingRoomEntity.getOriginalText();
+        this.summary = consultingRoomEntity.getSummary();
+        this.recordChat = consultingRoomEntity.getRecordChat();
+        this.voiceRecordUrl = consultingRoomEntity.getVoiceRecordUrl();
+        this.title = consultingRoomEntity.getTitle();
+        this.time = consultingRoomEntity.getTime();
+    }
 }

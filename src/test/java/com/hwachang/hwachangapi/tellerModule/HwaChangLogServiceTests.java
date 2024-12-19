@@ -42,7 +42,7 @@ public class HwaChangLogServiceTests {
                     .recordChat(List.of("Chat1", "Chat2"))
                     .time("Test Time")
                     .title("Test Title")
-                    .voiceRecord("Test Voice")
+                    .voiceRecordUrl("Test Voice")
                     .summary("Test Summary")
                     .build();
             consultingRoomRepository.save(consultingRoom);

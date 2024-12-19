@@ -14,8 +14,13 @@ import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.database.AccountRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,12 +58,12 @@ class CustomerServiceTest {
 
     @Test
     @Transactional
-    void testGetCustomerConsultingRecords() {
+    void testConsultingRecordsAndDetails() {
         // 1. Customer 생성
         CustomerSignupRequestDto customer = CustomerSignupRequestDto.builder()
                 .username("customer01")
                 .password("pass1234")
-                .name("Kim in young")
+                .name("Kim In Young")
                 .phoneNumber("010-1234-5678")
                 .build();
         String customerUsername = customerService.signup(customer);
@@ -68,10 +73,17 @@ class CustomerServiceTest {
 
         UUID customerId = customerEntity.getId();
 
+        // SecurityContext 설정
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        Mockito.when(authentication.getPrincipal()).thenReturn(customerEntity);
+        SecurityContextHolder.setContext(securityContext);
+
         // 2. Teller 생성
         TellerEntity teller = TellerEntity.create(
                 "teller01",
-                "Kim dong eun",
+                "Kim Dong Eun",
                 passwordEncoder.encode("pass1234"),
                 AccountRole.Teller,
                 "Manager",
@@ -85,7 +97,7 @@ class CustomerServiceTest {
         for (int i = 0; i < 3; i++) {
             ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
                     .tellerId(teller.getId())
-                    .categoryId(teller.getId())
+                    .categoryId(UUID.randomUUID())
                     .customerIds(List.of(customerId)) // 고객 ID 포함
                     .recordChat(List.of("Chat1", "Chat2"))
                     .time("10:00 AM")
@@ -95,38 +107,28 @@ class CustomerServiceTest {
             consultingRoomRepository.save(consultingRoom);
         }
 
-        // 4. 테스트 대상 메서드 호출
-        List<ConsultingListDto> consultingRecords = customerService.getCustomerConsultingRecords(customerId, null, null, null);
+        // 4. 상담 기록 목록 가져오기 테스트
+        List<ConsultingListDto> consultingRecords = customerService.getCustomerConsultingRecords(null, null, null);
 
-        // 5. 검증
         assertThat(consultingRecords).hasSize(3);
         consultingRecords.forEach(record -> {
-            assertThat(record.getTellerName()).isEqualTo("Kim dong eun");
+            assertThat(record.getTellerName()).isEqualTo("Kim Dong Eun");
             assertThat(record.getType()).isEqualTo("개인금융"); // Type.PERSONAL의 설명
             assertThat(record.getCategory()).isEqualTo("PERSONAL");
             assertThat(record.getSummary()).contains("Summary for Room");
             assertThat(record.getDate()).isNotNull();
         });
 
-        // 6. 상세보기 테스트 - 첫 번째 상담 기록 상세보기
-        ConsultingListDto firstRecord = consultingRecords.get(0);
-        UUID consultingRoomId = firstRecord.getConsultingRoomId();
-
-        ConsultingDetailsDto consultingDetails = customerService.getConsultingDetails(customerId, consultingRoomId);
-
-        // 7. 검증 - 상세보기
-        assertThat(consultingDetails.getSummary()).isEqualTo("Summary for Room 0");
-        assertThat(consultingDetails.getTellerName()).isEqualTo("Kim dong eun");
-        assertThat(consultingDetails.getType()).isEqualTo("PERSONAL");
-        assertThat(consultingDetails.getCategory()).isEqualTo("개인금융");
-        assertThat(consultingDetails.getDate()).isNotNull();
-        assertThat(consultingDetails.getOriginalText()).isNull(); // 예제에서는 OriginalText 미설정
-
-        // 추가: 모든 상담 기록에 대해 상세보기 테스트 반복 가능
+        // 5. 상담 상세 정보 가져오기 테스트
         consultingRecords.forEach(record -> {
-            ConsultingDetailsDto details = customerService.getConsultingDetails(customerId, record.getConsultingRoomId());
+            ConsultingDetailsDto details = customerService.getConsultingDetails(record.getConsultingRoomId());
             assertThat(details.getSummary()).contains("Summary for Room");
-            assertThat(details.getTellerName()).isEqualTo("Kim dong eun");
+            assertThat(details.getTellerName()).isEqualTo("Kim Dong Eun");
+            assertThat(details.getType()).isEqualTo("PERSONAL");
+            assertThat(details.getCategory()).isEqualTo("개인금융");
+            assertThat(details.getDate()).isNotNull();
+            assertThat(details.getOriginalText()).isNull(); // 예제에서는 OriginalText 미설정
         });
     }
 }
+

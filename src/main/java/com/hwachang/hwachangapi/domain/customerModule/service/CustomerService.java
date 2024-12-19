@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -85,60 +88,67 @@ public class CustomerService {
         System.out.println("로그아웃 성공: 클라이언트에서 토큰을 삭제하세요.");
     }
 
+    // 로그인된 고객의 상담 기록 목록 가져오기
     @Transactional
-    public List<ConsultingListDto> getCustomerConsultingRecords(UUID customerId, String summaryKeyword, String startDate, String endDate) {
+    public List<ConsultingListDto> getCustomerConsultingRecords(String summaryKeyword, String startDate, String endDate) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        CustomerEntity customerEntity = customerRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         LocalDate start = startDate != null ? LocalDate.parse(startDate) : LocalDate.MIN;
         LocalDate end = endDate != null ? LocalDate.parse(endDate) : LocalDate.MAX;
 
         List<ConsultingRoomEntity> allConsultingRooms = consultingRoomRepository.findAll();
 
         List<ConsultingRoomEntity> filteredRooms = allConsultingRooms.stream()
-                .filter(room -> room.getCustomerIds() != null && room.getCustomerIds().contains(customerId))
+                .filter(room -> room.getCustomerIds() != null && room.getCustomerIds().contains(customerEntity.getId()))
                 .filter(room -> {
-                    LocalDate roomDate = room.getCreatedAt().toLocalDate(); // `createdAt`이 LocalDateTime인 경우
+                    LocalDate roomDate = room.getCreatedAt().toLocalDate();
                     return !roomDate.isBefore(start) && !roomDate.isAfter(end);
                 })
                 .filter(room -> summaryKeyword == null || room.getSummary().contains(summaryKeyword))
                 .collect(Collectors.toList());
 
-        // 3. DTO 변환
         return filteredRooms.stream()
                 .map(room -> {
-                    // 상담을 담당한 행원 정보 조회
                     TellerEntity teller = tellerRepository.findById(room.getTellerId())
                             .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
-                    // DTO 생성 및 반환
                     return ConsultingListDto.builder()
-                            .consultingRoomId(room.getConsultingRoomId()) // 상담방 ID 추가
-                            .summary(room.getSummary()) // 상담 요약
-                            .tellerName(teller.getName()) // 행원 이름
-                            .type(teller.getType().getDescription()) // 유형 (개인금융/기업금융)
-                            .category(teller.getType().name()) // 카테고리 (enum key)
-                            .date(room.getCreatedAt()) // 생성 날짜
+                            .consultingRoomId(room.getConsultingRoomId())
+                            .summary(room.getSummary())
+                            .tellerName(teller.getName())
+                            .type(teller.getType().getDescription())
+                            .category(teller.getType().name())
+                            .date(room.getCreatedAt())
                             .build();
                 })
                 .collect(Collectors.toList());
     }
 
-
-
+    // 로그인된 고객의 특정 상담 상세 정보 가져오기
     @Transactional
-    public ConsultingDetailsDto getConsultingDetails(UUID customerId, UUID consultingRoomId) {
-        // 1. 상담방 조회
+    public ConsultingDetailsDto getConsultingDetails(UUID consultingRoomId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        CustomerEntity customerEntity = customerRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
         ConsultingRoomEntity consultingRoom = consultingRoomRepository.findById(consultingRoomId)
                 .orElseThrow(() -> new RuntimeException("상담 방을 찾을 수 없습니다."));
 
-        // 2. 고객 참여 검증
-        if (consultingRoom.getCustomerIds() == null || !consultingRoom.getCustomerIds().contains(customerId)) {
+        if (consultingRoom.getCustomerIds() == null || !consultingRoom.getCustomerIds().contains(customerEntity.getId())) {
             throw new RuntimeException("해당 고객은 이 상담에 참여하지 않았습니다.");
         }
 
-        // 3. 행원 정보 조회
         TellerEntity teller = tellerRepository.findById(consultingRoom.getTellerId())
-                .orElseThrow(() -> new RuntimeException("해당 상담을 담당한 행원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
-        // 4. DTO 생성 및 반환
         return ConsultingDetailsDto.builder()
                 .summary(consultingRoom.getSummary())
                 .originalText(consultingRoom.getOriginalText())
@@ -149,3 +159,4 @@ public class CustomerService {
                 .build();
     }
 }
+

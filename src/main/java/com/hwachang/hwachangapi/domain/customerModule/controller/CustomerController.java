@@ -36,21 +36,19 @@ public class CustomerController {
 
     @GetMapping("/consultings")
     public ResponseEntity<List<ConsultingListDto>> getConsultingRecords(
-            @RequestParam UUID customerId,
             @RequestParam(required = false) String summaryKeyword,
             @RequestParam(required = false) String startDate,
             @RequestParam(required = false) String endDate
     ) {
-        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(customerId, summaryKeyword, startDate, endDate);
+        List<ConsultingListDto> records = customerService.getCustomerConsultingRecords(summaryKeyword, startDate, endDate);
         return ResponseEntity.ok(records);
     }
 
     @GetMapping("/consultings/detail/{consultingRoomId}")
     public ResponseEntity<ConsultingDetailsDto> getConsultingDetail(
-            @PathVariable UUID consultingRoomId,
-            @RequestParam UUID customerId
+            @PathVariable UUID consultingRoomId
     ) {
-        ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(customerId, consultingRoomId);
+        ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(consultingRoomId);
         return ResponseEntity.ok(consultingDetail);
     }
 }

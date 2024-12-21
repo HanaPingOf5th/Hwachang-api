@@ -1,7 +1,9 @@
 package com.hwachang.hwachangapi.domain.customerModule.service;
 
 import com.hwachang.hwachangapi.domain.clovaModule.service.ClovaApiService;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.CategoryEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.CategoryRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.customerModule.dto.*;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
@@ -40,6 +42,7 @@ public class CustomerService {
     private final TellerRepository tellerRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final CategoryRepository categoryRepository;
 
 
     @Transactional
@@ -117,12 +120,15 @@ public class CustomerService {
                     TellerEntity teller = tellerRepository.findById(room.getTellerId())
                             .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
+                    CategoryEntity category = categoryRepository.findById(room.getCategoryId())
+                            .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+
                     return ConsultingListDto.builder()
                             .consultingRoomId(room.getConsultingRoomId())
                             .summary(room.getSummary())
                             .tellerName(teller.getName())
                             .type(teller.getType().getDescription())
-                            .category(teller.getType().name())
+                            .category(category.getCategoryName())
                             .date(room.getCreatedAt())
                             .build();
                 })
@@ -149,14 +155,16 @@ public class CustomerService {
         TellerEntity teller = tellerRepository.findById(consultingRoom.getTellerId())
                 .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
+        CategoryEntity category = categoryRepository.findById(consultingRoom.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+
         return ConsultingDetailsDto.builder()
                 .summary(consultingRoom.getSummary())
                 .originalText(consultingRoom.getOriginalText())
                 .tellerName(teller.getName())
                 .type(teller.getType().name())
-                .category(teller.getType().getDescription())
+                .category(category.getCategoryName())
                 .date(consultingRoom.getCreatedAt())
                 .build();
     }
 }
-

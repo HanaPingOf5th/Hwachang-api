@@ -9,9 +9,9 @@ services:
       - /var/log/:/logs/
     depends_on:
       - redis
+      - db
     networks:
       - api-net
-      -
   db:
     image: postgres:16
     ports:
@@ -23,7 +23,6 @@ services:
       - POSTGRES_PASSWORD=hwachang
     networks:
       - api-net
-
   redis:
     image: redis:latest
     ports:
@@ -33,4 +32,4 @@ services:
 
 networks:
   api-net:
-    name: hwachang-api
+    driver: bridge

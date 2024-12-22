@@ -11,6 +11,18 @@ services:
       - redis
     networks:
       - api-net
+      -
+  db:
+    image: postgres:16
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./postgresql/mount:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=hwachang
+      - POSTGRES_PASSWORD=hwachang
+    networks:
+      - api-net
 
   redis:
     image: redis:latest

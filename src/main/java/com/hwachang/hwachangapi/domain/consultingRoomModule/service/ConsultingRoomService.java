@@ -155,13 +155,16 @@ public class ConsultingRoomService {
                 .filter(room -> room.getCustomerIds() != null && room.getCustomerIds().contains(customerId))
                 .collect(Collectors.toList());
 
+
         return filteredRooms.stream()
                         .map(room->{
                             Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(room.getCategoryId());
+                            Optional<CustomerEntity> customerEntity = this.customerRepository.findById(customerId);
                             return ConsultingListDto.builder()
                                     .consultingRoomId(room.getConsultingRoomId())
                                     .createdAt(room.getCreatedAt())
                                     .title(room.getTitle())
+                                    .customerName(customerEntity.get().getName())
                                     .categoryName(categoryEntity.get().getCategoryName())
                                     .build();
                         }).collect(Collectors.toList());

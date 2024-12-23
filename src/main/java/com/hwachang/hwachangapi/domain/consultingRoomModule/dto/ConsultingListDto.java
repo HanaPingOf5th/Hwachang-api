@@ -14,4 +14,5 @@ public class ConsultingListDto {
     private String title;
     private String categoryName;
     private String summary;
+    private String customerName;
 }

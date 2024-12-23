@@ -30,7 +30,7 @@ public class WaitingQueueService {
     private AtomicLong counter = new AtomicLong(0);
 
     // 고객 대기열 입장 - 고객
-    public boolean addCustomerToQueue(int typeId, UUID categoryId, String userName) {
+    public UUID addCustomerToQueue(int typeId, UUID categoryId, String userName) {
         String key = getQueueKey(typeId);
 
         CustomerEntity customer = customerRepository.findByUsername(userName)
@@ -56,7 +56,7 @@ public class WaitingQueueService {
                 .anyMatch(dto -> dto.getUserName().equals(customerDto.getUserName()));
         if (isDuplicate) {
             log.warn("이미 큐에 추가된 고객입니다: {}", userName);
-            return false;
+            return null;
         }
 
         // 우선순위 큐에 고객 추가
@@ -65,7 +65,7 @@ public class WaitingQueueService {
         // 변경된 큐를 Redis에 저장
         redisTemplate.opsForValue().set(key, queue);
         log.info("{}: {} 고객 추가 (번호표 {})", key, userName, waitingNumber);
-        return true;
+        return customer.getId();
     }
 
     // 다음 고객 처리 - 행원

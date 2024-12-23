@@ -12,6 +12,8 @@ import com.hwachang.hwachangapi.utils.apiPayload.ApiResponse;
 import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,9 +21,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @RequestMapping("/queues")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class WaitingQueueController {
 
     private final WaitingQueueService waitingQueueService;
@@ -30,13 +34,14 @@ public class WaitingQueueController {
     private final NotificationService notificationService;
 
     @Operation(summary = "대기열에 고객 추가", description = "고객은 개인 금융 또는 기업 금융을 선택해 상담 대기실로 입장합니다.")
-    @PostMapping("/{typeId}")
+    @GetMapping("/{typeId}")
     public ApiResponse<Void> addCustomerToQueue(
             @PathVariable int typeId,
             @RequestParam(required = false) UUID categoryId) {
         String username = getCurrentUsername();
-        boolean added = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
-        return added
+        UUID customerId = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
+        notificationService.subscribe(customerId);
+        return customerId != null
                 ? ApiResponse.onSuccess(username + " 고객을 대기열에 추가하였습니다.", null)
                 : ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "이미 대기열에 추가된 고객입니다.", null);
     }
@@ -65,7 +70,6 @@ public class WaitingQueueController {
         ConsultingRoomResponseDto responseDto = consultingRoomService.createConsultingRoom(nextCustomer.getCustomerId(), nextCustomer.getCategoryId());
         UUID nextCustomerId = responseDto.getCustomerId();
 
-        notificationService.subscribe(nextCustomerId);
         notificationService.notify(nextCustomerId, responseDto);
 
         // 행원 상태 "상담 중"으로 변경
@@ -105,6 +109,7 @@ public class WaitingQueueController {
 
         // username 추출
         Object principal = authentication.getPrincipal();
+        log.info("Principal: {}", principal);
         if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
         } else {

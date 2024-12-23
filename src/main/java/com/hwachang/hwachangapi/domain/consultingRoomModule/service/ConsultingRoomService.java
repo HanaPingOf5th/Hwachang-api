@@ -62,6 +62,7 @@ public class ConsultingRoomService {
                 .consultingRoom(consultingRoom.getConsultingRoomId())
                 .customerId(customerId)
                 .userName(customer.getUsername())
+                .tellerId(teller.getId())
                 .categoryId(categoryId)
                 .build();
     }

@@ -5,6 +5,7 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDt
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerStatusRequestDto;
+import com.hwachang.hwachangapi.domain.tellerModule.service.NotificationService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.WaitingQueueService;
 import com.hwachang.hwachangapi.utils.apiPayload.ApiResponse;
@@ -26,6 +27,7 @@ public class WaitingQueueController {
     private final WaitingQueueService waitingQueueService;
     private final TellerService tellerService;
     private final ConsultingRoomService consultingRoomService;
+    private final NotificationService notificationService;
 
     @Operation(summary = "대기열에 고객 추가", description = "고객은 개인 금융 또는 기업 금융을 선택해 상담 대기실로 입장합니다.")
     @PostMapping("/{typeId}")
@@ -57,10 +59,14 @@ public class WaitingQueueController {
     }
 
     @Operation(summary = "다음 고객 처리", description = "대기열에서 다음 고객을 제거하고 처리합니다.")
-    @DeleteMapping("/{typeId}/next")
+    @GetMapping("/{typeId}/next")
     public ApiResponse<ConsultingRoomResponseDto> processNextCustomer(@PathVariable int typeId) {
         QueueCustomerDto nextCustomer = waitingQueueService.processNextCustomer(typeId);
         ConsultingRoomResponseDto responseDto = consultingRoomService.createConsultingRoom(nextCustomer.getCustomerId(), nextCustomer.getCategoryId());
+        UUID nextCustomerId = responseDto.getCustomerId();
+
+        notificationService.subscribe(nextCustomerId);
+        notificationService.notify(nextCustomerId, responseDto);
 
         // 행원 상태 "상담 중"으로 변경
         TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("UNAVAILABLE").build();

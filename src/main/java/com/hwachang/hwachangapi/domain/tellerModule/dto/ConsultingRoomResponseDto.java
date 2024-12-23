@@ -10,6 +10,7 @@ import java.util.UUID;
 public class ConsultingRoomResponseDto {
     private UUID consultingRoom;
     private UUID categoryId;
+    private UUID tellerId;
     private UUID customerId;
     private String userName;
 }

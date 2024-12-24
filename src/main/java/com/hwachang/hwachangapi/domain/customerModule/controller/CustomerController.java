@@ -51,4 +51,10 @@ public class CustomerController {
         ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(consultingRoomId);
         return ResponseEntity.ok(consultingDetail);
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoDto> getUserInfo() {
+        UserInfoDto userInfoDto = customerService.getUserInfo();
+        return ResponseEntity.ok(userInfoDto);
+    }
 }

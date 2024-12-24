@@ -20,16 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -166,5 +164,22 @@ public class CustomerService {
                 .category(category.getCategoryName())
                 .date(consultingRoom.getCreatedAt())
                 .build();
+    }
+
+    public UserInfoDto getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<CustomerEntity> customer = customerRepository.findByUsername(username);
+
+        if (customer.isPresent()) {
+            return UserInfoDto.builder()
+                    .name(customer.get().getName())
+                    .build();
+        } else {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
     }
 }

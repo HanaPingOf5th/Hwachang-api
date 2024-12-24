@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> {
-    Optional<CategoryEntity> findById(UUID categoryId);
-
-    List<CategoryEntity> findAllByCategoryType(Type categoryType);
+public interface CategoryRepository {
+    Optional<CategoryEntity> findById(UUID id);
+    List<CategoryEntity> findAll();
+    void save(CategoryEntity categoryEntity);
 }

@@ -34,6 +34,16 @@ public class ClovaController {
         }
     }
 
+    @PostMapping("recognize-all")
+    public ResponseEntity<String> recognizeAll(@RequestParam String fileUrl) {
+        try{
+            String result = clovaApiService.recognizeAll(fileUrl);
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
+        }
+    }
+
     /**
      * 음성 파일 URL을 텍스트로 변환
      */

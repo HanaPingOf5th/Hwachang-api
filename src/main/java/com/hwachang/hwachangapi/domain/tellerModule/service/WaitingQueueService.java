@@ -5,7 +5,6 @@ import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerReposit
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
-import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
 import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.TypeHandler;
@@ -16,6 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -23,11 +23,12 @@ import java.util.concurrent.atomic.AtomicLong;
 @Log4j2
 @RequiredArgsConstructor
 public class WaitingQueueService {
-    private final RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisTemplate;
+    private final RedisTemplate<String, Queue<QueueCustomerDto>> redisTemplate;
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private static final String WAIT_QUEUE_KEY = "waiting_queue:";
-    private AtomicLong counter = new AtomicLong(0);
+    private AtomicLong personalCounter = new AtomicLong(0);
+    private AtomicLong corporateCounter = new AtomicLong(0);
 
     // 고객 대기열 입장 - 고객
     public boolean addCustomerToQueue(int typeId, UUID categoryId, String userName) {
@@ -36,7 +37,7 @@ public class WaitingQueueService {
         CustomerEntity customer = customerRepository.findByUsername(userName)
                 .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
 
-        Long waitingNumber = counter.incrementAndGet();
+        Long waitingNumber = typeId == 0 ? personalCounter.incrementAndGet() : corporateCounter.incrementAndGet();
 
         QueueCustomerDto customerDto = QueueCustomerDto.builder()
                 .customerId(customer.getId())
@@ -45,8 +46,8 @@ public class WaitingQueueService {
                 .waitingNumber(waitingNumber)
                 .build();
 
-        // Redis에서 우선순위 큐 가져오기
-        PriorityQueue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
+        // Redis에서 큐 가져오기
+        Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
         if (queue == null) {
             queue = new PriorityQueue<>();
         }
@@ -59,7 +60,7 @@ public class WaitingQueueService {
             return false;
         }
 
-        // 우선순위 큐에 고객 추가
+        // 큐에 고객 추가
         queue.add(customerDto);
 
         // 변경된 큐를 Redis에 저장
@@ -72,14 +73,14 @@ public class WaitingQueueService {
     public QueueCustomerDto processNextCustomer(int typeId) {
         String key = getQueueKey(typeId);
 
-        // Redis에서 우선순위 큐 가져오기
-        PriorityQueue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
+        // Redis에 큐 가져오기
+        Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
         if (queue == null || queue.isEmpty()) {
             log.warn("{}: 큐가 없거나 비어 있습니다.", key);
             return null;
         }
 
-        // 우선순위 큐에서 가장 높은 우선순위의 고객 제거
+        // 큐에서 가장 높은 우선순위의 고객 제거
         QueueCustomerDto nextCustomer = queue.poll();
 
         // 변경된 큐를 Redis에 저장
@@ -93,8 +94,8 @@ public class WaitingQueueService {
     public boolean removeCustomerFromQueue(String userName, int typeId) {
         String key = getQueueKey(typeId);
 
-        // Redis에서 우선순위 큐 가져오기
-        PriorityQueue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
+        // Redis에서 큐 가져오기
+        Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
         if (queue == null || queue.isEmpty()) {
             log.warn("{}: 큐가 없거나 비어 있습니다.", key);
             return false;
@@ -114,7 +115,7 @@ public class WaitingQueueService {
     public Long getWaitingQueueSize(int typeId) {
         String key = getQueueKey(typeId);
 
-        PriorityQueue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
+        Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
         log.info("큐의 크기: {}", (queue != null) ? queue.size() : 0L);
 
         return (queue != null) ? (long) queue.size() : 0L;

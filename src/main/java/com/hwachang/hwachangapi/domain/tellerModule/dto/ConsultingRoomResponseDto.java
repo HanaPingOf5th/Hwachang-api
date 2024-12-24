@@ -11,5 +11,6 @@ public class ConsultingRoomResponseDto {
     private UUID consultingRoom;
     private UUID categoryId;
     private UUID customerId;
+    private UUID tellerId;
     private String userName;
 }

@@ -61,6 +61,7 @@ public class ConsultingRoomService {
         return ConsultingRoomResponseDto.builder()
                 .consultingRoom(consultingRoom.getConsultingRoomId())
                 .customerId(customerId)
+                .tellerId(teller.getId())
                 .userName(customer.getUsername())
                 .categoryId(categoryId)
                 .build();

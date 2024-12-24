@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Queue;
 import java.util.UUID;
 
 @RestController
@@ -86,6 +87,14 @@ public class WaitingQueueController {
     public ApiResponse<Long> getQueueSize(@PathVariable int typeId) {
         Long size = waitingQueueService.getWaitingQueueSize(typeId);
         return ApiResponse.onSuccess(size);
+    }
+
+    @Operation(summary = "나의 상담방 찾기", description = "고객은 행원과 매칭이 되었는지 현황을 조회합니다.")
+    @GetMapping("/consulting-room")
+    public ApiResponse<UUID> getMyConsultingRoom() {
+        String userName = getCurrentUsername();
+        UUID consultingRoomId = consultingRoomService.getCustomerConsultingRoom(userName);
+        return ApiResponse.onSuccess(consultingRoomId);
     }
 
     // 현재 로그인된 사용자 가져오기

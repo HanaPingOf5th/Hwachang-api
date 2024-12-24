@@ -16,6 +16,7 @@ import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
 import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.TellerRepository;
 import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
@@ -29,13 +30,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -169,5 +167,12 @@ public class ConsultingRoomService {
                                     .categoryName(categoryEntity.get().getCategoryName())
                                     .build();
                         }).collect(Collectors.toList());
+    }
+
+    public UUID getCustomerConsultingRoom(String userName) {
+        CustomerEntity customer = customerRepository.findByUsername(userName)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        return consultingRoomRepository.findByCustomerId(customer.getId()).orElseThrow();
     }
 }

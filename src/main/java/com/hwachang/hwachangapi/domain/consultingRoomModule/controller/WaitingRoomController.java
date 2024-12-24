@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequestMapping("/waiting-room")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class WaitingRoomController {
     private final RedisTemplate<String, List<String>> redisListTemplate;
     @PostMapping("/prechat")

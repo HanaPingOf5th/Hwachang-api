@@ -34,11 +34,12 @@ public class WaitingQueueController {
     private final NotificationService notificationService;
 
     @Operation(summary = "대기열에 고객 추가", description = "고객은 개인 금융 또는 기업 금융을 선택해 상담 대기실로 입장합니다.")
-    @GetMapping("/{typeId}")
+    @GetMapping(value = "/{typeId}/{username}", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ApiResponse<Void> addCustomerToQueue(
             @PathVariable int typeId,
+            @PathVariable String username,
             @RequestParam(required = false) UUID categoryId) {
-        String username = getCurrentUsername();
+//        String username = getCurrentUsername();
         UUID customerId = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
         notificationService.subscribe(customerId);
         return customerId != null

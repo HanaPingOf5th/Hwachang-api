@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.PriorityQueue;
 import java.util.UUID;
@@ -22,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Service
 @Log4j2
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class WaitingQueueService {
     private final RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisTemplate;
     private final CustomerRepository customerRepository;

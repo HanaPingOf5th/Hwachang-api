@@ -1,7 +1,9 @@
 package com.hwachang.hwachangapi.domain.tellerModule.service;
 
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.repository.EmitterRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,8 @@ public class NotificationService {
 
     public SseEmitter subscribe(UUID customerId){
         SseEmitter emitter = createEmitter(customerId);
+        emitter.onCompletion(() -> System.out.println("SSE connection completed for customer: " + customerId));
+        emitter.onTimeout(() -> System.out.println("SSE connection timed out for customer: " + customerId));
 
         sendToClient(customerId, "EventStream Created. [customerId=" + customerId + "]");
         return emitter;
@@ -37,7 +41,13 @@ public class NotificationService {
         SseEmitter emitter = emitterRepository.get(customerId);
         if(emitter != null){
             try{
-                emitter.send(SseEmitter.event().id(String.valueOf(customerId)).name("sse").data(data));
+                ObjectMapper objectMapper = new ObjectMapper();
+                String jsonMessage = objectMapper.writeValueAsString(data);
+
+                emitter.send(SseEmitter.event()
+                        .id(String.valueOf(customerId))
+                        .name("sse")
+                        .data(jsonMessage));
                 System.out.println("성공!");
             }catch (IOException e){
                 emitterRepository.deleteById(customerId);

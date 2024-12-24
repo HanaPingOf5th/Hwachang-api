@@ -1,6 +1,5 @@
 package com.hwachang.hwachangapi.utils.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -11,11 +10,10 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.List;
-import java.util.PriorityQueue;
+import java.util.Queue;
 
 @EnableCaching
 @Configuration
@@ -60,8 +58,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisQueueTemplate() {
-        RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, Queue<QueueCustomerDto>> redisQueueTemplate() {
+        RedisTemplate<String, Queue<QueueCustomerDto>> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
 

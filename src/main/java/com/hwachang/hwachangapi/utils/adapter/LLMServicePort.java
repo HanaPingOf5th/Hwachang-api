@@ -10,6 +10,12 @@ import java.util.Map;
 public interface LLMServicePort {
 
     /**
+     * 음성 파일 텍스트 원본
+     */
+
+    String transferAudioToTextAll(InputStream fileStream, String fileName) throws IOException;
+
+    /**
      * 음성 파일을 텍스트로 변환
      */
     List<Map<String, Object>> transferAudioToText(InputStream fileStream, String fileName) throws IOException;

@@ -21,6 +21,12 @@ public class ClovaAdapter implements LLMServicePort {
     }
 
     @Override
+    public String transferAudioToTextAll(InputStream fileStream, String fileName) throws IOException {
+        // 음성 파일을 JSON 형태의 전체 응답으로 반환
+        return clovaSpeechProvider.recognizeFile(fileStream, fileName);
+    }
+
+    @Override
     public List<Map<String, Object>> transferAudioToText(InputStream fileStream, String fileName) throws IOException {
         List<JsonObject> jsonObjects = clovaSpeechProvider.parseSegments(fileStream, fileName);
 

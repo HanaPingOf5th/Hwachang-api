@@ -1,6 +1,7 @@
 package com.hwachang.hwachangapi.utils.database;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CategoryDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CreateReviewDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.CategoryEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.DocumentEntity;
@@ -9,9 +10,13 @@ import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.CategoryR
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.DocumentRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.CategoryService;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.service.DocumentService;
 import com.hwachang.hwachangapi.domain.customerModule.dto.CustomerSignupRequestDto;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
+import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
+import com.hwachang.hwachangapi.domain.customerModule.repository.ReviewRepository;
 import com.hwachang.hwachangapi.domain.customerModule.service.CustomerService;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.CreateTellerRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
@@ -37,6 +42,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final ConsultingRoomRepository consultingRoomRepository;
     private final ApplicationFormRepository applicationFormRepository;
     private final DocumentRepository documentRepository;
+    private final ReviewRepository reviewRepository;
 
     @Override
     @Transactional
@@ -177,6 +183,24 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .title("적금관련 서류2")
                 .path("https://www.naver.com/")
                 .build());
+
+        //create review
+        ReviewEntity reviewEntity1 = ReviewEntity.builder()
+                .customerId(customerEntity.getId())
+                .tellerId(tellerEntity.getId())
+                .nps(10)
+                .content("훌륭함")
+                .consultingRoomId(consultingRoom1.getConsultingRoomId())
+                .build();
+        ReviewEntity reviewEntity2 = ReviewEntity.builder()
+                .customerId(customerEntity.getId())
+                .tellerId(tellerEntity.getId())
+                .nps(6)
+                .content("부족함")
+                .consultingRoomId(consultingRoom1.getConsultingRoomId())
+                .build();
+        reviewRepository.save(reviewEntity1);
+        reviewRepository.save(reviewEntity2);
     }
 
     private void saveCategory(String name, Boolean isPersonal) {

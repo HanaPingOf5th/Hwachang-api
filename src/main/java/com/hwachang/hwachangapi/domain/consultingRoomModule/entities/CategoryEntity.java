@@ -22,12 +22,13 @@ public class CategoryEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "category_id")
-    public UUID CategoryId;
+    public UUID categoryId;
 
     @Column(name = "category_name")
-    public String CategoryName;
+    public String categoryName;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "category_type")
-    public Type CategoryType;
+    public Type categoryType;
 
 }

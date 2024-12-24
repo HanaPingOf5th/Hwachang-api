@@ -69,12 +69,12 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         // Creating categories
         CategoryEntity depositCategory = CategoryEntity.builder()
-                .CategoryName("예금")
-                .CategoryType(Type.PERSONAL)
+                .categoryName("예금")
+                .categoryType(Type.PERSONAL)
                 .build();
         CategoryEntity savingsCategory = CategoryEntity.builder()
-                .CategoryName("적금")
-                .CategoryType(Type.PERSONAL)
+                .categoryName("적금")
+                .categoryType(Type.PERSONAL)
                 .build();
         categoryRepository.save(depositCategory);
         categoryRepository.save(savingsCategory);
@@ -205,8 +205,8 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     private void saveCategory(String name, Boolean isPersonal) {
         CategoryEntity category = CategoryEntity.builder()
-                .CategoryName(name)
-                .CategoryType(isPersonal?Type.PERSONAL:Type.CORPORATE)
+                .categoryName(name)
+                .categoryType(isPersonal?Type.PERSONAL:Type.CORPORATE)
                 .build();
         categoryRepository.save(category);
     }

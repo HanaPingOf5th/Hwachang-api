@@ -12,4 +12,6 @@ public interface CategoryRepository {
     Optional<CategoryEntity> findById(UUID id);
     List<CategoryEntity> findAll();
     void save(CategoryEntity categoryEntity);
+
+    List<CategoryEntity> findAllByCategoryType(Type categoryType);
 }

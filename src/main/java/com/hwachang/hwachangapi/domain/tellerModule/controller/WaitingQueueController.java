@@ -5,12 +5,17 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDt
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerStatusRequestDto;
+import com.hwachang.hwachangapi.domain.tellerModule.repository.EmitterRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.service.NotificationService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
 import com.hwachang.hwachangapi.domain.tellerModule.service.WaitingQueueService;
 import com.hwachang.hwachangapi.utils.apiPayload.ApiResponse;
 import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,23 +23,31 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Log4j2
 @RestController
 @RequestMapping("/queues")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class WaitingQueueController {
 
     private final WaitingQueueService waitingQueueService;
     private final TellerService tellerService;
     private final ConsultingRoomService consultingRoomService;
+    private final NotificationService notificationService;
+    private final EmitterRepository emitterRepository;
 
     @Operation(summary = "대기열에 고객 추가", description = "고객은 개인 금융 또는 기업 금융을 선택해 상담 대기실로 입장합니다.")
-    @PostMapping("/{typeId}")
+    @GetMapping(value = "/{typeId}")
     public ApiResponse<Void> addCustomerToQueue(
             @PathVariable int typeId,
             @RequestParam(required = false) UUID categoryId) {
         String username = getCurrentUsername();
-        boolean added = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
-        return added
+        UUID customerId = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
+//        notificationService.subscribe(username);
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+//        notificationService.subscribe(customerId);
+        return customerId != null
                 ? ApiResponse.onSuccess(username + " 고객을 대기열에 추가하였습니다.", null)
                 : ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "이미 대기열에 추가된 고객입니다.", null);
     }
@@ -61,6 +74,11 @@ public class WaitingQueueController {
     public ApiResponse<ConsultingRoomResponseDto> processNextCustomer(@PathVariable int typeId) {
         QueueCustomerDto nextCustomer = waitingQueueService.processNextCustomer(typeId);
         ConsultingRoomResponseDto responseDto = consultingRoomService.createConsultingRoom(nextCustomer.getCustomerId(), nextCustomer.getCategoryId());
+        String username = responseDto.getUserName();
+
+//        notificationService.notify(username, responseDto);
+
+        waitingQueueService.createConsultingRoomInfo(responseDto.getCustomerId(), responseDto);
 
         // 행원 상태 "상담 중"으로 변경
         TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("UNAVAILABLE").build();
@@ -69,6 +87,16 @@ public class WaitingQueueController {
         return nextCustomer != null
                 ? ApiResponse.onSuccess(responseDto)
                 : ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "대기열에 처리할 고객이 없습니다.", null);
+    }
+
+    @Operation(summary = "나의 상담방 찾기", description = "고객은 행원과 매칭이 되었는지 현황을 조회합니다.")
+    @GetMapping("/consulting-room")
+    public ApiResponse<ConsultingRoomResponseDto> getConsultingRoomInfo() {
+        String userName = getCurrentUsername();
+        ConsultingRoomResponseDto responseDto = waitingQueueService.getConsultingRoomInfo(userName);
+        return responseDto != null
+                ? ApiResponse.onSuccess(responseDto)
+                : ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(),"아직 상담실이 배정되지 않았습니다.", null);
     }
 
     @Operation(summary = "대기열에서 나가기", description = "현재 사용자가 대기열에서 자신을 제거합니다.")
@@ -99,6 +127,7 @@ public class WaitingQueueController {
 
         // username 추출
         Object principal = authentication.getPrincipal();
+        log.info("Principal: {}", principal);
         if (principal instanceof UserDetails) {
             return ((UserDetails) principal).getUsername();
         } else {

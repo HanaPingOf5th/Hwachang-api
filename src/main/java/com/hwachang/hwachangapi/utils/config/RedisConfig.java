@@ -1,5 +1,7 @@
 package com.hwachang.hwachangapi.utils.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
@@ -13,6 +15,8 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.List;
+import java.util.PriorityQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.Queue;
 
 @EnableCaching
@@ -66,6 +70,15 @@ public class RedisConfig {
         // PriorityQueue를 직렬화할 때 적절한 Serializer를 설정
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, ConsultingRoomResponseDto> redisConsultingTemplate() {
+        RedisTemplate<String, ConsultingRoomResponseDto> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         return redisTemplate;
     }
 }

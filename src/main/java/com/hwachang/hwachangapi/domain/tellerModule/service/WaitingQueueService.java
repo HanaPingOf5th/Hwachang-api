@@ -2,6 +2,7 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
@@ -11,31 +12,36 @@ import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.TypeHandler;
 import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 @Log4j2
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000")
 public class WaitingQueueService {
+    private final RedisTemplate<String, ConsultingRoomResponseDto> consultingRoomRedisTemplate;
     private final RedisTemplate<String, Queue<QueueCustomerDto>> redisTemplate;
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private static final String WAIT_QUEUE_KEY = "waiting_queue:";
+    private static final String CONSULTING_KEY = ":consulting";
     private AtomicLong personalCounter = new AtomicLong(0);
     private AtomicLong corporateCounter = new AtomicLong(0);
 
     // 고객 대기열 입장 - 고객
-    public boolean addCustomerToQueue(int typeId, UUID categoryId, String userName) {
+    public UUID addCustomerToQueue(int typeId, UUID categoryId, String userName) {
         String key = getQueueKey(typeId);
 
         CustomerEntity customer = customerRepository.findByUsername(userName)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.CUSTOMER_NOT_FOUND));
 
         Long waitingNumber = typeId == 0 ? personalCounter.incrementAndGet() : corporateCounter.incrementAndGet();
 
@@ -57,16 +63,17 @@ public class WaitingQueueService {
                 .anyMatch(dto -> dto.getUserName().equals(customerDto.getUserName()));
         if (isDuplicate) {
             log.warn("이미 큐에 추가된 고객입니다: {}", userName);
-            return false;
+            return null;
         }
 
         // 큐에 고객 추가
         queue.add(customerDto);
 
         // 변경된 큐를 Redis에 저장
-        redisTemplate.opsForValue().set(key, queue);
+        Long expiredTime = 600L;
+        redisTemplate.opsForValue().set(key, queue, expiredTime, TimeUnit.SECONDS);
         log.info("{}: {} 고객 추가 (번호표 {})", key, userName, waitingNumber);
-        return true;
+        return customer.getId();
     }
 
     // 다음 고객 처리 - 행원
@@ -111,11 +118,33 @@ public class WaitingQueueService {
         return removed;
     }
 
+    // 고객에게 제공할 상담실 정보 생성
+    public String createConsultingRoomInfo(UUID customerId, ConsultingRoomResponseDto dto) {
+        String key = getConsultingQueueKey(customerId);
+        Long expiredTime = 600L;
+        consultingRoomRedisTemplate.opsForValue().set(key, dto, expiredTime, TimeUnit.SECONDS);
+        log.info("{}: {}", key, dto);
+        return key;
+    }
+
+    // 고객이 필요한 정보
+    public ConsultingRoomResponseDto getConsultingRoomInfo(String userName) {
+        CustomerEntity customerEntity = customerRepository.findByUsername(userName)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.CUSTOMER_NOT_FOUND));
+
+        UUID customerId = customerEntity.getId();
+        String key = customerId + CONSULTING_KEY;
+
+        ValueOperations<String, ConsultingRoomResponseDto> valueOperations = consultingRoomRedisTemplate.opsForValue();
+        return valueOperations.get(key);
+    }
+
     // 대기열 크기 반환
     public Long getWaitingQueueSize(int typeId) {
         String key = getQueueKey(typeId);
 
         Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
+        log.info(queue.toString());
         log.info("큐의 크기: {}", (queue != null) ? queue.size() : 0L);
 
         return (queue != null) ? (long) queue.size() : 0L;
@@ -146,5 +175,9 @@ public class WaitingQueueService {
             throw new TypeHandler(ErrorStatus.INVALID_TYPE);
         }
         return WAIT_QUEUE_KEY + suffix;
+    }
+
+    private String getConsultingQueueKey(UUID customerId) {
+        return customerId + CONSULTING_KEY;
     }
 }

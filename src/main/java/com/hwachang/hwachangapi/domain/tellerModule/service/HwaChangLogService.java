@@ -118,7 +118,7 @@ public class HwaChangLogService {
         String username = userDetails.getUsername();
 
         TellerEntity teller = tellerRepository.findTellerByUserName(username)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.TELLER_NOT_FOUND));
 
         int avgScore = reviewRepository.findAverageNpsByTellerId(teller.getId());
         int sumCustomer = reviewRepository.countCustomersByTellerId(teller.getId());
@@ -142,7 +142,7 @@ public class HwaChangLogService {
         String username = userDetails.getUsername();
 
         TellerEntity teller = tellerRepository.findTellerByUserName(username)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.TELLER_NOT_FOUND));
 
         List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
 

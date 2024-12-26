@@ -34,6 +34,7 @@ public class WaitingQueueService {
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private static final String WAIT_QUEUE_KEY = "waiting_queue:";
+    private static final String CONSULTING_KEY = ":consulting";
     private AtomicLong personalCounter = new AtomicLong(0);
     private AtomicLong corporateCounter = new AtomicLong(0);
 
@@ -134,9 +135,10 @@ public class WaitingQueueService {
                 .orElseThrow(() -> new UserHandler(ErrorStatus.CUSTOMER_NOT_FOUND));
 
         UUID customerId = customerEntity.getId();
+        String key = customerId + CONSULTING_KEY;
 
         ValueOperations<String, ConsultingRoomResponseDto> valueOperations = consultingRoomRedisTemplate.opsForValue();
-        return valueOperations.get(String.valueOf(customerId));
+        return valueOperations.get(key);
     }
 
     // 대기열 크기 반환
@@ -178,6 +180,6 @@ public class WaitingQueueService {
     }
 
     private String getConsultingQueueKey(UUID customerId) {
-        return String.valueOf(customerId);
+        return customerId + CONSULTING_KEY;
     }
 }

@@ -182,4 +182,13 @@ public class CustomerService {
         }
 
     }
+
+    @Transactional
+    public CustomerUsernameCheckResponseDto checkUsernameAvailability(CustomerUsernameCheckRequestDto request) {
+        boolean exists = customerRepository.findByUsername(request.getUsername()).isPresent();
+        return CustomerUsernameCheckResponseDto.builder()
+                .isAvailable(!exists)
+                .message(exists ? "이미 존재하는 아이디입니다." : "사용 가능한 아이디입니다.")
+                .build();
+    }
 }

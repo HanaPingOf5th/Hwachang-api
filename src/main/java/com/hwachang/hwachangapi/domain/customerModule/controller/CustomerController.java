@@ -57,4 +57,11 @@ public class CustomerController {
         UserInfoDto userInfoDto = customerService.getUserInfo();
         return ResponseEntity.ok(userInfoDto);
     }
+
+    @PostMapping("/check-username")
+    public ResponseEntity<CustomerUsernameCheckResponseDto> checkUsernameAvailability(
+            @RequestBody CustomerUsernameCheckRequestDto requestDto) {
+        CustomerUsernameCheckResponseDto response = customerService.checkUsernameAvailability(requestDto);
+        return ResponseEntity.ok(response);
+    }
 }

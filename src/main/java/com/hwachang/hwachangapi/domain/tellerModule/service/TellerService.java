@@ -70,7 +70,7 @@ public class TellerService {
         String username = userDetails.getUsername();
 
         TellerEntity teller = tellerRepository.findTellerByUserName(username)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.TELLER_NOT_FOUND));
 
         return TellerInfoResponseDto.builder()
                 .name(teller.getName())
@@ -88,7 +88,7 @@ public class TellerService {
         String username = userDetails.getUsername();
 
         TellerEntity teller = tellerRepository.findTellerByUserName(username)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.TELLER_NOT_FOUND));
 
         try {
             teller.changeStatus(Status.valueOf(requestDto.getStatus()));

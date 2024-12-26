@@ -55,10 +55,10 @@ public class ConsultingRoomService {
         String username = userDetails.getUsername();
 
         TellerEntity teller = tellerRepository.findTellerByUserName(username)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.TELLER_NOT_FOUND));
 
         CustomerEntity customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.CUSTOMER_NOT_FOUND));
 
         ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
                 .tellerId(teller.getId())

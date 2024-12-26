@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @RequiredArgsConstructor
 @CrossOrigin(origins = "http://localhost:3000")
 public class WaitingQueueService {
-    private final RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisTemplate;
     private final RedisTemplate<String, ConsultingRoomResponseDto> consultingRoomRedisTemplate;
     private final RedisTemplate<String, Queue<QueueCustomerDto>> redisTemplate;
     private final CustomerRepository customerRepository;
@@ -43,7 +42,7 @@ public class WaitingQueueService {
         String key = getQueueKey(typeId);
 
         CustomerEntity customer = customerRepository.findByUsername(userName)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.CUSTOMER_NOT_FOUND));
 
         Long waitingNumber = typeId == 0 ? personalCounter.incrementAndGet() : corporateCounter.incrementAndGet();
 
@@ -72,7 +71,8 @@ public class WaitingQueueService {
         queue.add(customerDto);
 
         // 변경된 큐를 Redis에 저장
-        redisTemplate.opsForValue().set(key, queue);
+        Long expiredTime = 600L;
+        redisTemplate.opsForValue().set(key, queue, expiredTime, TimeUnit.SECONDS);
         log.info("{}: {} 고객 추가 (번호표 {})", key, userName, waitingNumber);
         return customer.getId();
     }
@@ -131,7 +131,7 @@ public class WaitingQueueService {
     // 고객이 필요한 정보
     public ConsultingRoomResponseDto getConsultingRoomInfo(String userName) {
         CustomerEntity customerEntity = customerRepository.findByUsername(userName)
-                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new UserHandler(ErrorStatus.CUSTOMER_NOT_FOUND));
 
         UUID customerId = customerEntity.getId();
 
@@ -144,6 +144,7 @@ public class WaitingQueueService {
         String key = getQueueKey(typeId);
 
         Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
+        log.info(queue.toString());
         log.info("큐의 크기: {}", (queue != null) ? queue.size() : 0L);
 
         return (queue != null) ? (long) queue.size() : 0L;

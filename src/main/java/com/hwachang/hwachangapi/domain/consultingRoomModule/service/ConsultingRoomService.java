@@ -1,10 +1,15 @@
 package com.hwachang.hwachangapi.domain.consultingRoomModule.service;
 
 import com.hwachang.hwachangapi.domain.clovaModule.utils.FileUtils;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.controller.ConsultingRoomController;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ConsultingRoom;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CategoryDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.ConsultingListDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CreateReviewDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.CategoryEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
 
+import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.CategoryRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.JpaConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.entities.ReviewEntity;
@@ -23,12 +28,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +46,7 @@ public class ConsultingRoomService {
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private final LLMServicePort llmServicePort;
+    private final CategoryRepository categoryRepository;
 
     @Transactional
     public ConsultingRoomResponseDto createConsultingRoom(UUID customerId, UUID categoryId) {
@@ -61,6 +70,7 @@ public class ConsultingRoomService {
         return ConsultingRoomResponseDto.builder()
                 .consultingRoomId(consultingRoom.getConsultingRoomId())
                 .customerId(customerId)
+                .tellerId(teller.getId())
                 .userName(customer.getUsername())
                 .tellerId(teller.getId())
                 .categoryId(categoryId)
@@ -139,5 +149,26 @@ public class ConsultingRoomService {
             throw new RuntimeException("예상치 못한 오류 발생", e);
         }
     }
+    @Transactional
+    public List<ConsultingListDto> getConsultingList(UUID customerId) {
+        List<ConsultingRoomEntity> allConsultingRooms = consultingRoomRepository.findAll();
+        System.out.println(allConsultingRooms.get(0).getConsultingRoomId());
+        List<ConsultingRoomEntity> filteredRooms = allConsultingRooms.stream()
+                .filter(room -> room.getCustomerIds() != null && room.getCustomerIds().contains(customerId))
+                .collect(Collectors.toList());
 
+
+        return filteredRooms.stream()
+                        .map(room->{
+                            Optional<CategoryEntity> categoryEntity = this.categoryRepository.findById(room.getCategoryId());
+                            Optional<CustomerEntity> customerEntity = this.customerRepository.findById(customerId);
+                            return ConsultingListDto.builder()
+                                    .consultingRoomId(room.getConsultingRoomId())
+                                    .createdAt(room.getCreatedAt())
+                                    .title(room.getTitle())
+                                    .customerName(customerEntity.get().getName())
+                                    .categoryName(categoryEntity.get().getCategoryName())
+                                    .build();
+                        }).collect(Collectors.toList());
+    }
 }

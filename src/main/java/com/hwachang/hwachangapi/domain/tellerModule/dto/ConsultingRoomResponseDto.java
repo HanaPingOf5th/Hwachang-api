@@ -14,6 +14,7 @@ public class ConsultingRoomResponseDto {
     private UUID categoryId;
     private UUID tellerId;
     private UUID customerId;
+    private UUID tellerId;
     private String userName;
 
     @JsonCreator

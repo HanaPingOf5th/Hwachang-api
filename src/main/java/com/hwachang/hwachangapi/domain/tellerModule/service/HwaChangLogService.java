@@ -5,6 +5,7 @@ import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.DailyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.LogData;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.MonthlyLog;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.HwaChangLog.WeeklyLog;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.NpsDataDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerMainResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerReviewResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.TellerEntity;
@@ -19,8 +20,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,20 +66,35 @@ public class HwaChangLogService {
 
     public LogData readGraphData(TellerEntity teller) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime yesterday = now.minusDays(1);
-        LocalDateTime twoDaysAgo = now.minusDays(2);
-        LocalDateTime oneWeekAgo = now.minusWeeks(1);
-        LocalDateTime twoWeeksAgo = now.minusWeeks(2);
-        LocalDateTime oneMonthAgo = now.minusMonths(1);
-        LocalDateTime twoMonthsAgo = now.minusMonths(2);
+
+        // 오늘
+        LocalDateTime todayStart = LocalDate.now().atStartOfDay();
+
+        // 어제
+        LocalDateTime yesterdayStart = LocalDate.now().atStartOfDay();
+        LocalDateTime yesterdayEnd = yesterdayStart.plusDays(1).minusSeconds(1);
+
+        // 이번주
+        LocalDateTime thisWeekStart = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY)).atStartOfDay();
         
+        // 저번주
+        LocalDateTime lastWeekStart = thisWeekStart.minusWeeks(1);
+        LocalDateTime lastWeekEnd = lastWeekStart.plusDays(4).with(LocalTime.MAX);
+        
+        // 이번달
+        LocalDateTime thisMonthStart = LocalDate.now().withDayOfMonth(1).atStartOfDay();
+        
+        // 저번달
+        LocalDateTime lastMonthStart = thisMonthStart.minusMonths(1);
+        LocalDateTime lastMonthEnd = lastMonthStart.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+
         // 조회
-        List<Integer> todayList = countByHour(read(teller, yesterday, now));
-        List<Integer> yesterdayList = countByHour(read(teller, twoDaysAgo, yesterday));
-        List<Integer> thisweekList = countByDay(read(teller, oneWeekAgo, now), oneWeekAgo, now);
-        List<Integer> lastWeekList = countByDay(read(teller, twoWeeksAgo, oneWeekAgo), twoWeeksAgo, oneWeekAgo);
-        List<Integer> thismonthList = countByDay(read(teller, oneMonthAgo, now), oneMonthAgo, now);
-        List<Integer> lastMonthList = countByDay(read(teller, twoMonthsAgo, oneMonthAgo), twoMonthsAgo, oneMonthAgo);
+        List<Integer> todayList = countByHour(read(teller, todayStart, now));
+        List<Integer> yesterdayList = countByHour(read(teller, yesterdayStart, yesterdayEnd));
+        List<Integer> thisweekList = countByDay(read(teller, thisWeekStart, now), thisWeekStart, now);
+        List<Integer> lastWeekList = countByDay(read(teller, lastWeekStart, lastWeekEnd), lastWeekStart, lastWeekEnd);
+        List<Integer> thismonthList = countByDay(read(teller, thisMonthStart, now), thisMonthStart, now);
+        List<Integer> lastMonthList = countByDay(read(teller, lastMonthStart, lastMonthEnd), lastMonthStart, lastMonthEnd);
 
         return LogData.builder()
                 .dailyLog(DailyLog.builder()
@@ -102,12 +122,15 @@ public class HwaChangLogService {
 
         int avgScore = reviewRepository.findAverageNpsByTellerId(teller.getId());
         int sumCustomer = reviewRepository.countCustomersByTellerId(teller.getId());
+        NpsDataDto npsData = reviewRepository.findNpsDataByTellerId(teller.getId());
+        System.out.println(npsData.toString());
         LogData logData = readGraphData(teller);
         List<String> reviews = reviewRepository.findReviewEntitiesByTellerId(teller.getId());
 
         return TellerMainResponseDto.builder()
                 .avgScore(avgScore)
                 .sumCustomer(sumCustomer)
+                .npsData(npsData)
                 .hwachangLog(logData)
                 .reviews(reviews)
                 .build();

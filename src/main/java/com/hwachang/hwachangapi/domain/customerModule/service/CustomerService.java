@@ -1,7 +1,9 @@
 package com.hwachang.hwachangapi.domain.customerModule.service;
 
 import com.hwachang.hwachangapi.domain.clovaModule.service.ClovaApiService;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.CategoryEntity;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.entities.ConsultingRoomEntity;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.CategoryRepository;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.repository.ConsultingRoomRepository;
 import com.hwachang.hwachangapi.domain.customerModule.dto.*;
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
@@ -18,16 +20,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +40,7 @@ public class CustomerService {
     private final TellerRepository tellerRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final CategoryRepository categoryRepository;
 
 
     @Transactional
@@ -117,12 +118,15 @@ public class CustomerService {
                     TellerEntity teller = tellerRepository.findById(room.getTellerId())
                             .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
+                    CategoryEntity category = categoryRepository.findById(room.getCategoryId())
+                            .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+
                     return ConsultingListDto.builder()
                             .consultingRoomId(room.getConsultingRoomId())
                             .summary(room.getSummary())
                             .tellerName(teller.getName())
                             .type(teller.getType().getDescription())
-                            .category(teller.getType().name())
+                            .category(category.getCategoryName())
                             .date(room.getCreatedAt())
                             .build();
                 })
@@ -149,14 +153,42 @@ public class CustomerService {
         TellerEntity teller = tellerRepository.findById(consultingRoom.getTellerId())
                 .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
+        CategoryEntity category = categoryRepository.findById(consultingRoom.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+
         return ConsultingDetailsDto.builder()
                 .summary(consultingRoom.getSummary())
                 .originalText(consultingRoom.getOriginalText())
                 .tellerName(teller.getName())
                 .type(teller.getType().name())
-                .category(teller.getType().getDescription())
+                .category(category.getCategoryName())
                 .date(consultingRoom.getCreatedAt())
                 .build();
     }
-}
 
+    public UserInfoDto getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        Optional<CustomerEntity> customer = customerRepository.findByUsername(username);
+
+        if (customer.isPresent()) {
+            return UserInfoDto.builder()
+                    .name(customer.get().getName())
+                    .build();
+        } else {
+            throw new UsernameNotFoundException("User not found: " + username);
+        }
+
+    }
+
+    @Transactional
+    public CustomerUsernameCheckResponseDto checkUsernameAvailability(CustomerUsernameCheckRequestDto request) {
+        boolean exists = customerRepository.findByUsername(request.getUsername()).isPresent();
+        return CustomerUsernameCheckResponseDto.builder()
+                .isAvailable(!exists)
+                .message(exists ? "이미 존재하는 아이디입니다." : "사용 가능한 아이디입니다.")
+                .build();
+    }
+}

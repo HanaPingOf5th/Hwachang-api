@@ -1,27 +1,23 @@
-package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
+package com.hwachang.hwachangapi.domain.consultingRoomModule.service;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.PreChatRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-@RestController
-@RequestMapping("/waiting-room")
+@Service
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000")
-public class WaitingRoomController {
+public class PreChatService {
     private final RedisTemplate<String, List<String>> redisListTemplate;
-    @PostMapping("/prechat")
-    public void sendPreChat (@RequestBody PreChatRequestDto preChatRequestDto){
+
+    public void sendPreChat(PreChatRequestDto preChatRequestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String userName = userDetails.getUsername();
@@ -37,10 +33,12 @@ public class WaitingRoomController {
         valueOperations.set(userName, prechats, expiredTime, TimeUnit.SECONDS);
     }
 
-    @GetMapping("/prechat/{userName}")
-    public List<String> getPreChatsByUserName(@PathVariable String userName){
+    public List<String> getPreChatsByUserName(String userName) {
         ValueOperations<String, List<String>> valueOperations = redisListTemplate.opsForValue();
         List<String> prechats = valueOperations.get(userName);
+        if (prechats == null) {
+            prechats = new ArrayList<>();
+        }
         return prechats;
     }
 }

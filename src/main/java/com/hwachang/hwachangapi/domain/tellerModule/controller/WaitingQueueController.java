@@ -69,8 +69,8 @@ public class WaitingQueueController {
         return ApiResponse.onSuccess("행원이 다른 업무 중입니다.", null);
     }
 
-    @Operation(summary = "다음 고객 처리", description = "대기열에서 다음 고객을 제거하고 처리합니다.")
-    @GetMapping(value = "/{typeId}/next")
+    @Operation(summary = "다음 고객 처리", description = "대기열에서 다음 고객의 정보를 가져옵니다.")
+    @GetMapping ("/{typeId}/next")
     public ApiResponse<ConsultingRoomResponseDto> processNextCustomer(@PathVariable int typeId) {
         QueueCustomerDto nextCustomer = waitingQueueService.processNextCustomer(typeId);
         ConsultingRoomResponseDto responseDto = consultingRoomService.createConsultingRoom(nextCustomer.getCustomerId(), nextCustomer.getCategoryId());

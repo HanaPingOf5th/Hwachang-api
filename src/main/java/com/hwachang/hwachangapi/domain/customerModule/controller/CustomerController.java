@@ -51,4 +51,17 @@ public class CustomerController {
         ConsultingDetailsDto consultingDetail = customerService.getConsultingDetails(consultingRoomId);
         return ResponseEntity.ok(consultingDetail);
     }
+
+    @GetMapping("/info")
+    public ResponseEntity<UserInfoDto> getUserInfo() {
+        UserInfoDto userInfoDto = customerService.getUserInfo();
+        return ResponseEntity.ok(userInfoDto);
+    }
+
+    @PostMapping("/check-username")
+    public ResponseEntity<CustomerUsernameCheckResponseDto> checkUsernameAvailability(
+            @RequestBody CustomerUsernameCheckRequestDto requestDto) {
+        CustomerUsernameCheckResponseDto response = customerService.checkUsernameAvailability(requestDto);
+        return ResponseEntity.ok(response);
+    }
 }

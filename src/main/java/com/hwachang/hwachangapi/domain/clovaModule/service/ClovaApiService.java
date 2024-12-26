@@ -22,6 +22,11 @@ public class ClovaApiService {
 
     private final LLMServicePort llmServicePort;
 
+    public String recognizeAll(String fileUrl) throws IOException {
+        InputStream inputStream = FileUtils.downloadFileAsStream(fileUrl);
+        return llmServicePort.transferAudioToTextAll(inputStream, fileUrl);
+    }
+
     public List<Map<String, Object>>  recognizeAudio(String fileUrl) throws IOException {
         InputStream inputStream = FileUtils.downloadFileAsStream(fileUrl);
         return llmServicePort.transferAudioToText(inputStream, fileUrl);

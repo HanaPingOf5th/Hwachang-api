@@ -79,7 +79,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         categoryRepository.save(depositCategory);
         categoryRepository.save(savingsCategory);
 
-        saveCategory("예금", true);saveCategory("펀드/신택", true);
+        saveCategory("예금", true);saveCategory("펀드/신탁", true);
         saveCategory("카드", true);saveCategory("대출", true);
         saveCategory("스마트뱅킹", true);saveCategory("인증서", true);
         saveCategory("주택청약", true);saveCategory("텔레뱅킹", true);

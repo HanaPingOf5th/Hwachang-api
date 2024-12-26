@@ -64,4 +64,9 @@ public class CustomerController {
         CustomerUsernameCheckResponseDto response = customerService.checkUsernameAvailability(requestDto);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping()
+    public UUID getCustomerId() {
+        return customerService.getCustomerId();
+    }
 }

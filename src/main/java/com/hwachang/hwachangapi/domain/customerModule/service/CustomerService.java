@@ -89,6 +89,18 @@ public class CustomerService {
         System.out.println("로그아웃 성공: 클라이언트에서 토큰을 삭제하세요.");
     }
 
+
+    public UUID getCustomerId(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+
+        CustomerEntity customerEntity = customerRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+
+        return customerEntity.getId();
+    }
+
     // 로그인된 고객의 상담 기록 목록 가져오기
     @Transactional
     public List<ConsultingListDto> getCustomerConsultingRecords(String summaryKeyword, String startDate, String endDate) {

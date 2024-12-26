@@ -10,19 +10,19 @@ import java.util.UUID;
 @Getter
 @Builder
 public class ConsultingRoomResponseDto {
-    private UUID consultingRoom;
+    private UUID consultingRoomId;
     private UUID categoryId;
     private UUID tellerId;
     private UUID customerId;
     private String userName;
 
     @JsonCreator
-    public ConsultingRoomResponseDto(@JsonProperty("consultingRoom") UUID consultingRoom,
+    public ConsultingRoomResponseDto(@JsonProperty("consultingRoomId") UUID consultingRoomId,
                                      @JsonProperty("categoryId") UUID categoryId,
                                      @JsonProperty("tellerId") UUID tellerId,
                                      @JsonProperty("customerId") UUID customerId,
                                      @JsonProperty("userName") String userName) {
-        this.customerId = customerId;
+        this.consultingRoomId = consultingRoomId;
         this.categoryId = categoryId;
         this.tellerId = tellerId;
         this.customerId = customerId;

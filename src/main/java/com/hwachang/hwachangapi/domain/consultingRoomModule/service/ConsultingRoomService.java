@@ -59,7 +59,7 @@ public class ConsultingRoomService {
         consultingRoomRepository.save(consultingRoom);
 
         return ConsultingRoomResponseDto.builder()
-                .consultingRoom(consultingRoom.getConsultingRoomId())
+                .consultingRoomId(consultingRoom.getConsultingRoomId())
                 .customerId(customerId)
                 .userName(customer.getUsername())
                 .tellerId(teller.getId())

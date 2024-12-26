@@ -2,6 +2,7 @@ package com.hwachang.hwachangapi.domain.tellerModule.service;
 
 import com.hwachang.hwachangapi.domain.customerModule.entities.CustomerEntity;
 import com.hwachang.hwachangapi.domain.customerModule.repository.CustomerRepository;
+import com.hwachang.hwachangapi.domain.tellerModule.dto.ConsultingRoomResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueCustomerDto;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.QueueResponseDto;
 import com.hwachang.hwachangapi.domain.tellerModule.entities.Status;
@@ -12,12 +13,15 @@ import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.TypeHandler;
 import com.hwachang.hwachangapi.utils.apiPayload.exception.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -26,6 +30,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @CrossOrigin(origins = "http://localhost:3000")
 public class WaitingQueueService {
     private final RedisTemplate<String, PriorityQueue<QueueCustomerDto>> redisTemplate;
+    private final RedisTemplate<String, ConsultingRoomResponseDto> consultingRoomRedisTemplate;
     private final CustomerRepository customerRepository;
     private final TellerRepository tellerRepository;
     private static final String WAIT_QUEUE_KEY = "waiting_queue:";
@@ -112,6 +117,26 @@ public class WaitingQueueService {
         return removed;
     }
 
+    // 고객에게 제공할 상담실 정보 생성
+    public String createConsultingRoomInfo(UUID customerId, ConsultingRoomResponseDto dto) {
+        String key = getConsultingQueueKey(customerId);
+        Long expiredTime = 600L;
+        consultingRoomRedisTemplate.opsForValue().set(key, dto, expiredTime, TimeUnit.SECONDS);
+        log.info("{}: {}", key, dto);
+        return key;
+    }
+
+    // 고객이 필요한 정보
+    public ConsultingRoomResponseDto getConsultingRoomInfo(String userName) {
+        CustomerEntity customerEntity = customerRepository.findByUsername(userName)
+                .orElseThrow(() -> new UserHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+        UUID customerId = customerEntity.getId();
+
+        ValueOperations<String, ConsultingRoomResponseDto> valueOperations = consultingRoomRedisTemplate.opsForValue();
+        return valueOperations.get(String.valueOf(customerId));
+    }
+
     // 대기열 크기 반환
     public Long getWaitingQueueSize(int typeId) {
         String key = getQueueKey(typeId);
@@ -147,5 +172,9 @@ public class WaitingQueueService {
             throw new TypeHandler(ErrorStatus.INVALID_TYPE);
         }
         return WAIT_QUEUE_KEY + suffix;
+    }
+
+    private String getConsultingQueueKey(UUID customerId) {
+        return String.valueOf(customerId);
     }
 }

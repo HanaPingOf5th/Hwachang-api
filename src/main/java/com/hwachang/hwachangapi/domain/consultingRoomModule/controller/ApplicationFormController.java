@@ -3,6 +3,7 @@ package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.domain.ApplicationForm;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.FormByCategoryDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.InsertFormDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.SendApplicationFormDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ApplicationFormService;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.SavedFormService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,16 @@ import java.util.UUID;
 public class ApplicationFormController {
     private final ApplicationFormService applicationFormService;
     private final SavedFormService savedFormService;
+
+    @PostMapping("/send")
+    public void sendApplicationForm(@RequestBody SendApplicationFormDto sendApplicationFormDto) {
+        this.applicationFormService.sendApplicationForm(sendApplicationFormDto);
+    }
+
+    @GetMapping("/get")
+    public ApplicationForm getApplicationForm() {
+        return this.applicationFormService.getApplicationFormFromRedis();
+    }
 
     @GetMapping("/{formId}")
     public ApplicationForm getApplicationForm(@PathVariable("formId") UUID applicationFormId) {

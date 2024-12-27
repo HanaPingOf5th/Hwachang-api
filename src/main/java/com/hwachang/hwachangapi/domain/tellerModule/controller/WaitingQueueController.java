@@ -55,6 +55,7 @@ public class WaitingQueueController {
     @Operation(summary = "대기열 정보 조회", description = "행원은 상담 하러 가기 페이지에서 대기열 정보를 조회합니다.")
     @GetMapping("/{typeId}/teller-entrance")
     public ApiResponse<QueueResponseDto> getWaitingQueuesInfo(@PathVariable int typeId) {
+        log.info("요청입니다");
         QueueResponseDto responseDto = waitingQueueService.getWaitingQueuesInfo(typeId);
         return ApiResponse.onSuccess(responseDto);
     }

@@ -75,15 +75,12 @@ public class WaitingQueueController {
     public ApiResponse<ConsultingRoomResponseDto> processNextCustomer(@PathVariable int typeId) {
         QueueCustomerDto nextCustomer = waitingQueueService.processNextCustomer(typeId);
         ConsultingRoomResponseDto responseDto = consultingRoomService.createConsultingRoom(nextCustomer.getCustomerId(), nextCustomer.getCategoryId());
-        String username = responseDto.getUserName();
-
-//        notificationService.notify(username, responseDto);
 
         waitingQueueService.createConsultingRoomInfo(responseDto.getCustomerId(), responseDto);
 
         // 행원 상태 "상담 중"으로 변경
-        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("UNAVAILABLE").build();
-        tellerService.updateStatus(statusRequestDto);
+//        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("UNAVAILABLE").build();
+//        tellerService.updateStatus(statusRequestDto);
 
         return nextCustomer != null
                 ? ApiResponse.onSuccess(responseDto)

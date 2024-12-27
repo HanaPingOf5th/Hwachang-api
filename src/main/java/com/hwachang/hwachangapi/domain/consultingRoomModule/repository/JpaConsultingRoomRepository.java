@@ -19,6 +19,7 @@ public class JpaConsultingRoomRepository implements ConsultingRoomRepository {
     @Override
     public void save(ConsultingRoomEntity consultingRoomEntity) {
         em.persist(consultingRoomEntity);
+        em.flush();
     }
 
     @Override

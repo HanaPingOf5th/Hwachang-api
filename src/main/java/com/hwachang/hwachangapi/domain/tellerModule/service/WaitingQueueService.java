@@ -37,7 +37,7 @@ public class WaitingQueueService {
     private AtomicLong corporateCounter = new AtomicLong(0);
 
     // 고객 대기열 입장 - 고객
-    public UUID addCustomerToQueue(int typeId, UUID categoryId, String userName) {
+    public String addCustomerToQueue(int typeId, UUID categoryId, String userName) {
         String key = getQueueKey(typeId);
 
         CustomerEntity customer = customerRepository.findByUsername(userName)
@@ -73,7 +73,7 @@ public class WaitingQueueService {
         Long expiredTime = 600L;
         redisTemplate.opsForValue().set(key, queue, expiredTime, TimeUnit.SECONDS);
         log.info("{}: {} 고객 추가 (번호표 {})", key, userName, waitingNumber);
-        return customer.getId();
+        return customer.getName();
     }
 
     // 다음 고객 처리 - 행원

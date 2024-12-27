@@ -38,17 +38,13 @@ public class WaitingQueueController {
 
     @Operation(summary = "대기열에 고객 추가", description = "고객은 개인 금융 또는 기업 금융을 선택해 상담 대기실로 입장합니다.")
     @GetMapping(value = "/{typeId}")
-    public ApiResponse<Void> addCustomerToQueue(
+    public ApiResponse<String> addCustomerToQueue(
             @PathVariable int typeId,
             @RequestParam(required = false) UUID categoryId) {
         String username = getCurrentUsername();
-        UUID customerId = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
-//        notificationService.subscribe(username);
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-//        notificationService.subscribe(customerId);
-        return customerId != null
-                ? ApiResponse.onSuccess(username + " 고객을 대기열에 추가하였습니다.", null)
+        String customerName = waitingQueueService.addCustomerToQueue(typeId, categoryId, username);
+        return customerName != null
+                ? ApiResponse.onSuccess("고객을 대기열에 추가하였습니다.", customerName)
                 : ApiResponse.onFailure(ErrorStatus._BAD_REQUEST.getCode(), "이미 대기열에 추가된 고객입니다.", null);
     }
 

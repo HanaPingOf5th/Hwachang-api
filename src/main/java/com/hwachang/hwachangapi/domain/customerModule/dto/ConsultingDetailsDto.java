@@ -21,6 +21,7 @@ public class ConsultingDetailsDto {
     private String type;          // 유형 (개인금융 or 기업금융)
     private String category;      // 카테고리
     private LocalDateTime date;   // 상담한 날짜
+    private String voiceUrl;
 
     // Type Enum을 문자열로 변환하는 메서드
     public static String mapTypeToString(Type type) {

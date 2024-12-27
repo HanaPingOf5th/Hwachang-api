@@ -2,6 +2,7 @@ package com.hwachang.hwachangapi.domain.consultingRoomModule.controller;
 
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.ConsultingListDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.CreateReviewDto;
+import com.hwachang.hwachangapi.domain.consultingRoomModule.dto.EndConsultingRoomDto;
 import com.hwachang.hwachangapi.domain.consultingRoomModule.service.ConsultingRoomService;
 import com.hwachang.hwachangapi.domain.tellerModule.dto.TellerStatusRequestDto;
 import com.hwachang.hwachangapi.domain.tellerModule.service.TellerService;
@@ -21,21 +22,15 @@ public class ConsultingRoomController {
 
     @PostMapping("/end")
     public UUID endConsultingRoom(
-            @RequestParam UUID consultingRoomId,
-            @RequestParam UUID tellerId,
-            @RequestParam UUID categoryId,
-            @RequestParam List<UUID> customerIds,
-            @RequestParam List<String> recordChat,
-            @RequestParam String voiceUrl,
-            @RequestParam String time) {
+            @RequestBody EndConsultingRoomDto dto) {
 
         // 행원 상태 "상담 가능"으로 변경
-        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("AVAILABLE").build();
-        tellerService.updateStatus(statusRequestDto);
+//        TellerStatusRequestDto statusRequestDto = TellerStatusRequestDto.builder().status("AVAILABLE").build();
+//        tellerService.updateStatus(statusRequestDto);
 
         // 상담 종료 후 데이터를 저장
         return consultingRoomService.updateConsultingRoomDetails(
-                consultingRoomId, tellerId, categoryId, customerIds, recordChat, voiceUrl, time);
+                dto.getConsultingRoomId(), dto.getTellerId(), dto.getCategoryId(), dto.getCustomerIds(), dto.getRecordChat(), dto.getVoiceUrl(), dto.getTime());
     }
 
     @PostMapping("/review")

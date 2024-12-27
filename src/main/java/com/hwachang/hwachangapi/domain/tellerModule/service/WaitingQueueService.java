@@ -142,9 +142,8 @@ public class WaitingQueueService {
     // 대기열 크기 반환
     public Long getWaitingQueueSize(int typeId) {
         String key = getQueueKey(typeId);
-
+        log.info("KEY: {}, TYPEID: {}", key, typeId);
         Queue<QueueCustomerDto> queue = redisTemplate.opsForValue().get(key);
-        log.info(queue.toString());
         log.info("큐의 크기: {}", (queue != null) ? queue.size() : 0L);
 
         return (queue != null) ? (long) queue.size() : 0L;

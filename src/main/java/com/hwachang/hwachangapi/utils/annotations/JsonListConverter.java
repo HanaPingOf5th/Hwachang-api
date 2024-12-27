@@ -3,10 +3,12 @@ package com.hwachang.hwachangapi.utils.annotations;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 import java.util.List;
 import java.util.Map;
 
+@Converter
 public class JsonListConverter implements AttributeConverter<List<Map<String, Object>>, String> {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -25,6 +27,9 @@ public class JsonListConverter implements AttributeConverter<List<Map<String, Ob
 
     @Override
     public List<Map<String, Object>> convertToEntityAttribute(String dbData) {
+        if (dbData == null) {
+            return null;
+        }
         try {
             return objectMapper.readValue(dbData, objectMapper.getTypeFactory().constructCollectionType(List.class, Map.class));
         } catch (JsonProcessingException e) {

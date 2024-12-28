@@ -29,13 +29,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,9 +59,11 @@ public class ConsultingRoomService {
 
         ConsultingRoomEntity consultingRoom = ConsultingRoomEntity.builder()
                 .tellerId(teller.getId())
+                .recordChat(new ArrayList<>())
                 .customerIds(List.of(customerId))
                 .categoryId(categoryId)
                 .build();
+
         consultingRoomRepository.save(consultingRoom);
 
         return ConsultingRoomResponseDto.builder()

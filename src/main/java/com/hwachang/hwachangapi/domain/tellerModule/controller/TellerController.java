@@ -39,6 +39,7 @@ public class TellerController {
     @Operation(summary = "행원 상담 현황 조회", description = "행원은 메인 페이지에서 대시보드로 상담 현황을 확인할 수 있습니다.")
     @GetMapping("/main")
     public ApiResponse<TellerMainResponseDto> getTellerDashboard() {
+        log.info("TELLER MAIN");
         TellerMainResponseDto responseDto = hwaChangLogService.getTellerDashboardData();
         return ApiResponse.onSuccess(responseDto);
     }

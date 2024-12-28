@@ -175,6 +175,7 @@ public class CustomerService {
                 .type(teller.getType().name())
                 .category(category.getCategoryName())
                 .date(consultingRoom.getCreatedAt())
+                .voiceUrl(consultingRoom.getVoiceRecordUrl())
                 .build();
     }
 

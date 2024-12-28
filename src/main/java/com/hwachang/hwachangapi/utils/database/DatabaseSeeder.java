@@ -96,8 +96,12 @@ public class DatabaseSeeder implements CommandLineRunner {
 
 
         List<CategoryDto> categories = categoryService.getCategories();
+        categories.forEach(category -> createFormsForCategory(category.getCategoryId(), category.getCategoryName()));
+        categories.forEach(category -> createDocumentsForCategory(category.getCategoryId(), category.getCategoryName()));
         UUID depositCategoryId = categories.get(0).getCategoryId();
         UUID savingsCategoryId = categories.get(1).getCategoryId();
+
+
 
         // Create two consulting rooms for the same customer and teller
         List<Map<String, Object>> consultingRoom1Text = new ArrayList<>();
@@ -116,7 +120,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 )
                 .recordChat(new ArrayList<>())
                 .voiceRecordUrl("voice1.url")
-                .time("20min")
+                .time("2024-10-10")
                 .build();
 
         List<Map<String, Object>> consultingRoom2Text = new ArrayList<>();
@@ -135,54 +139,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                 )
                 .recordChat(new ArrayList<>())
                 .voiceRecordUrl("voice2.url")
-                .time("30min")
+                .time("2024-10-11")
                 .build();
 
         consultingRoomRepository.save(consultingRoom1);
         consultingRoomRepository.save(consultingRoom2);
-
-        // Create application forms for categories
-        applicationFormRepository.createApplicationFormEntity(depositCategoryId);
-        applicationFormRepository.createSavingsApplicationFormEntity(savingsCategoryId);
-
-        // Create document
-        for(int i=0; i<24; i++){
-            documentRepository.save(DocumentEntity.builder()
-                    .categoryId(categories.get(i).getCategoryId())
-                    .title("서류")
-                    .path("https://www.naver.com/")
-                    .build());
-            documentRepository.save(DocumentEntity.builder()
-                    .categoryId(categories.get(i).getCategoryId())
-                    .title("서류2")
-                    .path("https://www.naver.com/")
-                    .build());
-        }
-        documentRepository.save(DocumentEntity.builder()
-                .categoryId(categories.get(0).getCategoryId())
-                .title("예금관련 서류")
-                .path("https://www.naver.com/")
-                .build());
-        documentRepository.save(DocumentEntity.builder()
-                .categoryId(categories.get(0).getCategoryId())
-                .title("예금관련 서류2")
-                .path("https://www.naver.com/")
-                .build());
-        documentRepository.save(DocumentEntity.builder()
-                .categoryId(categories.get(0).getCategoryId())
-                .title("예금관련 서류3")
-                .path("https://www.naver.com/")
-                .build());
-        documentRepository.save(DocumentEntity.builder()
-                .categoryId(categories.get(1).getCategoryId())
-                .title("적금관련 서류1")
-                .path("https://www.naver.com/")
-                .build());
-        documentRepository.save(DocumentEntity.builder()
-                .categoryId(categories.get(1).getCategoryId())
-                .title("적금관련 서류2")
-                .path("https://www.naver.com/")
-                .build());
 
         //create review
         ReviewEntity reviewEntity1 = ReviewEntity.builder()
@@ -218,5 +179,36 @@ public class DatabaseSeeder implements CommandLineRunner {
         entry.put("text", text);
         entry.put("speaker", speaker);
         return entry;
+    }
+
+    private void createFormsForCategory(UUID categoryId, String categoryName) {
+        for (int i = 1; i <= 3; i++) {
+            UUID formId = UUID.randomUUID();
+            String title = categoryName + " 신청서 " + i;
+            String applicationForm = "{ \"title\": \"" + title + "\", " +
+                    "   \"customerInfo\": { \"name\": \"김인영\", \"residentNumber\": \"123456-7890123\", \"address\": \"서울특별시\" }, " +
+                    "   \"subjects\": [ " +
+                    "     { \"title\": \"상담 항목\", " +
+                    "       \"items\": [ " +
+                    "         { \"type\": \"input\", \"description\": \"상품명\" }, " +
+                    "         { \"type\": \"input\", \"description\": \"계약기간\" }, " +
+                    "         { \"type\": \"input\", \"description\": \"금액\" } " +
+                    "       ] " +
+                    "     } " +
+                    "   ] " +
+                    " }";
+
+            applicationFormRepository.createApplicationFormEntity(formId, categoryId, title, applicationForm);
+        }
+    }
+
+    private void createDocumentsForCategory(UUID categoryId, String categoryName) {
+        for (int i = 1; i <= 3; i++) {
+            documentRepository.save(DocumentEntity.builder()
+                    .categoryId(categoryId)
+                    .title(categoryName + " 관련 서류 " + i)
+                    .path("https://example.com/" + categoryName + "/document" + i)
+                    .build());
+        }
     }
 }

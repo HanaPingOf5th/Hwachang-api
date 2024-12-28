@@ -14,8 +14,6 @@ import com.hwachang.hwachangapi.utils.apiPayload.code.status.ErrorStatus;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -70,7 +68,7 @@ public class WaitingQueueController {
     public ApiResponse<ConsultingRoomResponseDto> processNextCustomer(@PathVariable int typeId) {
         QueueCustomerDto nextCustomer = waitingQueueService.processNextCustomer(typeId);
         ConsultingRoomResponseDto responseDto = consultingRoomService.createConsultingRoom(nextCustomer.getCustomerId(), nextCustomer.getCategoryId());
-        String username = responseDto.getUserName();
+        String username = responseDto.getCustomerName();
 
 //        notificationService.notify(username, responseDto);
 

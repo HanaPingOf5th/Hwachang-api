@@ -70,9 +70,9 @@ public class ConsultingRoomService {
         return ConsultingRoomResponseDto.builder()
                 .consultingRoomId(consultingRoom.getConsultingRoomId())
                 .customerId(customerId)
+                .tellerName(teller.getName())
                 .tellerId(teller.getId())
-                .userName(customer.getUsername())
-                .tellerId(teller.getId())
+                .customerName(customer.getName())
                 .categoryId(categoryId)
                 .build();
     }

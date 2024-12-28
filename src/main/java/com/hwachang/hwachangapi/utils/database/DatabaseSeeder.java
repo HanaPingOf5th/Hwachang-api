@@ -59,7 +59,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .position("대리")
                 .password("12345")
                 .build();
-        this.tellerService.signup(tellerRequestDto2);
+        this.tellerService.signupP(tellerRequestDto2);
 
         CustomerSignupRequestDto customerRequestDto = CustomerSignupRequestDto.builder()
                 .username("dw1234")

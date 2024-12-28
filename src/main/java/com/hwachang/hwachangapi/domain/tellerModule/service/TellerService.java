@@ -43,6 +43,23 @@ public class TellerService {
     }
 
     @Transactional
+    public String signupP(CreateTellerRequestDto request) {
+        TellerEntity tellerEntity = TellerEntity.create(
+                request.getTellerNumber(),
+                request.getName(),
+                passwordEncoder.encode(request.getPassword()),
+                AccountRole.Teller,
+                request.getPosition(),
+                Status.AVAILABLE,
+                Type.PERSONAL,
+                "profile-image-url"
+        );
+
+        this.tellerRepository.save(tellerEntity);
+        return tellerEntity.getPosition();
+    }
+
+    @Transactional
     public LoginResponseDto login(LoginRequestDto loginRequestDto) {
         // 행원 조회
         TellerEntity tellerEntity = this.tellerRepository.findTellerByUserName(loginRequestDto.getTellerNumber())

@@ -173,10 +173,10 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .build();
 
         List<Map<String, Object>> consultingRoom4Text = new ArrayList<>();
-        consultingRoom3Text.add(createTextEntry("00:00:01", "00:00:09", "도는 하고 지금 적금을 알아 보고 있습니다. 추천해 주실 만한 상품이 있을까요?", "발화자1"));
-        consultingRoom3Text.add(createTextEntry("00:00:10", "00:00:17", "안녕하세요. 은행의 드림 적 금 상품을 추천드립니다. 월 납입 금액과 기간에 따라 다양한 옵션이 있습니다.", "발화자1"));
-        consultingRoom3Text.add(createTextEntry("00:00:18", "00:00:25", "이 상품이 어떻게 되나요? 기본 금리는 3.5%이고 1 년 이상 유지하면 최대 4% 까지 받을 수 있습니다.", "발화자1"));
-        consultingRoom3Text.add(createTextEntry("00:00:26", "00:00:33", "감사합니다.", "발화자1"));
+        consultingRoom4Text.add(createTextEntry("00:00:01", "00:00:09", "도는 하고 지금 적금을 알아 보고 있습니다. 추천해 주실 만한 상품이 있을까요?", "발화자1"));
+        consultingRoom4Text.add(createTextEntry("00:00:10", "00:00:17", "안녕하세요. 은행의 드림 적 금 상품을 추천드립니다. 월 납입 금액과 기간에 따라 다양한 옵션이 있습니다.", "발화자1"));
+        consultingRoom4Text.add(createTextEntry("00:00:18", "00:00:25", "이 상품이 어떻게 되나요? 기본 금리는 3.5%이고 1 년 이상 유지하면 최대 4% 까지 받을 수 있습니다.", "발화자1"));
+        consultingRoom4Text.add(createTextEntry("00:00:26", "00:00:33", "감사합니다.", "발화자1"));
 
         ConsultingRoomEntity consultingRoom4 = ConsultingRoomEntity.builder()
                 .tellerId(tellerEntity2.getId())

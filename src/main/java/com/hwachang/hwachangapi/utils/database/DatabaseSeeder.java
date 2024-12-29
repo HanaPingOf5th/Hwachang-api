@@ -83,10 +83,25 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryName("적금")
                 .categoryType(Type.PERSONAL)
                 .build();
+        CategoryEntity overseasRemittance = CategoryEntity.builder()
+                .categoryName("해외송금")
+                .categoryType(Type.PERSONAL)
+                .build();
+        CategoryEntity retirementPension = CategoryEntity.builder()
+                .categoryName("퇴직연금")
+                .categoryType(Type.PERSONAL)
+                .build();
+        CategoryEntity fund = CategoryEntity.builder()
+                .categoryName("펀드")
+                .categoryType(Type.CORPORATE)
+                .build();
         categoryRepository.save(depositCategory);
         categoryRepository.save(savingsCategory);
+        categoryRepository.save(overseasRemittance);
+        categoryRepository.save(retirementPension);
+        categoryRepository.save(fund);
 
-//        saveCategory("예금", true);
+
         saveCategory("신탁/ISA", true);
         saveCategory("펀드", true);saveCategory("대출", true);
         saveCategory("퇴직연금", true);saveCategory("전자금융", true);
@@ -108,6 +123,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         categories.forEach(category -> createDocumentsForCategory(category.getCategoryId(), category.getCategoryName(), category.getCategoryType()));
         UUID depositCategoryId = categories.get(0).getCategoryId();
         UUID savingsCategoryId = categories.get(1).getCategoryId();
+        UUID overseasRemittanceId = categories.get(2).getCategoryId();
+        UUID retirementPensionId = categories.get(3).getCategoryId();
+        UUID fundId = categories.get(4).getCategoryId();
 
 
 
@@ -121,7 +139,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(depositCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom1Text)
-                .title("제목1")
+                .title("개인상담과 기업상담의 차이")
                 .summary("주요주제 : 개인상담과 기업상담은 주제가 다름" +
                         " - 개인상담은 개인위주로 해주는 상담임" +
                         " - 기업상담은 기업위주로 해주는 상담임" +
@@ -141,7 +159,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(savingsCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom2Text)
-                .title("제목2")
+                .title("예금과 적금의 차이")
                 .summary("주요주제 : 예금과 적금은 하는 방법과 효율이 다름" +
                         " - 예금은 이율이 좋지 않음" +
                         " - 적금은 이율이 좋음" +
@@ -164,7 +182,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(savingsCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom3Text)
-                .title("제목3")
+                .title("금리 높은 예금 상품 문의")
                 .summary("주요주제 : 금리 높은 예금 상품 문의" +
                         " - 금리 높은 예금 상품 문의함" +
                         " - 해당 은행에는 스마트 정기 예금이 있음 (기본금리 4.5%, 1년 만기)" +
@@ -187,7 +205,8 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(savingsCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom4Text)
-                .summary("주요주제 : 금리 높은 예금 상품 문의" +
+                .title("금리 높은 적금 상품 문의")
+                .summary("주요주제 : 금리 높은 적금 상품 문의" +
                         " - 금리 높은 정기예금 상품 문의" +
                         " - 해당 상품 설명, 기본금리 4.5%, 1년 만기" +
                         " - 가입조건 확인, 최소금액 100만원, 모바일앱 가입 시 추가금리 0.2%" +
@@ -199,15 +218,92 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .time("2024-12-28")
                 .build();
 
+        List<Map<String, Object>> consultingRoom5Text = new ArrayList<>();
+        consultingRoom5Text.add(createTextEntry("00:00:05", "00:00:12", "안녕하세요. 하나은행 외환 상담 센터입니다. 오늘은 어떤 도움을 드릴까요?", "발화자1"));
+        consultingRoom5Text.add(createTextEntry("00:00:13", "00:00:22", "안녕하세요. 해외 송금에 대해 문의드리고 싶어서요. 송금 절차와 수수료에 대해 알고 싶습니다.", "발화자2"));
+        consultingRoom5Text.add(createTextEntry("00:00:23", "00:00:33", "네, 해외 송금은 수취 은행 정보와 송금 금액만 입력하시면 진행 가능합니다. 기본 수수료는 5천 원부터 시작합니다.", "발화자1"));
+        consultingRoom5Text.add(createTextEntry("00:00:34", "00:00:41", "그렇군요. 환율은 실시간으로 적용되나요? 혹시 예약 송금도 가능한가요?", "발화자2"));
+        consultingRoom5Text.add(createTextEntry("00:00:42", "00:00:49", "네, 환율은 실시간으로 적용되며, 예약 송금 서비스도 제공됩니다. 예약 시점의 환율로 송금 가능합니다.", "발화자1"));
+        consultingRoom5Text.add(createTextEntry("00:00:50", "00:01:04", "송금이 완료되기까지 보통 얼마나 걸리나요? 그리고 해외 계좌에서 바로 입금 확인이 가능한가요?", "발화자2"));
+        consultingRoom5Text.add(createTextEntry("00:01:05", "00:01:13", "송금 소요 시간은 대략 1~2 영업일입니다. 다만 국가와 은행에 따라 차이가 있을 수 있습니다. 입금 확인은 송금 완료 후 수취인 은행에서 확인 가능합니다.", "발화자1"));
+        consultingRoom5Text.add(createTextEntry("00:01:14", "00:01:27", "알겠습니다. 그리고 환율 우대 혜택 같은 것도 있나요?", "발화자2"));
+        consultingRoom5Text.add(createTextEntry("00:01:28", "00:01:36", "네, 하나은행은 외환 거래 고객에게 최대 50% 환율 우대 혜택을 제공합니다. 자세한 내용은 홈페이지나 모바일 앱에서 확인하실 수 있습니다.", "발화자1"));
+        consultingRoom5Text.add(createTextEntry("00:01:37", "00:01:42", "좋은 정보 감사합니다. 자세히 알아보겠습니다.", "발화자2"));
+        consultingRoom5Text.add(createTextEntry("00:01:43", "00:01:47", "천만에요. 더 궁금하신 점이 있으면 언제든 문의해주세요!", "발화자1"));
+
+
+
         ConsultingRoomEntity consultingRoom5 = ConsultingRoomEntity.builder()
                 .tellerId(tellerEntity2.getId())
-                .categoryId(savingsCategoryId)
+                .categoryId(overseasRemittanceId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
-                .originalText(null)
-                .summary(null)
+                .originalText(consultingRoom5Text)
+                .title("해외송금 방법, 수수료, 환율 등 문의")
+                .summary("주요주제 : 해외송금 방법, 수수료, 환율 등 문의" +
+                        " - 해외 송금은 수취 은행 정보와 송금 금액만 입력하면 진행 가능함" +
+                        " - 기본 수수료는 5천원 부터 시작하며, 환율은 실시간으로 제공됨" +
+                        " - 예약 송금 서비스 이용 시 예약 시점의 환율로 송금 가능 함" +
+                        " - 송금 소요 시간은 대략 1~2영업일이며, 입금 확인은 송금 완료 후 수취인 은행에서 확인 가능" +
+                        " - 하나은행은 외환 거래 고객에게 최대 50% 환율 우대 혜택 제공")
                 .recordChat(new ArrayList<>())
-                .voiceRecordUrl("https://kr.object.ncloudstorage.com/consulting-audiofile/consulting-data-b2d6d2c8-135f-4b23-b912-14bf39a312b5.mp4")
-                .time("2024-12-28")
+                .voiceRecordUrl("https://kr.object.ncloudstorage.com/consulting-audiofile/consulting-data-981971d9-bdf4-40b6-8d99-611d0bfc4bf4.mp4")
+                .time("2024-11-11")
+                .build();
+
+        List<Map<String, Object>> consultingRoom6Text = new ArrayList<>();
+        consultingRoom6Text.add(createTextEntry("00:00:05", "00:00:12", "안녕하세요. 하나은행을 찾아 주셔서 감사합니다. 오늘은 어떤 상담을 도와드릴까요?", "발화자1"));
+        consultingRoom6Text.add(createTextEntry("00:00:13", "00:00:22", "안녕하세요. 은행의 드림 적 금 상품을 추천드립니다. 월 납입 금액과 기간에 따라 다양한 옵션이 있습니다.", "발화자2"));
+        consultingRoom6Text.add(createTextEntry("00:00:23", "00:00:33", "이 상품이 어떻게 되나요? 기본 금리는 3.5%이고 1 년 이상 유지하면 최대 4% 까지 받을 수 있습니다.", "발화자1"));
+        consultingRoom6Text.add(createTextEntry("00:00:34", "00:00:41", "아직 잘 모르겠어요. 두 가 지 차이를 설명해 주실 수 있을까요?.", "발화자2"));
+        consultingRoom6Text.add(createTextEntry("00:00:42", "00:00:49", "물론이죠. DB형은 회사가 퇴직 후 받을 금액을 보장하 는 방식으로 회사가 운영 책 임을 집니다.", "발화자1"));
+        consultingRoom6Text.add(createTextEntry("00:00:50", "00:01:04", "DCR은 매년 회사가 일정 금액으로 고객님 계좌에 납입 하고 고객님이 직접 투자 방 향을 결정하는 방식입니다. 혹시 투자에 관심이 있으신가 요? 아니면 안정적인 방식이 더 좋으신가요?", "발화자2"));
+        consultingRoom6Text.add(createTextEntry("00:01:05", "00:01:13", "저는 투자 경험은 없어서 안 정적인 방식이 더 좋을 것 같습니다. 그러면 DC형이 더 수익이 높은가요?", "발화자1"));
+        consultingRoom6Text.add(createTextEntry("00:01:14", "00:01:27", "네 DCR는 본인 투자 선택 에 따라 수익을 극대화할 수 있는 가능성이 있지만 그만 큼 위험도 있을 수 있습니다 . 반대로 DB형은 안정적이 지만 수익률 면에서는 상대적 으로 낮을 수 있죠.", "발화자2"));
+        consultingRoom6Text.add(createTextEntry("00:01:28", "00:01:32", "감사합니다.", "발화자1"));
+
+        ConsultingRoomEntity consultingRoom6 = ConsultingRoomEntity.builder()
+                .tellerId(tellerEntity2.getId())
+                .categoryId(retirementPensionId)
+                .customerIds(Collections.singletonList(customerEntity.getId()))
+                .originalText(consultingRoom6Text)
+                .title("퇴직연금제도 (DB형, DC형) 안내")
+                .summary("주요주제 : 퇴직연금 제도 (DB형, DC형) 안내" +
+                        " - 퇴직연금에는 DB형과 DC형이 있음" +
+                        " - DB형은 회사가 퇴직 후 받을 금액을 보장하며 회사가 운영함" +
+                        " - DC형은 회사가 매년 일정 금액을 납입하면 고객이 직접 투자방향을 결정함" +
+                        " - 투자경험이 없는 경우 안정적인 DB형이 적합하나 수익률은 상대적으로 낮음")
+                .recordChat(new ArrayList<>())
+                .voiceRecordUrl("https://kr.object.ncloudstorage.com/consulting-audiofile/consulting-data-c9b933e0-d831-4a10-aea0-c4293ccb53ec.mp4")
+                .time("2024-10-10")
+                .build();
+
+        List<Map<String, Object>> consultingRoomFundText = new ArrayList<>();
+        consultingRoomFundText.add(createTextEntry("00:00:05", "00:00:12", "안녕하세요. 하나은행 기업금융 상담 센터입니다. 어떤 도움을 드릴까요?", "발화자1"));
+        consultingRoomFundText.add(createTextEntry("00:00:13", "00:00:22", "안녕하세요. 회사 운영 자금을 위해 펀드 상품을 알아보고 있습니다. 어떤 상품이 있는지 궁금합니다.", "발화자2"));
+        consultingRoomFundText.add(createTextEntry("00:00:23", "00:00:33", "네, 기업을 위한 펀드 상품은 안정적인 채권형 펀드부터 수익성이 높은 주식형 펀드까지 다양합니다. 회사의 투자 목적에 따라 추천드릴 수 있습니다.", "발화자1"));
+        consultingRoomFundText.add(createTextEntry("00:00:34", "00:00:41", "저희는 안정성과 수익성을 모두 고려하고 싶습니다. 추천해 주실 만한 상품이 있을까요?", "발화자2"));
+        consultingRoomFundText.add(createTextEntry("00:00:42", "00:00:49", "네, 혼합형 펀드가 적합할 것 같습니다. 안정적인 채권과 수익성 있는 주식에 분산 투자하여 위험을 줄이면서도 수익을 기대할 수 있습니다.", "발화자1"));
+        consultingRoomFundText.add(createTextEntry("00:00:50", "00:01:04", "좋네요. 그런데 펀드 운용 방식과 수수료 구조는 어떻게 되나요?", "발화자2"));
+        consultingRoomFundText.add(createTextEntry("00:01:05", "00:01:13", "펀드는 전문가가 운용하며, 고객님께서는 정기적으로 운용 성과를 확인할 수 있습니다. 수수료는 가입 시점과 운용 단계에서 각각 부과되며, 상품에 따라 차이가 있습니다.", "발화자1"));
+        consultingRoomFundText.add(createTextEntry("00:01:14", "00:01:27", "그렇군요. 혹시 환매 시점은 어떻게 결정되나요? 긴급 자금이 필요할 때 바로 찾을 수 있을까요?", "발화자2"));
+        consultingRoomFundText.add(createTextEntry("00:01:28", "00:01:36", "환매는 상품 유형에 따라 다르지만, 일반적으로 펀드 환매는 1~3 영업일 내에 처리됩니다. 긴급 상황에서는 유동성 높은 상품을 추천드립니다.", "발화자1"));
+        consultingRoomFundText.add(createTextEntry("00:01:37", "00:01:42", "알겠습니다. 감사합니다.", "발화자2"));
+
+        ConsultingRoomEntity consultingRoom7 = ConsultingRoomEntity.builder()
+                .tellerId(tellerEntity1.getId())
+                .categoryId(fundId)
+                .customerIds(Collections.singletonList(customerEntity.getId()))
+                .originalText(consultingRoomFundText)
+                .title("기업용 펀드 상품 문의")
+                .summary("주요주제 : 기업용 펀드 상품 문의" +
+                        " - 회사 운영 자금 목적으로 펀드 상품 탐색중" +
+                        " - 안정성과 수익성 둘 다 고려 희망" +
+                        " - 산업형 펀드 추천 받음" +
+                        " - 펀드 운용 방식, 수수료 구조, 판매 시점 등 추가 정보 요구" +
+                        " - 긴급상황시 유동성 높은 상품 추천받음")
+                .recordChat(new ArrayList<>())
+                .voiceRecordUrl("https://kr.object.ncloudstorage.com/consulting-audiofile/consulting-data-7d4bdf08-28a7-4955-adf0-bcd81bb78dfa.mp4")
+                .time("2024-10-10")
                 .build();
 
         consultingRoomRepository.save(consultingRoom1);
@@ -215,6 +311,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         consultingRoomRepository.save(consultingRoom3);
         consultingRoomRepository.save(consultingRoom4);
         consultingRoomRepository.save(consultingRoom5);
+        consultingRoomRepository.save(consultingRoom6);
+        consultingRoomRepository.save(consultingRoom7);
+
 
         //create review
         ReviewEntity reviewEntity1 = ReviewEntity.builder()

@@ -56,7 +56,7 @@ public class TellerService {
         );
 
         this.tellerRepository.save(tellerEntity);
-        return tellerEntity.getPosition();
+        return tellerEntity.getUsername();
     }
 
     @Transactional

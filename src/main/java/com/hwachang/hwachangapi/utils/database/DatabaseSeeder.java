@@ -104,14 +104,16 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         saveCategory("신탁/ISA", true);
         saveCategory("펀드", true);saveCategory("대출", true);
-        saveCategory("퇴직연금", true);saveCategory("전자금융", true);
+        //saveCategory("퇴직연금", true);
+        saveCategory("전자금융", true);
         saveCategory("주택청약", true);saveCategory("파생상품", true);
         saveCategory("외환", true);saveCategory("자동이체", true);
         saveCategory("보험", true);saveCategory("기타", true);
 
         saveCategory("기업", false);saveCategory("예금", false);
         saveCategory("대출", false);saveCategory("퇴직연금", false);
-        saveCategory("펀드", false);saveCategory("외환", false);
+        //saveCategory("펀드", false);
+        saveCategory("외환", false);
         saveCategory("전자금융", false);saveCategory("파생상품", false);
         saveCategory("오픈 뱅킹", false);saveCategory("우수고객", false);
         saveCategory("예금", false);saveCategory("기타", false);

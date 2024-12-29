@@ -116,34 +116,42 @@ public class CustomerService {
 
         List<ConsultingRoomEntity> allConsultingRooms = consultingRoomRepository.findAll();
 
+        // summary가 null인 데이터는 필터링
         List<ConsultingRoomEntity> filteredRooms = allConsultingRooms.stream()
                 .filter(room -> room.getCustomerIds() != null && room.getCustomerIds().contains(customerEntity.getId()))
+                .filter(room -> room.getSummary() != null) // summary가 null인 데이터 제외
                 .filter(room -> {
                     LocalDate roomDate = room.getCreatedAt().toLocalDate();
                     return !roomDate.isBefore(start) && !roomDate.isAfter(end);
                 })
-                .filter(room -> summaryKeyword == null || room.getSummary().contains(summaryKeyword))
+                .filter(room -> summaryKeyword == null || room.getSummary().contains(summaryKeyword)) // 안전한 contains 호출
                 .collect(Collectors.toList());
 
         return filteredRooms.stream()
                 .map(room -> {
-                    TellerEntity teller = tellerRepository.findById(room.getTellerId())
-                            .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
+                    try {
+                        TellerEntity teller = tellerRepository.findById(room.getTellerId())
+                                .orElseThrow(() -> new RuntimeException("담당 행원을 찾을 수 없습니다."));
 
-                    CategoryEntity category = categoryRepository.findById(room.getCategoryId())
-                            .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
+                        CategoryEntity category = categoryRepository.findById(room.getCategoryId())
+                                .orElseThrow(() -> new RuntimeException("해당 카테고리를 찾을 수 없습니다."));
 
-                    return ConsultingListDto.builder()
-                            .consultingRoomId(room.getConsultingRoomId())
-                            .summary(room.getSummary())
-                            .tellerName(teller.getName())
-                            .type(teller.getType().getDescription())
-                            .category(category.getCategoryName())
-                            .date(room.getCreatedAt())
-                            .build();
+                        return ConsultingListDto.builder()
+                                .consultingRoomId(room.getConsultingRoomId())
+                                .summary(room.getSummary())
+                                .tellerName(teller.getName())
+                                .type(teller.getType().getDescription())
+                                .category(category.getCategoryName())
+                                .date(room.getCreatedAt())
+                                .build();
+                    } catch (Exception e) {
+                        return null; // 오류 발생 시 null 반환
+                    }
                 })
+                .filter(Objects::nonNull) // null 값 제거
                 .collect(Collectors.toList());
     }
+
 
     // 로그인된 고객의 특정 상담 상세 정보 가져오기
     @Transactional

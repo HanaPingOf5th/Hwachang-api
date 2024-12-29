@@ -86,17 +86,17 @@ public class DatabaseSeeder implements CommandLineRunner {
         categoryRepository.save(depositCategory);
         categoryRepository.save(savingsCategory);
 
-        saveCategory("예금", true);saveCategory("펀드/신택", true);
-        saveCategory("카드", true);saveCategory("대출", true);
-        saveCategory("스마트뱅킹", true);saveCategory("인증서", true);
-        saveCategory("주택청약", true);saveCategory("텔레뱅킹", true);
-        saveCategory("금융사기", true);saveCategory("자동이체", true);
+        saveCategory("예금", true);saveCategory("신탁/ISA", true);
+        saveCategory("펀드", true);saveCategory("대출", true);
+        saveCategory("퇴직연금", true);saveCategory("전자금융", true);
+        saveCategory("주택청약", true);saveCategory("파생상품", true);
+        saveCategory("외환", true);saveCategory("자동이체", true);
         saveCategory("보험", true);saveCategory("기타", true);
 
-        saveCategory("대출", false);saveCategory("자동이체", false);
-        saveCategory("외환", false);saveCategory("금융사기", false);
-        saveCategory("입출금 알림", false);saveCategory("텔레뱅킹", false);
-        saveCategory("펀드/신탁", false);saveCategory("인증서", false);
+        saveCategory("기업", false);saveCategory("예금", false);
+        saveCategory("대출", false);saveCategory("퇴직연금", false);
+        saveCategory("펀드", false);saveCategory("외환", false);
+        saveCategory("전자금융", false);saveCategory("파생상품", false);
         saveCategory("오픈 뱅킹", false);saveCategory("우수고객", false);
         saveCategory("예금", false);saveCategory("기타", false);
 
@@ -104,7 +104,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         List<CategoryDto> categories = categoryService.getCategories();
         categories.forEach(category -> createFormsForCategory(category.getCategoryId(), category.getCategoryName()));
-        categories.forEach(category -> createDocumentsForCategory(category.getCategoryId(), category.getCategoryName()));
+        categories.forEach(category -> createDocumentsForCategory(category.getCategoryId(), category.getCategoryName(), category.getCategoryType()));
         UUID depositCategoryId = categories.get(0).getCategoryId();
         UUID savingsCategoryId = categories.get(1).getCategoryId();
 
@@ -195,11 +195,22 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .time("2024-12-28")
                 .build();
 
+        ConsultingRoomEntity consultingRoom5 = ConsultingRoomEntity.builder()
+                .tellerId(tellerEntity2.getId())
+                .categoryId(savingsCategoryId)
+                .customerIds(Collections.singletonList(customerEntity.getId()))
+                .originalText(null)
+                .summary(null)
+                .recordChat(new ArrayList<>())
+                .voiceRecordUrl("https://kr.object.ncloudstorage.com/consulting-audiofile/consulting-data-b2d6d2c8-135f-4b23-b912-14bf39a312b5.mp4")
+                .time("2024-12-28")
+                .build();
+
         consultingRoomRepository.save(consultingRoom1);
         consultingRoomRepository.save(consultingRoom2);
         consultingRoomRepository.save(consultingRoom3);
         consultingRoomRepository.save(consultingRoom4);
-
+        consultingRoomRepository.save(consultingRoom5);
 
         //create review
         ReviewEntity reviewEntity1 = ReviewEntity.builder()
@@ -258,13 +269,217 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
     }
 
-    private void createDocumentsForCategory(UUID categoryId, String categoryName) {
-        for (int i = 1; i <= 3; i++) {
-            documentRepository.save(DocumentEntity.builder()
-                    .categoryId(categoryId)
-                    .title(categoryName + " 관련 서류 " + i)
-                    .path("https://example.com/" + categoryName + "/document" + i)
-                    .build());
+    private void createDocumentsForCategory(UUID categoryId, String categoryName, Type type) {
+        if(type.equals(Type.PERSONAL)) {
+            if (categoryName.equals("이체")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("보이스피싱 예방 가이드")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070101/__icsFiles/afieldfile/2024/12/18/GuidesForPreventingVoicePhishing-20241216.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("이체 서비스 이용약관")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070101/__icsFiles/afieldfile/2024/08/08/3-11-0012.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("예금(신탁) 양도승낙 의뢰서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070101/__icsFiles/afieldfile/2020/05/08/5-08-0037_200508.pdf")
+                        .build());
+            } else if (categoryName.equals("대출")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("대출 상품설명서(권유용)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070102/__icsFiles/afieldfile/2023/12/14/3060148_231214.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("대출정보 열람청구 및 상환 위임장")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070102/__icsFiles/afieldfile/2023/05/31/5-16-0365_230531.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("[필수] 개인(신용)정보 수집 · 이용 · 제공 동의서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070102/__icsFiles/afieldfile/2021/03/02/5-06-0813_20210302.pdf")
+                        .build());
+            } else if (categoryName.equals("신탁/ISA")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("[필수] 개인(신용)정보 수집 · 이용 · 제공 동의서(은행보관용)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070107/__icsFiles/afieldfile/2021/05/27/3-21-0004_20210510.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("위임장 (일임형 개인종합자산관리계좌(ISA)용)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070107/__icsFiles/afieldfile/2021/08/26/5210001_20210115.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("계약대상자 확인서 (은행보관용)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070107/__icsFiles/afieldfile/2024/08/20/3-14-0034_20240821.pdf")
+                        .build());
+            } else if (categoryName.equals("퇴직연금")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("퇴직연금 현재운용상품변경 신청서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070108/__icsFiles/afieldfile/2024/10/15/5-14-0046.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("퇴직연금 거래신청서(개인형IRP)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070108/__icsFiles/afieldfile/2024/10/02/5-14-0020.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("퇴직연금 계약해지 신청서(개인형IRP)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070108/__icsFiles/afieldfile/2024/07/18/5-14-0044.pdf")
+                        .build());
+            } else if (categoryName.equals("펀드")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("공모부동산집합투자증권 과세특례 신청서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070109/__icsFiles/afieldfile/2021/01/15/5190014_20210104.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("위임장 (집합투자증권 및 연금저축계좌 투자용)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070109/__icsFiles/afieldfile/2021/08/19/3-14-0231_20210819.pdf")
+                        .build());
+            } else if (categoryName.equals("외환")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("해 외 직 접 투 자 신 고 서(보고서)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070103/__icsFiles/afieldfile/2024/04/25/5-09-0290.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("외화송금의 내용변경 및 취소, 송금수표 분실신고 등 신청서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070103/__icsFiles/afieldfile/2022/12/21/5-09-0064.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("외국인투자기업등록신청서 [ ]신규등록 [ ]변경등록")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070103/__icsFiles/afieldfile/2022/11/11/5_09_0206_8.pdf")
+                        .build());
+            } else if (categoryName.equals("전자금융")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("금융결제원CMS 이용계약서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070104/__icsFiles/afieldfile/2021/07/01/b000020130313_20090921.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("[필수] 개인(신용)정보 수집·이용 동의서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070104/__icsFiles/afieldfile/2021/02/04/2021_20210204_01.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("Hana 1Q bank CMSiNet 서비스 이용 추가 계약서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070104/__icsFiles/afieldfile/2021/01/08/5-08-0502_210108.pdf")
+                        .build());
+            } else if (categoryName.equals("파생상품")) {
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("고령(만65세~79세) 투자자확인서(장외파생상품용)")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070105/__icsFiles/afieldfile/2022/04/06/5-09-0465_1.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("장외파생상품 일반투자자 투자자정보 분석결과표 ")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070105/__icsFiles/afieldfile/2023/08/18/5-09-0526.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("장외파생상품 일반투자자 투자자정보 확인서")
+                        .path("https://image.kebhana.com/cont/customer/customer07/customer0701/customer070105/__icsFiles/afieldfile/2023/08/18/5-09-0095.pdf")
+                        .build());
+            }
+        }else{
+            if(categoryName.equals("기업")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("기업 전자금융서비스 신청서(은행용)")
+                        .path("https://biz.kebhana.com/cont/pdf/terms/3080024_f.pdf")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("기업 전자금융서비스 신청서(은행용)")
+                        .path("https://biz.kebhana.com/cont/pdf/terms/3080024_f.pdf")
+                        .build());
+            } else if(categoryName.equals("예금")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("예금(신탁) 잔액증명 의뢰서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070101/1418359_115299.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("자동이체 신청서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070101/1502795_115299.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("금융거래의 목적 확인 안내")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070101/1503182_115299.jsp")
+                        .build());
+            } else if(categoryName.equals("대출")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("융자상담 및 차입신청서(기업용)")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070102/1418365_115298.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("적합성•적정성 정보파악용 고객정보 확인서(법인)")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070102/1501962_115298.jsp")
+                        .build());
+            } else if(categoryName.equals("퇴직연금")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("퇴직연금 거래신청서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070108/1452339_137475.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("퇴직급여 지급신청서(DC, 기업형IRP)")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070108/1452345_137475.jsp")
+                        .build());
+            } else if(categoryName.equals("외환")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("해 외 직 접 투 자 신 고 서(보고서)")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070103/1432123_115297.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("해 외 직 접 투 자 신 고 서(보고서)")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070103/1432125_115297.jsp")
+                        .build());
+            } else if(categoryName.equals("전자금융")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("CMS Global 이용 신청서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070104/1418303_115296.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("하나 sERP 상담 신청서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070104/1501965_115296.jsp")
+                        .build());
+            } else if(categoryName.equals("파생 상품")){
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("장외파생상품 일반투자자 투자자정보 확인서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070105/1433947_115294.jsp")
+                        .build());
+                documentRepository.save(DocumentEntity.builder()
+                        .categoryId(categoryId)
+                        .title("HANA FX TRADING SYSTEM 이용신청서")
+                        .path("https://www.hanabank.com/cont/customer/customer07/customer0701/customer070105/1468448_115294.jsp")
+                        .build());
+            }
         }
     }
+
 }

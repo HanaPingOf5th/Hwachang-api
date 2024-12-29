@@ -84,7 +84,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryType(Type.PERSONAL)
                 .build();
         CategoryEntity overseasRemittance = CategoryEntity.builder()
-                .categoryName("해외송금")
+                .categoryName("외환")
                 .categoryType(Type.PERSONAL)
                 .build();
         CategoryEntity retirementPension = CategoryEntity.builder()
@@ -107,7 +107,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         //saveCategory("퇴직연금", true);
         saveCategory("전자금융", true);
         saveCategory("주택청약", true);saveCategory("파생상품", true);
-        saveCategory("외환", true);saveCategory("자동이체", true);
+        //saveCategory("외환", true);
+        saveCategory("자동이체", true);
         saveCategory("보험", true);saveCategory("기타", true);
 
         saveCategory("기업", false);saveCategory("예금", false);

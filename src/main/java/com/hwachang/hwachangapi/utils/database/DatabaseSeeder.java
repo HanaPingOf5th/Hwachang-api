@@ -120,6 +120,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(depositCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom1Text)
+                .title("제목1")
                 .summary("주요주제 : 개인상담과 기업상담은 주제가 다름" +
                         " - 개인상담은 개인위주로 해주는 상담임" +
                         " - 기업상담은 기업위주로 해주는 상담임" +
@@ -139,6 +140,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(savingsCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom2Text)
+                .title("제목2")
                 .summary("주요주제 : 예금과 적금은 하는 방법과 효율이 다름" +
                         " - 예금은 이율이 좋지 않음" +
                         " - 적금은 이율이 좋음" +
@@ -161,6 +163,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 .categoryId(savingsCategoryId)
                 .customerIds(Collections.singletonList(customerEntity.getId()))
                 .originalText(consultingRoom3Text)
+                .title("제목3")
                 .summary("주요주제 : 금리 높은 예금 상품 문의" +
                         " - 금리 높은 예금 상품 문의함" +
                         " - 해당 은행에는 스마트 정기 예금이 있음 (기본금리 4.5%, 1년 만기)" +

@@ -165,6 +165,7 @@ public class ConsultingRoomService {
                                     .consultingRoomId(room.getConsultingRoomId())
                                     .createdAt(room.getCreatedAt())
                                     .title(room.getTitle())
+                                    .summary(room.getSummary())
                                     .customerName(customerEntity.get().getName())
                                     .categoryName(categoryEntity.get().getCategoryName())
                                     .build();

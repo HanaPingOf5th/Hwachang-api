@@ -12,7 +12,7 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, UUID> {
     @Query("SELECT COALESCE(AVG(r.nps), 0) FROM ReviewEntity r WHERE r.tellerId = :tellerId")
     Integer findAverageNpsByTellerId(UUID tellerId);
 
-    @Query("SELECT COUNT(DISTINCT r.customerId) FROM ReviewEntity r WHERE r.tellerId = :tellerId")
+    @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.tellerId = :tellerId")
     Integer countCustomersByTellerId(UUID tellerId);
 
     @Query("SELECT r.content FROM ReviewEntity r WHERE r.tellerId = :tellerId")
